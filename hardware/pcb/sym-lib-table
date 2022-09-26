@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name "NCP160")(type "KiCad")(uri "${KIPRJMOD}/NCP160.kicad_sym")(options "")(descr ""))
+  (lib (name "Nuvoton")(type "KiCad")(uri "${KIPRJMOD}/Nuvoton.kicad_sym")(options "")(descr ""))
+)
