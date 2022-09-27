@@ -1,4 +1,5 @@
 (fp_lib_table
   (lib (name "CustomQFN")(type "KiCad")(uri "${KIPRJMOD}/CustomQFN.pretty")(options "")(descr ""))
   (lib (name "Torex")(type "KiCad")(uri "${KIPRJMOD}/Torex.pretty")(options "")(descr ""))
+  (lib (name "Si2342DS")(type "KiCad")(uri "/mnt/data/Downloads/Si2342DS.pretty")(options "")(descr ""))
 )
