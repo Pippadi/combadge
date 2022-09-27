@@ -17,6 +17,8 @@ I suppose any similar microphone will do the job. The manufacturer has very kind
 
 With a speaker must come an amplifier. I chose the [NAU8315](https://www.nuvoton.com/export/resource-files/DS_NAU8315_DataSheet_EN_Rev1.7.pdf) because it's a class D amplifier that takes I2S input, and can drive a speaker with pretty much no external circuitry.
 
+As an exercise, I designed the PCB footprint for the NAU8315.
+
 I'm still on the lookout for an actual speaker.
 
 ## Power Management
@@ -25,7 +27,7 @@ The unit runs on a lithium-polymer battery. Exact model and size unknown as of n
 At this stage, though, I'm more concerned with battery management.
 
 All the chosen components of the combadge operate on 3.3V. I was hoping to find an all-in-one charging and voltage-regulating IC, but none seem to exist for these parameters.
-For charging, I plan to stick to a tried-and-tested TP4056 and DW01A combination.
+For charging, I plan to use an [XC6808A4D28R-G](https://www.torexsemi.com/products/battery-charge-ics/series/?name=xc6808) and a zener diode circuit for over-discharge protection.
 I found the super tiny 250mA [NCP160](https://www.onsemi.com/products/power-management/linear-regulators-ldo/ncp160) LDO linear regulator for 3.3V power.
 
 I still need to verify whether 250mA is enough for the entire combadge (it better be; it's running off a battery).
