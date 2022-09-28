@@ -4,6 +4,11 @@
 
   (paper "A4")
 
+  (title_block
+    (title "Combadge")
+    (rev "1")
+  )
+
   (lib_symbols
     (symbol "CMM-3526D-261-I2S-TR:CMM-3526D-261-I2S-TR" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
       (property "Reference" "MK" (id 0) (at -12.7 10.795 0)
@@ -1201,7 +1206,7 @@
   (symbol (lib_id "power:GND") (at 229.87 90.17 270) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 1b5d8123-fe2f-4957-86ba-aece6f7812d0)
-    (property "Reference" "#PWR?" (id 0) (at 223.52 90.17 0)
+    (property "Reference" "#PWR0114" (id 0) (at 223.52 90.17 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (id 1) (at 226.06 90.1699 90)
@@ -1219,7 +1224,7 @@
   (symbol (lib_id "power:+3.3V") (at 259.08 110.49 180) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 1f197de7-8f64-4aef-b52a-422fae11f49e)
-    (property "Reference" "#PWR?" (id 0) (at 259.08 106.68 0)
+    (property "Reference" "#PWR0117" (id 0) (at 259.08 106.68 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3.3V" (id 1) (at 259.08 115.57 0))
@@ -1269,7 +1274,7 @@
   (symbol (lib_id "power:GND") (at 255.27 92.71 90) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 3ee41b2d-f3da-4dcf-95f9-4d2f53bf980d)
-    (property "Reference" "#PWR?" (id 0) (at 261.62 92.71 0)
+    (property "Reference" "#PWR0115" (id 0) (at 261.62 92.71 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (id 1) (at 259.08 92.7099 90)
@@ -1287,7 +1292,7 @@
   (symbol (lib_id "Device:C") (at 220.98 81.28 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 45675717-f492-4f4f-a167-18356673890d)
-    (property "Reference" "C?" (id 0) (at 214.63 81.28 0)
+    (property "Reference" "C5" (id 0) (at 214.63 81.28 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "4.7uF" (id 1) (at 214.63 83.82 0)
@@ -1342,7 +1347,7 @@
   (symbol (lib_id "Device:R_US") (at 259.08 104.14 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 65ecb276-9d69-4f1a-bd2e-69221f373bf0)
-    (property "Reference" "R?" (id 0) (at 261.62 102.8699 0)
+    (property "Reference" "R5" (id 0) (at 261.62 102.8699 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100k" (id 1) (at 261.62 105.4099 0)
@@ -1411,7 +1416,7 @@
   (symbol (lib_id "power:GND") (at 224.79 72.39 180) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 71ff710a-c937-4bbd-a8e2-13fcf45b7663)
-    (property "Reference" "#PWR?" (id 0) (at 224.79 66.04 0)
+    (property "Reference" "#PWR0118" (id 0) (at 224.79 66.04 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (id 1) (at 224.79 67.31 0))
@@ -1445,7 +1450,7 @@
   (symbol (lib_id "Device:Speaker") (at 243.84 120.65 270) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 7c65d4b9-482c-4a7d-9365-126ab5b66d1e)
-    (property "Reference" "LS?" (id 0) (at 248.92 119.8879 90)
+    (property "Reference" "LS1" (id 0) (at 248.92 119.8879 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "Speaker" (id 1) (at 248.92 122.4279 90)
@@ -1520,7 +1525,7 @@
   (symbol (lib_id "power:+3.3V") (at 218.44 87.63 90) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 89af64ba-41d6-4971-ace0-48f71957e655)
-    (property "Reference" "#PWR?" (id 0) (at 222.25 87.63 0)
+    (property "Reference" "#PWR0116" (id 0) (at 222.25 87.63 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3.3V" (id 1) (at 214.63 87.6299 90)
@@ -1560,7 +1565,7 @@
   (symbol (lib_id "Nuvoton:NAU8315YG") (at 242.57 82.55 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid a3e9f322-b8d4-47c2-ad48-edf4cfe76ba5)
-    (property "Reference" "U?" (id 0) (at 242.57 80.01 0))
+    (property "Reference" "U4" (id 0) (at 242.57 80.01 0))
     (property "Value" "NAU8315YG" (id 1) (at 242.57 82.55 0))
     (property "Footprint" "CustomQFN:QFN-20-1EP_4x4mm_P0.5mm_EP2x2mm" (id 2) (at 242.57 77.47 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -1609,7 +1614,7 @@
   (symbol (lib_id "Connector:Conn_01x01_Male") (at 133.35 76.2 180) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid a6e5c9c8-cb7b-408f-828d-ae46f4af3d38)
-    (property "Reference" "J?" (id 0) (at 132.715 71.12 0))
+    (property "Reference" "J3" (id 0) (at 132.715 71.12 0))
     (property "Value" "TOUCH" (id 1) (at 132.715 73.66 0))
     (property "Footprint" "" (id 2) (at 133.35 76.2 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -1654,7 +1659,7 @@
   (symbol (lib_id "Device:C") (at 228.6 81.28 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid c9c68790-db29-4468-810c-d11a4b68e482)
-    (property "Reference" "C?" (id 0) (at 232.41 81.28 0)
+    (property "Reference" "C6" (id 0) (at 232.41 81.28 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100pF" (id 1) (at 229.87 83.82 0)
@@ -1673,7 +1678,7 @@
   (symbol (lib_id "power:+3.3V") (at 205.74 34.29 90) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid e58f6e5e-a452-440f-af9f-6aee729c4980)
-    (property "Reference" "#PWR?" (id 0) (at 209.55 34.29 0)
+    (property "Reference" "#PWR0119" (id 0) (at 209.55 34.29 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3.3V" (id 1) (at 201.93 34.2899 90)
@@ -1780,22 +1785,22 @@
       (reference "#PWR0113") (unit 1) (value "+BATT") (footprint "")
     )
     (path "/1b5d8123-fe2f-4957-86ba-aece6f7812d0"
-      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
-    )
-    (path "/1f197de7-8f64-4aef-b52a-422fae11f49e"
-      (reference "#PWR?") (unit 1) (value "+3.3V") (footprint "")
+      (reference "#PWR0114") (unit 1) (value "GND") (footprint "")
     )
     (path "/3ee41b2d-f3da-4dcf-95f9-4d2f53bf980d"
-      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
-    )
-    (path "/71ff710a-c937-4bbd-a8e2-13fcf45b7663"
-      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
+      (reference "#PWR0115") (unit 1) (value "GND") (footprint "")
     )
     (path "/89af64ba-41d6-4971-ace0-48f71957e655"
-      (reference "#PWR?") (unit 1) (value "+3.3V") (footprint "")
+      (reference "#PWR0116") (unit 1) (value "+3.3V") (footprint "")
+    )
+    (path "/1f197de7-8f64-4aef-b52a-422fae11f49e"
+      (reference "#PWR0117") (unit 1) (value "+3.3V") (footprint "")
+    )
+    (path "/71ff710a-c937-4bbd-a8e2-13fcf45b7663"
+      (reference "#PWR0118") (unit 1) (value "GND") (footprint "")
     )
     (path "/e58f6e5e-a452-440f-af9f-6aee729c4980"
-      (reference "#PWR?") (unit 1) (value "+3.3V") (footprint "")
+      (reference "#PWR0119") (unit 1) (value "+3.3V") (footprint "")
     )
     (path "/522738f4-f6b2-4897-a079-07da122bd152/54fa1821-1962-473c-8470-e88a1b27fa8c"
       (reference "BT1") (unit 1) (value "Battery_Cell") (footprint "Package_DFN_QFN:OnSemi_XDFN4-1EP_1.0x1.0mm_EP0.52x0.52mm")
@@ -1813,10 +1818,10 @@
       (reference "C4") (unit 1) (value "1uF") (footprint "")
     )
     (path "/45675717-f492-4f4f-a167-18356673890d"
-      (reference "C?") (unit 1) (value "4.7uF") (footprint "")
+      (reference "C5") (unit 1) (value "4.7uF") (footprint "")
     )
     (path "/c9c68790-db29-4468-810c-d11a4b68e482"
-      (reference "C?") (unit 1) (value "100pF") (footprint "")
+      (reference "C6") (unit 1) (value "100pF") (footprint "")
     )
     (path "/522738f4-f6b2-4897-a079-07da122bd152/90b83734-9b32-498c-90f9-3d6e745143bf"
       (reference "D1") (unit 1) (value "3V") (footprint "")
@@ -1828,10 +1833,10 @@
       (reference "J2") (unit 1) (value "USB_B_Micro") (footprint "")
     )
     (path "/a6e5c9c8-cb7b-408f-828d-ae46f4af3d38"
-      (reference "J?") (unit 1) (value "TOUCH") (footprint "")
+      (reference "J3") (unit 1) (value "TOUCH") (footprint "")
     )
     (path "/7c65d4b9-482c-4a7d-9365-126ab5b66d1e"
-      (reference "LS?") (unit 1) (value "Speaker") (footprint "")
+      (reference "LS1") (unit 1) (value "Speaker") (footprint "")
     )
     (path "/6692667a-23d9-4d51-a0f9-87ae21b84031"
       (reference "MK1") (unit 1) (value "CMM-3526D-261-I2S-TR") (footprint "MIC_CMM-3526D-261-I2S-TR")
@@ -1852,7 +1857,7 @@
       (reference "R4") (unit 1) (value "10") (footprint "")
     )
     (path "/65ecb276-9d69-4f1a-bd2e-69221f373bf0"
-      (reference "R?") (unit 1) (value "100k") (footprint "")
+      (reference "R5") (unit 1) (value "100k") (footprint "")
     )
     (path "/522738f4-f6b2-4897-a079-07da122bd152/bd72950c-6810-4eec-8819-388bfc93ab04"
       (reference "R_ISET1") (unit 1) (value "10k") (footprint "")
@@ -1867,7 +1872,7 @@
       (reference "U3") (unit 1) (value "NCP160AMX330TBG") (footprint "Package_DFN_QFN:OnSemi_XDFN4-1EP_1.0x1.0mm_EP0.52x0.52mm")
     )
     (path "/a3e9f322-b8d4-47c2-ad48-edf4cfe76ba5"
-      (reference "U?") (unit 1) (value "NAU8315YG") (footprint "CustomQFN:QFN-20-1EP_4x4mm_P0.5mm_EP2x2mm")
+      (reference "U4") (unit 1) (value "NAU8315YG") (footprint "CustomQFN:QFN-20-1EP_4x4mm_P0.5mm_EP2x2mm")
     )
   )
 )
