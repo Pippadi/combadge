@@ -32,3 +32,5 @@ I found the super tiny 250mA [NCP160](https://www.onsemi.com/products/power-mana
 
 I still need to verify whether 250mA is enough for the entire combadge (it better be; it's running off a battery).
 I'm hoping decoupling capacitors will take care of any current spikes the ESP32 and speakers may need.
+
+You'll need the symbol and PCB footprint for the [Si2342DS](https://www.vishay.com/en/product/63302/).
