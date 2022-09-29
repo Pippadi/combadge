@@ -34,3 +34,8 @@ I still need to verify whether 250mA is enough for the entire combadge (it bette
 I'm hoping decoupling capacitors will take care of any current spikes the ESP32 and speakers may need.
 
 You'll need the symbol and PCB footprint for the [Si2342DS](https://www.vishay.com/en/product/63302/).
+
+## The rest
+
+Major components used are more-or-less finalized. PCB footprints are chosen to be as large as possible where applicable, to facilitate hand-soldering.
+Both the battery and speaker are assumed to be soldered to the board with wires.
