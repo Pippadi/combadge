@@ -15,9 +15,10 @@ I suppose any similar microphone will do the job. The manufacturer has very kind
 
 ### Speaker
 
-With a speaker must come an amplifier. I chose the [NAU8315](https://www.nuvoton.com/export/resource-files/DS_NAU8315_DataSheet_EN_Rev1.7.pdf) because it's a class D amplifier that takes I2S input, and can drive a speaker with pretty much no external circuitry.
+With a speaker must come an amplifier. I chose the [MAX98357AEWL+T](https://www.mouser.in/datasheet/2/256/MAX98357A-MAX98357B-271244.pdf) because it's a class D amplifier that takes I2S input, and can drive a speaker with pretty much no external circuitry.
+It's also what I used to prototype.
 
-As an exercise, I designed the PCB footprint for the NAU8315.
+Its footprint can be found on its [product page](https://www.maximintegrated.com/en/products/analog/audio/MAX98357A.html).
 
 I'm still on the lookout for an actual speaker.
 
