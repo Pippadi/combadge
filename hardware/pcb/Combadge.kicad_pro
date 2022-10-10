@@ -411,8 +411,7 @@
           "/SPK_BCLK",
           "/SPK_EN",
           "/SPK_SD",
-          "/SPK_WS",
-          "Net-(R8-Pad1)"
+          "/SPK_WS"
         ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
