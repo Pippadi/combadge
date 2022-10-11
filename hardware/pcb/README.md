@@ -39,4 +39,4 @@ You'll need the symbol and PCB footprint for the [Si2342DS](https://www.vishay.c
 ## The rest
 
 Major components used are more-or-less finalized. PCB footprints are chosen to be as large as possible where applicable, to facilitate hand-soldering.
-Both the battery and speaker are assumed to be soldered to the board with wires.
+Both the battery and speaker are assumed to be connected to the board with wires.
