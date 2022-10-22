@@ -3,9 +3,6 @@
 #include "driver/i2s.h"
 #include "config.h"
 
-const char* SSID = "YourSSID";
-const char* Password = "YourPassword";
-
 AsyncUDP udp;
 
 int16_t outgoingBuf[BUF_LEN];
@@ -24,8 +21,7 @@ void setup() {
     Serial.begin(115200);
     delay(1000);
 
-	WiFi.begin(SSID, Password);
-    WiFi.setSleep(false);
+	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 	while (WiFi.status() != WL_CONNECTED) {
 		delay(500);
 		Serial.print(".");
