@@ -11,11 +11,11 @@
 #define BUF_LEN 256
 #define BUF_FULL_INTERVAL BUF_LEN * int(1000000.0 * (1.0 / float(44100)))
 
-#define BUDDY_IP IPAddress(192, 168, 1, 40)
+#define BUDDY_IP IPAddress(192, 168, 142, 40)
 #define UDP_PORT 1592
 
-const char* SSID = "YourSSID";
-const char* Password = "YourPassword";
+const char* SSID = "MVWiFi";
+const char* Password = "A12168A17BC1519251521A18E219ECC";
 
 AsyncUDP udp;
 
