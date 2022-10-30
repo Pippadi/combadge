@@ -1,6 +1,5 @@
 #include <WiFi.h>
 #include <AsyncUDP.h>
-#include "config.h"
 
 #define WIFI_SSID "SSID"
 #define WIFI_PASSWORD "PASSWORD"
