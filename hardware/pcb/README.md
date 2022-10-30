@@ -1,7 +1,13 @@
-# Electronics and PCB
+# Component Choices
 
 The combadge is built around an [ESP32-WROOM-32](https://www.espressif.com/en/support/documents/technical-documents?keys=&field_type_tid%5B%5D=54&7&8&8&2&3https://www.espressif.com/en/support/documents/technical-documents?keys=&field_type_tid%5B%5D=54&7&8&8&2&3).
-It is supposedly not recommended for new designs, but it's among the best supported by Arduino for programming, and it seems to be the only ESP32 variant that is cheaply available in my region.
+
+It is supposedly not recommended for new designs, but I chose it regardless because:
+
+- It is the wireless board with which I am most familiar
+- It has hardware I2S and touch support
+- It is well-supported by the Arduino toolchain
+- It is cheaply available in my region
 
 ## Sound
 
@@ -11,31 +17,37 @@ The [ESP32](https://docs.espressif.com/projects/esp-idf/en/v4.2.3/esp32/api-refe
 ### Microphone
 
 I've zeroed in on the [CMM-3526D-261-I2S-TR](https://www.cuidevices.com/product/audio/microphones/mems-microphones/cmm-3526d-261-i2s-tr).
-I suppose any similar microphone will do the job. The manufacturer has very kindly provided [an official footprint](https://www.cuidevices.com/product/resource/pcbfootprint/cmm-3526d-261-i2s-tr).
+I suppose any similar microphone will do the job.
 
 ### Speaker
 
-With a speaker must come an amplifier. I chose the [NAU8315](https://www.nuvoton.com/export/resource-files/DS_NAU8315_DataSheet_EN_Rev1.7.pdf) because it's a class D amplifier that takes I2S input, and can drive a speaker with pretty much no external circuitry.
-
-As an exercise, I designed the PCB footprint for the NAU8315.
+With a speaker must come an amplifier. I chose the [MAX98357AEWL+T](https://www.maximintegrated.com/en/products/analog/audio/MAX98357A.html) because it's a class D amplifier that takes I2S input, and can drive a speaker with pretty much no external circuitry.
+It's also what I used to prototype.
 
 I'm still on the lookout for an actual speaker.
 
 ## Power Management
 
-The unit runs on a lithium-polymer battery. Exact model and size unknown as of now. I'm expecting it to be one of the usual 3.7V LiPo cells.
+The unit runs on a lithium-polymer battery. Exact model and size undecided as of now. I'm expecting it to be one of the usual 3.7V LiPo cells.
 At this stage, though, I'm more concerned with battery management.
 
-All the chosen components of the combadge operate on 3.3V. I was hoping to find an all-in-one charging and voltage-regulating IC, but none seem to exist for these parameters.
+All the chosen components of the combadge operate on 3.3V. I was hoping to find an all-in-one charging and voltage-regulating IC, but my searches yielded none for these parameters.
 For charging, I plan to use an [XC6808A4D28R-G](https://www.torexsemi.com/products/battery-charge-ics/series/?name=xc6808) and a zener diode circuit for over-discharge protection.
 I found the super tiny 250mA [NCP160](https://www.onsemi.com/products/power-management/linear-regulators-ldo/ncp160) LDO linear regulator for 3.3V power.
 
 I still need to verify whether 250mA is enough for the entire combadge (it better be; it's running off a battery).
 I'm hoping decoupling capacitors will take care of any current spikes the ESP32 and speakers may need.
 
-You'll need the symbol and PCB footprint for the [Si2342DS](https://www.vishay.com/en/product/63302/).
+# PCB
 
-## The rest
+The PCB has been designed in KiCAD 6.
 
-Major components used are more-or-less finalized. PCB footprints are chosen to be as large as possible where applicable, to facilitate hand-soldering.
-Both the battery and speaker are assumed to be soldered to the board with wires.
+- Footprints are chosen to be as large as possible where applicable, to facilitate hand-soldering.
+- All the QFN/DFN-type ICs are on one side of the PCB so that there is some hope of reflowing them on at home.
+- The PCB has headers to which battery and speaker wires can be soldered.
+
+To load this KiCAD project, you will need to get the following third-party symbols and footprints:
+
+- [Si2342DS](https://www.vishay.com/en/product/63302/)
+- [MAX98357AEWL+T](https://vendor.ultralibrarian.com/Maxim/Embedded?vdrPN=MAX98357AEWL%2BT)
+- [CMM-3526D-261-I2S-TR](https://www.cuidevices.com/product/resource/pcbfootprint/cmm-3526d-261-i2s-tr)

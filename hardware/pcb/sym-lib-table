@@ -1,6 +1,6 @@
 (sym_lib_table
   (lib (name "NCP160")(type "KiCad")(uri "${KIPRJMOD}/NCP160.kicad_sym")(options "")(descr ""))
-  (lib (name "Nuvoton")(type "KiCad")(uri "${KIPRJMOD}/Nuvoton.kicad_sym")(options "")(descr ""))
   (lib (name "Torex")(type "KiCad")(uri "${KIPRJMOD}/Torex.kicad_sym")(options "")(descr ""))
   (lib (name "Si2342DS")(type "KiCad")(uri "/mnt/data/Downloads/Si2342DS.kicad_sym")(options "")(descr ""))
+  (lib (name "MAX98357AEWL+T")(type "KiCad")(uri "/mnt/data/Downloads/MAX98357AEWL+T.kicad_sym")(options "")(descr ""))
 )
