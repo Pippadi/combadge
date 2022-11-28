@@ -48,6 +48,8 @@ The PCB has been designed in KiCAD 6.
 
 To load this KiCAD project, you will need to get the following third-party symbols and footprints:
 
-- [Si2342DS](https://www.vishay.com/en/product/63302/)
+- [RN4989](https://vendor.ultralibrarian.com/toshiba/Embedded?vdrPN=RN4989#)
 - [MAX98357AEWL+T](https://vendor.ultralibrarian.com/Maxim/Embedded?vdrPN=MAX98357AEWL%2BT)
 - [CMM-3526D-261-I2S-TR](https://www.cuidevices.com/product/resource/pcbfootprint/cmm-3526d-261-i2s-tr)
+
+You will need to change the paths to the third party symbols in the library and footprint managers.

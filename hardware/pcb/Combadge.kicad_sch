@@ -2081,12 +2081,6 @@
     (path "/6692667a-23d9-4d51-a0f9-87ae21b84031"
       (reference "MK1") (unit 1) (value "CMM-3526D-261-I2S-TR") (footprint "CMM-3526D-261-I2S-TR:MIC_CMM-3526D-261-I2S-TR")
     )
-    (path "/522738f4-f6b2-4897-a079-07da122bd152/d6d3c993-4fad-4f95-950f-0bf2abde6d94"
-      (reference "Q1") (unit 1) (value "Q_PNP_CBE") (footprint "")
-    )
-    (path "/522738f4-f6b2-4897-a079-07da122bd152/4df9f8a7-f5c4-4033-b504-469a7bc89242"
-      (reference "Q2") (unit 1) (value "Q_NPN_CBE") (footprint "")
-    )
     (path "/f73ba15a-b5c2-4609-86f3-0cf8c0519475"
       (reference "R1") (unit 1) (value "10k") (footprint "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
     )
@@ -2114,17 +2108,11 @@
     (path "/d27f02f2-9fdc-4737-ae05-f0c72f080a92"
       (reference "R9") (unit 1) (value "TBD") (footprint "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
     )
-    (path "/522738f4-f6b2-4897-a079-07da122bd152/0782012d-0e1f-4701-85e6-a70c9efd3067"
-      (reference "R10") (unit 1) (value "10k") (footprint "")
-    )
-    (path "/522738f4-f6b2-4897-a079-07da122bd152/adf46b93-59b7-410d-a57b-df2098a03857"
-      (reference "R11") (unit 1) (value "10k") (footprint "")
-    )
     (path "/522738f4-f6b2-4897-a079-07da122bd152/bd72950c-6810-4eec-8819-388bfc93ab04"
       (reference "R_ISET1") (unit 1) (value "10k") (footprint "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
     )
     (path "/522738f4-f6b2-4897-a079-07da122bd152/b0be4319-86de-42e4-aed3-d046aae94521"
-      (reference "SW?") (unit 1) (value "SW_SPST") (footprint "")
+      (reference "SW1") (unit 1) (value "SW_SPST") (footprint "")
     )
     (path "/522738f4-f6b2-4897-a079-07da122bd152/4d9bfdc9-548c-473b-8b63-b9edd4d05e1e"
       (reference "U1") (unit 1) (value "XC6808A4D28R-G") (footprint "Torex:USP-6B07")
@@ -2137,6 +2125,9 @@
     )
     (path "/402ca91b-dc6d-4dc7-b1a7-68e7b55aeb34"
       (reference "U4") (unit 1) (value "MAX98357AEWL+T") (footprint "MAX98357AEWL+T:MAX98357AEWL&plus_T")
+    )
+    (path "/522738f4-f6b2-4897-a079-07da122bd152/30504c5d-3679-41ee-b2c5-c1db3e0d5443"
+      (reference "U5") (unit 1) (value "RN4989") (footprint "SOT-363   US6_TOS")
     )
   )
 )
