@@ -1,6 +1,7 @@
 (fp_lib_table
   (lib (name "Torex")(type "KiCad")(uri "${KIPRJMOD}/Torex.pretty")(options "")(descr ""))
-  (lib (name "Si2342DS")(type "KiCad")(uri "/mnt/data/Downloads/Si2342DS.pretty")(options "")(descr ""))
-  (lib (name "CMM-3526D-261-I2S-TR")(type "KiCad")(uri "/mnt/data/Downloads/CMM-3526D-261-I2S-TR")(options "")(descr ""))
-  (lib (name "MAX98357AEWL+T")(type "KiCad")(uri "/mnt/data/Downloads/MAX98357AEWL+T.pretty")(options "")(descr ""))
+  (lib (name "Si2342DS")(type "KiCad")(uri "${KIPRJMOD}/third-party/Si2342DS.pretty")(options "")(descr ""))
+  (lib (name "CMM-3526D-261-I2S-TR")(type "KiCad")(uri "${KIPRJMOD}/third-party/CMM-3526D-261-I2S-TR.pretty")(options "")(descr ""))
+  (lib (name "MAX98357AEWL+T")(type "KiCad")(uri "${KIPRJMOD}/third-party/MAX98357AEWL+T.pretty")(options "")(descr ""))
+  (lib (name "RN4989")(type "KiCad")(uri "${KIPRJMOD}/third-party/RN4989")(options "")(descr ""))
 )

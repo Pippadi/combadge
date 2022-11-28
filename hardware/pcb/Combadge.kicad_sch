@@ -2123,8 +2123,8 @@
     (path "/522738f4-f6b2-4897-a079-07da122bd152/bd72950c-6810-4eec-8819-388bfc93ab04"
       (reference "R_ISET1") (unit 1) (value "10k") (footprint "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
     )
-    (path "/522738f4-f6b2-4897-a079-07da122bd152/d8fc44d9-8480-45ca-8ddb-fb00391750bf"
-      (reference "SW1") (unit 1) (value "SW_SPST") (footprint "")
+    (path "/522738f4-f6b2-4897-a079-07da122bd152/b0be4319-86de-42e4-aed3-d046aae94521"
+      (reference "SW?") (unit 1) (value "SW_SPST") (footprint "")
     )
     (path "/522738f4-f6b2-4897-a079-07da122bd152/4d9bfdc9-548c-473b-8b63-b9edd4d05e1e"
       (reference "U1") (unit 1) (value "XC6808A4D28R-G") (footprint "Torex:USP-6B07")
