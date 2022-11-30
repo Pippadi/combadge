@@ -1,5 +1,7 @@
 # combadge
 
+![PCB 3D View](/assets/pcb3d.gif)
+
 A Star Trek combadge built with the ESP32.
 
 ![PCB](/assets/pcb.png)
