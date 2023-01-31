@@ -7,6 +7,10 @@
 #define FREQ 440
 #define PI 3.14
 
+#define DATA_PIN 27
+#define BCLK_PIN 12
+#define WS_PIN 13
+
 typedef int32_t sample_t;
 
 sample_t buf[BUF_LEN];
@@ -28,9 +32,9 @@ void setup() {
     };
 
     i2s_pin_config_t spkPins = {
-        .bck_io_num = 12,
-        .ws_io_num = 13,
-        .data_out_num = 27,
+        .bck_io_num = BCLK_PIN,
+        .ws_io_num = WS_PIN,
+        .data_out_num = DATA_PIN,
     };
 
     i2s_driver_install(spkPort, &spkCfg, 0, NULL);
