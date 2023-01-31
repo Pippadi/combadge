@@ -1,13 +1,15 @@
 #include <driver/i2s.h>
 
-#define BUF_LEN 512
-#define SAMPLE_RATE 44100
+#define BUF_LEN 1024
+#define SAMPLE_RATE 8000
 #define BITS_PER_SAMPLE 32
 
 #define FREQ 440
 #define PI 3.14
 
-int32_t buf[BUF_LEN];
+typedef int32_t sample_t;
+
+sample_t buf[BUF_LEN];
 i2s_port_t spkPort = I2S_NUM_1;
 
 void setup() {
@@ -16,7 +18,7 @@ void setup() {
     const i2s_config_t spkCfg = {
         .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_TX),
         .sample_rate = SAMPLE_RATE,
-        .bits_per_sample = I2S_BITS_PER_SAMPLE_32BIT,
+        .bits_per_sample = i2s_bits_per_sample_t(BITS_PER_SAMPLE),
         // .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,
         .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
         .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB),
@@ -38,7 +40,7 @@ void setup() {
 void loop() {
     static int n = 0;
     for (int i=0; i<BUF_LEN; i++) {
-        int32_t sample = f(n);
+        sample_t sample = f(n);
         buf[i] = sample;
         n++;
         // Serial.println(sample);
@@ -50,8 +52,8 @@ void loop() {
     delayMicroseconds(1000000 * (double(BUF_LEN) / double(SAMPLE_RATE)));
 }
 
-int32_t f(int n) {
+sample_t f(int n) {
     double sinVal = sin((2.0 * PI * double(n*FREQ)) / double(SAMPLE_RATE));
-    uint32_t res = (pow(2, BITS_PER_SAMPLE) / 2) - 1;
-    return uint32_t(double(res) * sinVal);
+    sample_t res = (pow(2, BITS_PER_SAMPLE) / 2) - 1;
+    return sample_t(double(res) * sinVal);
 }
