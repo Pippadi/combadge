@@ -6,7 +6,7 @@
 #define BITS_PER_BYTE 8
 
 #define FREQ 1000
-#define PI 3.14
+#define PI 3.1415
 
 #define DATA_PIN 27
 #define BCLK_PIN 12
@@ -27,9 +27,11 @@ void setup() {
         .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_TX),
         .sample_rate = SAMPLE_RATE,
         .bits_per_sample = i2s_bits_per_sample_t(BITS_PER_SAMPLE),
+
         // .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,
         .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
-        .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB),
+
+        .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S),
         .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
         .dma_buf_count = 8,
         .dma_buf_len = BUF_LEN,
@@ -75,6 +77,6 @@ void loop() {
 
 sample_t f(uint64_t n) {
     double sinVal = sin((2.0 * PI * double(n*FREQ)) / double(SAMPLE_RATE));
-    sample_t res = (pow(2, BITS_PER_SAMPLE) / 2) - 1;
+    sample_t res = pow(2, BITS_PER_SAMPLE-1);
     return sample_t(double(res) * sinVal);
 }
