@@ -7,17 +7,17 @@
 #define MIC_TIMER 0
 
 #define SPK_WS 13
-#define SPK_SD 27
+#define SPK_DATA 27
 #define SPK_BCLK 12
 #define SPK_PORT I2S_NUM_1
 
-#define SAMPLE_RATE 16000
-#define BUF_LEN 256
-#define BUF_FULL_INTERVAL BUF_LEN * int(1000000.0 * (1.0 / float(SAMPLE_RATE)))
+typedef int16_t sample_t;
+#define BITS_PER_SAMPLE 16
+#define BYTES_PER_SAMPLE BITS_PER_SAMPLE / 8
 
-// Changing this means changing data types in the rest of the code.
-// This is just to make byte count to sample count conversions look prettier.
-#define BYTES_PER_SAMPLE 2
+#define SAMPLE_RATE 8000
+#define BUF_LEN 512
+#define BUF_FULL_INTERVAL BUF_LEN * int(1000000.0 * (1.0 / float(SAMPLE_RATE)))
 
 #define WIFI_SSID "YourSSID"
 #define WIFI_PASSWORD "YourPassword"
