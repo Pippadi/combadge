@@ -5,8 +5,8 @@
 
 AsyncUDP udp;
 
-int16_t outgoingBuf[BUF_LEN];
-int16_t incomingBuf[BUF_LEN];
+sample_t outgoingBuf[BUF_LEN];
+sample_t incomingBuf[BUF_LEN];
 volatile bool shouldTransmit = false;
 
 hw_timer_t* timer = NULL;
@@ -21,10 +21,10 @@ void IRAM_ATTR flagOffTransmit() {
 void onPacket(AsyncUDPPacket packet) {
     size_t size = packet.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*BUF_LEN);
     Serial.println(size);
-    Serial.println(incomingBuf[0]);
+    // Serial.println(incomingBuf[0]);
 
     size_t written = 0; // Bytes written over I2S
-    esp_err_t err = i2s_write(SPK_PORT, incomingBuf, BUF_LEN, &written, 1000);
+    esp_err_t err = i2s_write(SPK_PORT, incomingBuf, BUF_LEN*BYTES_PER_SAMPLE, &written, 1000);
     if (err != ESP_OK) {
         Serial.println(written / BYTES_PER_SAMPLE);
     }
