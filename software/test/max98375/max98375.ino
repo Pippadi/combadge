@@ -3,7 +3,7 @@
 #define BUF_LEN 1024
 #define SAMPLE_RATE 8000
 #define BITS_PER_SAMPLE 16
-#define BITS_PER_BYTE 8
+#define BYTES_PER_SAMPLE BITS_PER_SAMPLE / 8
 
 #define FREQ 1000
 #define PI 3.1415
@@ -71,8 +71,8 @@ void loop() {
     }
 
     size_t bytesWritten;
-    // i2s_write(spkPort, (char*) buf, BUF_LEN*2*BITS_PER_SAMPLE/BITS_PER_BYTE, &bytesWritten, portMAX_DELAY);
-    i2s_write(spkPort, (char*) buf, BUF_LEN*BITS_PER_SAMPLE/BITS_PER_BYTE, &bytesWritten, portMAX_DELAY);
+    // i2s_write(spkPort, (char*) buf, BUF_LEN*2*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
+    i2s_write(spkPort, (char*) buf, BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
 }
 
 sample_t f(uint64_t n) {
