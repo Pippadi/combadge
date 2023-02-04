@@ -20,6 +20,8 @@ void IRAM_ATTR flagOffTransmit() {
 
 void onPacket(AsyncUDPPacket packet) {
     size_t size = packet.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*BUF_LEN);
+    Serial.println(size);
+    // Serial.println(incomingBuf[0]);
 
     size_t written = 0; // Bytes written over I2S
     esp_err_t err = i2s_write(SPK_PORT, incomingBuf, BUF_LEN*BYTES_PER_SAMPLE, &written, 1000);
