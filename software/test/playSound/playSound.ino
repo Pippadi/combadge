@@ -60,8 +60,6 @@ void playSound(const int16_t* sound, const size_t soundSizeBytes) {
     Serial.println(soundSizeSamples);
     for (i=0; i<soundSizeSamples/BUF_LEN; i++) {
         i2s_write(spkPort, (char*) &(sound[i*BUF_LEN]), BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
-        Serial.println(i);
-        Serial.println(bytesWritten);
     }
     i2s_write(spkPort, (char*) &(sound[i*BUF_LEN + soundSizeSamples%BUF_LEN]), (soundSizeSamples%BUF_LEN)*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
 }
