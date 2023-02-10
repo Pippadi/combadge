@@ -21,29 +21,8 @@ void IRAM_ATTR flagOffTransmit() {
 	portEXIT_CRITICAL_ISR(&timerMux);
 }
 
-void onPacket(AsyncUDPPacket packet) {
-    size_t size = packet.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*BUF_LEN);
-
-    size_t written = 0; // Bytes written over I2S
-    esp_err_t err = i2s_write(SPK_PORT, incomingBuf, BUF_LEN*BYTES_PER_SAMPLE, &written, 1000);
-    if (err != ESP_OK) {
-        Serial.println(written / BYTES_PER_SAMPLE);
-    }
-}
-
-void playSound(const sample_t* sound, const size_t soundSizeBytes) {
-    int i = 0;
-    size_t bytesWritten;
-    size_t soundSizeSamples = soundSizeBytes / size_t(BYTES_PER_SAMPLE);
-    for (i=0; i<soundSizeSamples/BUF_LEN; i++) {
-        i2s_write(SPK_PORT, (char*) &(sound[i*BUF_LEN]), BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
-    }
-    i2s_write(SPK_PORT, (char*) &(sound[i*BUF_LEN + soundSizeSamples%BUF_LEN]), (soundSizeSamples%BUF_LEN)*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
-}
-
 void setup() {
     Serial.begin(115200);
-    delay(1000);
 
 	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 	while (WiFi.status() != WL_CONNECTED) {
@@ -65,7 +44,11 @@ void setup() {
     playSound(HailBeep, HailBeepSizeBytes);
 
     udp.onPacket(onPacket);
-    Serial.println(udp.listen(UDP_PORT));
+    if (!udp.listen(UDP_PORT)) {
+        Serial.println("Failed listening on UDP");
+    };
+
+    playSound(TNGChirp1, TNGChirp1SizeBytes);
 
 	timer = timerBegin(MIC_TIMER, 80, true);
 	timerAttachInterrupt(timer, &flagOffTransmit, true);
@@ -75,11 +58,31 @@ void setup() {
 
 void loop() {
     if (shouldTransmit) {
-        size_t incomingBytes = 0;
+        size_t incomingBytes;
         esp_err_t err = i2s_read(MIC_PORT, outgoingBuf, BUF_LEN * BYTES_PER_SAMPLE, &incomingBytes, 1000);
         if (err == ESP_OK) {
             udp.writeTo((uint8_t*) outgoingBuf, incomingBytes, BUDDY_IP, UDP_PORT);
         }
         shouldTransmit = false;
     }
+}
+
+void onPacket(AsyncUDPPacket packet) {
+    size_t size = packet.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*BUF_LEN);
+
+    size_t bytesWritten = 0;
+    esp_err_t err = i2s_write(SPK_PORT, incomingBuf, BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten, 1000);
+    if (err != ESP_OK) {
+        Serial.println(bytesWritten / BYTES_PER_SAMPLE);
+    }
+}
+
+void playSound(const sample_t* sound, const size_t soundSizeBytes) {
+    int i = 0;
+    size_t bytesWritten;
+    size_t soundSizeSamples = soundSizeBytes / size_t(BYTES_PER_SAMPLE);
+    for (i=0; i<soundSizeSamples/BUF_LEN; i++) {
+        i2s_write(SPK_PORT, (char*) &(sound[i*BUF_LEN]), BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
+    }
+    i2s_write(SPK_PORT, (char*) &(sound[i*BUF_LEN + soundSizeSamples%BUF_LEN]), (soundSizeSamples%BUF_LEN)*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
 }
