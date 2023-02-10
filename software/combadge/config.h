@@ -15,8 +15,8 @@ typedef int16_t sample_t;
 #define BITS_PER_SAMPLE 16
 #define BYTES_PER_SAMPLE BITS_PER_SAMPLE / 8
 
-#define SAMPLE_RATE 8000
-#define BUF_LEN 512
+#define SAMPLE_RATE 16000
+#define BUF_LEN 1024
 #define BUF_FULL_INTERVAL BUF_LEN * int(1000000.0 * (1.0 / float(SAMPLE_RATE)))
 
 #define WIFI_SSID "YourSSID"

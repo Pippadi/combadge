@@ -2,6 +2,9 @@
 #include <AsyncUDP.h>
 #include "driver/i2s.h"
 #include "config.h"
+#include "sounds/HailBeep.h"
+#include "sounds/TNGChirp1.h"
+#include "sounds/TNGChirp2.h"
 
 AsyncUDP udp;
 
@@ -28,6 +31,16 @@ void onPacket(AsyncUDPPacket packet) {
     }
 }
 
+void playSound(const sample_t* sound, const size_t soundSizeBytes) {
+    int i = 0;
+    size_t bytesWritten;
+    size_t soundSizeSamples = soundSizeBytes / size_t(BYTES_PER_SAMPLE);
+    for (i=0; i<soundSizeSamples/BUF_LEN; i++) {
+        i2s_write(SPK_PORT, (char*) &(sound[i*BUF_LEN]), BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
+    }
+    i2s_write(SPK_PORT, (char*) &(sound[i*BUF_LEN + soundSizeSamples%BUF_LEN]), (soundSizeSamples%BUF_LEN)*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
+}
+
 void setup() {
     Serial.begin(115200);
     delay(1000);
@@ -39,8 +52,6 @@ void setup() {
 	}
 	Serial.println("Connected to WiFi!");
 	Serial.println(WiFi.localIP());
-    // uint8_t ff = 255;
-    // udp.writeTo(&ff, 1, BUDDY_IP, UDP_PORT);
 
     if (!setupMicI2s()) {
         Serial.println("Failed initializing microphone");
@@ -50,6 +61,8 @@ void setup() {
         Serial.println("Failed initializing speaker");
         while (true);
     }
+
+    playSound(HailBeep, HailBeepSizeBytes);
 
     udp.onPacket(onPacket);
     Serial.println(udp.listen(UDP_PORT));
@@ -65,7 +78,6 @@ void loop() {
         size_t incomingBytes = 0;
         esp_err_t err = i2s_read(MIC_PORT, outgoingBuf, BUF_LEN * BYTES_PER_SAMPLE, &incomingBytes, 1000);
         if (err == ESP_OK) {
-            //Serial.println(outgoingBuf[1]);
             udp.writeTo((uint8_t*) outgoingBuf, incomingBytes, BUDDY_IP, UDP_PORT);
         }
         shouldTransmit = false;
