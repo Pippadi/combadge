@@ -1,12 +1,15 @@
 #include <WiFi.h>
 #include <AsyncUDP.h>
-#include "driver/i2s.h"
+#include <driver/i2s.h>
 #include "config.h"
+#include "src/max98357.h"
+#include "src/i2scfg.h"
 #include "sounds/HailBeep.h"
 #include "sounds/TNGChirp1.h"
 #include "sounds/TNGChirp2.h"
 
 AsyncUDP udp;
+MAX98357 spk;
 
 sample_t outgoingBuf[BUF_LEN];
 sample_t incomingBuf[BUF_LEN];
@@ -32,11 +35,24 @@ void setup() {
 	Serial.println("Connected to WiFi!");
 	Serial.println(WiFi.localIP());
 
+    I2SCfg i2scfg = {
+        .sampleRate = SAMPLE_RATE,
+        .bitsPerSample = BITS_PER_SAMPLE,
+        .bufLen = BUF_LEN,
+    };
+
     if (!setupMicI2s()) {
         Serial.println("Failed initializing microphone");
         while (true);
     }
-    if (!setupSpkI2s()) {
+
+    MAX98357PinCfg spkPins = {
+        .bclk = SPK_BCLK,
+        .ws = SPK_WS,
+        .data = SPK_DATA,
+        .enable = SPK_EN,
+    };
+    if (!spk.begin(SPK_PORT, i2scfg, spkPins)) {
         Serial.println("Failed initializing speaker");
         while (true);
     }
@@ -47,8 +63,6 @@ void setup() {
     if (!udp.listen(UDP_PORT)) {
         Serial.println("Failed listening on UDP");
     };
-
-    playSound(TNGChirp1, TNGChirp1SizeBytes);
 
 	timer = timerBegin(MIC_TIMER, 80, true);
 	timerAttachInterrupt(timer, &flagOffTransmit, true);
@@ -68,11 +82,10 @@ void loop() {
 }
 
 void onPacket(AsyncUDPPacket packet) {
-    size_t size = packet.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*BUF_LEN);
+    size_t bytesRead = packet.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*BUF_LEN);
 
-    size_t bytesWritten = 0;
-    esp_err_t err = i2s_write(SPK_PORT, incomingBuf, BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten, 1000);
-    if (err != ESP_OK) {
+    size_t bytesWritten;
+    if (!spk.write((uint8_t*) incomingBuf, bytesRead*BYTES_PER_SAMPLE, &bytesWritten)) {
         Serial.println(bytesWritten / BYTES_PER_SAMPLE);
     }
 }
@@ -81,8 +94,11 @@ void playSound(const sample_t* sound, const size_t soundSizeBytes) {
     int i = 0;
     size_t bytesWritten;
     size_t soundSizeSamples = soundSizeBytes / size_t(BYTES_PER_SAMPLE);
+
+    spk.wake();
     for (i=0; i<soundSizeSamples/BUF_LEN; i++) {
-        i2s_write(SPK_PORT, (char*) &(sound[i*BUF_LEN]), BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
+        spk.write((uint8_t*) &(sound[i*BUF_LEN]), BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten);
     }
-    i2s_write(SPK_PORT, (char*) &(sound[i*BUF_LEN + soundSizeSamples%BUF_LEN]), (soundSizeSamples%BUF_LEN)*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
+    spk.write((uint8_t*) &(sound[i*BUF_LEN + soundSizeSamples%BUF_LEN]), (soundSizeSamples%BUF_LEN)*BYTES_PER_SAMPLE, &bytesWritten);
+    spk.sleep();
 }
