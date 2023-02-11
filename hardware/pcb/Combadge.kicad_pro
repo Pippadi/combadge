@@ -425,7 +425,6 @@
           "/ESP_RX",
           "/ESP_TX",
           "/MIC_BCLK",
-          "/MIC_SD",
           "/MIC_WS",
           "/Power/CHRG_STATUS"
         ],
@@ -449,7 +448,6 @@
         "nets": [
           "/SPK_BCLK",
           "/SPK_EN",
-          "/SPK_SD",
           "/SPK_WS"
         ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
