@@ -142,6 +142,7 @@
   (net 52 "Net-(U3-Pad3)")
   (net 53 "Net-(U5-Pad5)")
   (net 54 "unconnected-(SW1-Pad3)")
+  (net 55 "unconnected-(U1-Pad7)")
 
   (footprint "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" (layer "F.Cu")
     (tedit 59FED5CC) (tstamp 02ec81ec-8ff3-49f4-9198-b4f583a8149f)
@@ -2115,7 +2116,8 @@
       (net 19 "unconnected-(U1-Pad5)") (pinfunction "THIN") (pintype "no_connect") (tstamp 78839efe-acd5-4c5d-9621-5b506c310f0d))
     (pad "6" smd rect (at -0.55 -0.9375 270) (size 0.35 0.375) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 8 "Net-(J2-Pad1)") (pinfunction "VIN") (pintype "power_in") (tstamp d898bd45-f855-4487-ae04-893038ae7afd))
-    (pad "7" smd rect (at 0 0 270) (size 1.5 1.1) (layers "B.Cu" "B.Paste" "B.Mask") (tstamp a83ff5be-4620-4fa0-ba58-a9fa6370a13e))
+    (pad "7" smd rect (at 0 0 270) (size 1.5 1.1) (layers "B.Cu" "B.Paste" "B.Mask")
+      (net 55 "unconnected-(U1-Pad7)") (pinfunction "Thermal") (pintype "no_connect") (tstamp a83ff5be-4620-4fa0-ba58-a9fa6370a13e))
   )
 
   (footprint "MAX98357AEWL+T:MAX98357AEWL&plus_T" (layer "B.Cu")

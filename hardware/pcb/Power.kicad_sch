@@ -1448,6 +1448,10 @@
           (name "VIN" (effects (font (size 1.27 1.27))))
           (number "6" (effects (font (size 1.27 1.27))))
         )
+        (pin no_connect line (at 10.16 -3.81 180) (length 2.54) hide
+          (name "Thermal" (effects (font (size 1.27 1.27))))
+          (number "7" (effects (font (size 1.27 1.27))))
+        )
       )
     )
     (symbol "power:+3.3V" (power) (pin_names (offset 0)) (in_bom yes) (on_board yes)
@@ -1960,6 +1964,7 @@
     (pin "4" (uuid ceb8735a-26c6-4067-b83b-2598a6ca5dd6))
     (pin "5" (uuid 8436a93a-d6eb-45b1-b1c8-ed4e1bc219b1))
     (pin "6" (uuid 986370d2-b6d9-4c71-b1c8-16cae6cb3e5e))
+    (pin "7" (uuid 090d4eef-6005-46c6-a22b-4e05a2c3aa88))
   )
 
   (symbol (lib_id "Connector:USB_B_Micro") (at 24.765 92.075 0) (unit 1)

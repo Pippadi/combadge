@@ -21,5 +21,5 @@
   (pad "4" smd rect (at 0.55 0.9375) (size 0.35 0.375) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 6d6955a9-c224-4669-b4af-191bab5385c7))
   (pad "5" smd rect (at 0 0.9375) (size 0.35 0.375) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 2453f844-72c3-4d29-8f57-c52259469967))
   (pad "6" smd rect (at -0.55 0.9375) (size 0.35 0.375) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 51c65985-938d-41d9-9391-1bf8bfacd2e8))
-  (pad "7" smd rect (at 0 0) (size 1.5 1.1) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 96df8a6b-260a-4920-9227-2051f02f0201))
+  (pad "7" smd rect (at 0 0) (size 1.5 1.1) (property pad_prop_heatsink) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 96df8a6b-260a-4920-9227-2051f02f0201))
 )
