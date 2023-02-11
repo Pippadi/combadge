@@ -1,7 +1,7 @@
 #include "driver/i2s.h"
 
 #define MIC_WS 25
-#define MIC_SD 33
+#define MIC_DATA 33
 #define MIC_BCLK 32
 #define MIC_PORT I2S_NUM_0
 #define MIC_TIMER 0

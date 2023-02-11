@@ -1,15 +1,16 @@
 #include <WiFi.h>
 #include <AsyncUDP.h>
-#include <driver/i2s.h>
 #include "config.h"
-#include "src/max98357.h"
 #include "src/i2scfg.h"
+#include "src/max98357.h"
+#include "src/inmp441.h"
 #include "sounds/HailBeep.h"
 #include "sounds/TNGChirp1.h"
 #include "sounds/TNGChirp2.h"
 
 AsyncUDP udp;
 MAX98357 spk;
+INMP441 mic;
 
 sample_t outgoingBuf[BUF_LEN];
 sample_t incomingBuf[BUF_LEN];
@@ -41,7 +42,12 @@ void setup() {
         .bufLen = BUF_LEN,
     };
 
-    if (!setupMicI2s()) {
+    INMP441PinCfg micPins = {
+        .bclk = MIC_BCLK,
+        .ws = MIC_WS,
+        .data = MIC_DATA,
+    };
+    if (!mic.begin(MIC_PORT, i2scfg, micPins)) {
         Serial.println("Failed initializing microphone");
         while (true);
     }
@@ -73,8 +79,7 @@ void setup() {
 void loop() {
     if (shouldTransmit) {
         size_t incomingBytes;
-        esp_err_t err = i2s_read(MIC_PORT, outgoingBuf, BUF_LEN * BYTES_PER_SAMPLE, &incomingBytes, 1000);
-        if (err == ESP_OK) {
+        if (mic.read((uint8_t*) outgoingBuf, BUF_LEN*BYTES_PER_SAMPLE, &incomingBytes)) {
             udp.writeTo((uint8_t*) outgoingBuf, incomingBytes, BUDDY_IP, UDP_PORT);
         }
         shouldTransmit = false;
