@@ -9,7 +9,7 @@
 #define SPK_WS 13
 #define SPK_DATA 27
 #define SPK_BCLK 12
-#define SPK_EN 18
+#define SPK_EN 26
 #define SPK_PORT I2S_NUM_1
 
 typedef int16_t sample_t;

@@ -2,12 +2,12 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 210 297"
+   width="33.699753mm"
+   height="31.000175mm"
+   viewBox="0 0 33.699753 31.000175"
    version="1.1"
    id="svg5"
-   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    sodipodi:docname="CombadgeEllipse45x31.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,8 +25,8 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="2.7865881"
-     inkscape:cx="254.79187"
-     inkscape:cy="39.833659"
+     inkscape:cx="141.57098"
+     inkscape:cy="71.413497"
      inkscape:window-width="1920"
      inkscape:window-height="1011"
      inkscape:window-x="0"
@@ -42,6 +42,6 @@
     <path
        id="path111"
        style="fill:#000000;stroke-width:0.124502;image-rendering:auto"
-       d="M 11.999785,0 A 22.499996,15.5 0 0 0 0,2.3931356 V 28.606523 A 22.499996,15.5 0 0 0 11.999785,31.000175 22.499996,15.5 0 0 0 34.499703,15.499829 22.499996,15.5 0 0 0 11.999785,0 Z" />
+       d="M 11.999784,0 A 22.499996,15.5 0 0 0 0,2.3931356 V 28.606523 A 22.499996,15.5 0 0 0 11.999784,31.000175 22.499996,15.5 0 0 0 33.699752,19.593636 V 11.409123 A 22.499996,15.5 0 0 0 11.999784,0 Z" />
   </g>
 </svg>
