@@ -20,9 +20,9 @@ Export the file with Shift-Ctrl-E. Set file type to "Other uncompressed files", 
 Finally, invoke `headerFromRaw.py` to generate the header file accordingly.
 
 ```
-~/path/to/sounds:$ python3 /path/to/headerFromRaw.py rawAudio.raw NameOfClip # Dry run
+~/path/to/sounds:$ python3 /path/to/headerFromRaw.py rawAudio.raw NameOfClip BitsPerSample # Dry run
 ...
-~/path/to/sounds:$ python3 /path/to/headerFromRaw.py rawAudio.raw NameOfClip > NameOfClip.h # Write to file
+~/path/to/sounds:$ python3 /path/to/headerFromRaw.py chirp.raw Chirp 16 > Chirp.h # Write to file
 ```
 
 Move the generated header file to the appropriate location and use.
