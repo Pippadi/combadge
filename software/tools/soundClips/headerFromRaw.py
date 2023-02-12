@@ -13,7 +13,7 @@ bitsPerSample = int(sys.argv[3])
 bytesPerSample = bitsPerSample // 8
 formatSpecifier = "0x%%0%dx, " % (bitsPerSample/4)
 
-print("const PROGMEM sample_t %s[] = {" % soundName)
+print("const PROGMEM sample_t %s[] = {\n\t" % soundName, end="")
 
 with open(infile, "rb") as file:
     contents = file.read()
