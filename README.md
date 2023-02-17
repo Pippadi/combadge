@@ -11,3 +11,5 @@ This project is still in its early stages. For more information, feel free to ex
 A good place to start is [hardware/pcb](hardware/pcb), followed by [software/combadge](software/combadge).
 Code used for testing/developing individual components of the system can be found under [software/test](software/test).
 The 3D-printable enclosure can be found at [hardware/enclosure](hardware/enclosure).
+
+![Enclosure](/assets/enclosure.png)
