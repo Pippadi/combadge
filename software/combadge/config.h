@@ -13,11 +13,15 @@
 #define SPK_PORT I2S_NUM_1
 
 typedef int16_t sample_t;
-#define BITS_PER_SAMPLE 16
-#define BYTES_PER_SAMPLE BITS_PER_SAMPLE / 8
+#define BYTES_PER_SAMPLE sizeof(sample_t)
+#define BITS_PER_SAMPLE BYTES_PER_SAMPLE * 8
 
-#define SAMPLE_RATE 44100
-#define BUF_LEN 1024
+#define SAMPLE_RATE 16000
+
+// Because this is in samples, we are ensuring that buffers are
+// exactly 1024 bytes long (must be less than or equal to MTU)
+#define BUF_LEN 1024 / BYTES_PER_SAMPLE
+
 #define BUF_FULL_INTERVAL BUF_LEN * int(1000000.0 * (1.0 / float(SAMPLE_RATE)))
 
 #define WIFI_SSID "YourSSID"

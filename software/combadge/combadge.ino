@@ -70,10 +70,12 @@ void setup() {
         Serial.println("Failed listening on UDP");
     };
 
+    /*
 	timer = timerBegin(MIC_TIMER, 80, true);
 	timerAttachInterrupt(timer, &flagOffTransmit, true);
 	timerAlarmWrite(timer, BUF_FULL_INTERVAL, true);
     timerAlarmEnable(timer);
+    */
 }
 
 void loop() {
@@ -90,9 +92,11 @@ void onPacket(AsyncUDPPacket packet) {
     size_t bytesRead = packet.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*BUF_LEN);
 
     size_t bytesWritten;
+    spk.wake();
     if (!spk.write((uint8_t*) incomingBuf, bytesRead*BYTES_PER_SAMPLE, &bytesWritten)) {
         Serial.println(bytesWritten / BYTES_PER_SAMPLE);
     }
+    spk.sleep();
 }
 
 void playSound(const sample_t* sound, const size_t soundSizeBytes) {
