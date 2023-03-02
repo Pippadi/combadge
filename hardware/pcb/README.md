@@ -19,6 +19,8 @@ The [ESP32](https://docs.espressif.com/projects/esp-idf/en/v4.2.3/esp32/api-refe
 I've zeroed in on the [CMM-3526D-261-I2S-TR](https://www.cuidevices.com/product/audio/microphones/mems-microphones/cmm-3526d-261-i2s-tr).
 I suppose any similar microphone will do the job.
 
+For testing, I'm using the INMP441, because it's available as a module. I would have stuck with it for the PCB, but it seems to be discontinued by the manufacturer.
+
 ### Speaker
 
 With a speaker must come an amplifier. I chose the [MAX98357AEWL+T](https://www.maximintegrated.com/en/products/analog/audio/MAX98357A.html) because it's a class D amplifier that takes I2S input, and can drive a speaker with pretty much no external circuitry.
@@ -28,14 +30,13 @@ I'm still on the lookout for an actual speaker.
 
 ## Power Management
 
-The unit runs on a lithium-polymer battery. Exact model and size undecided as of now. I'm expecting it to be one of the usual 3.7V LiPo cells.
+The unit runs on a lithium-polymer battery. Exact model and size undecided as of now. It will be one of the usual 3.7V LiPo cells.
 At this stage, though, I'm more concerned with battery management.
 
 All the chosen components of the combadge operate on 3.3V. I was hoping to find an all-in-one charging and voltage-regulating IC, but my searches yielded none for these parameters.
-For charging, I plan to use an [XC6808A4D28R-G](https://www.torexsemi.com/products/battery-charge-ics/series/?name=xc6808) and a zener diode circuit for over-discharge protection.
+For charging, I plan to use an [MCP73831](https://www.microchip.com/en-us/product/MCP73831) and a zener diode circuit for over-discharge protection.
 I found the super tiny 250mA [NCP160](https://www.onsemi.com/products/power-management/linear-regulators-ldo/ncp160) LDO linear regulator for 3.3V power.
 
-I still need to verify whether 250mA is enough for the entire combadge (it better be; it's running off a battery).
 I'm hoping decoupling capacitors will take care of any current spikes the ESP32 and speakers may need.
 
 # PCB
