@@ -1,7 +1,6 @@
 (sym_lib_table
   (version 7)
-  (lib (name "NCP160")(type "KiCad")(uri "${KIPRJMOD}/NCP160.kicad_sym")(options "")(descr ""))
   (lib (name "MAX98357AEWL+T")(type "KiCad")(uri "${KIPRJMOD}/third-party/MAX98357AEWL+T.kicad_sym")(options "")(descr ""))
-  (lib (name "RN4989")(type "KiCad")(uri "${KIPRJMOD}/third-party/RN4989.kicad_sym")(options "")(descr ""))
   (lib (name "CSS-1210TB")(type "KiCad")(uri "${KIPRJMOD}/third-party/CSS-1210TB.kicad_sym")(options "")(descr ""))
+  (lib (name "CMM-3526D-261-I2S-TR")(type "KiCad")(uri "${KIPRJMOD}/third-party/CMM-3526D-261-I2S-TR.kicad_sym")(options "")(descr ""))
 )
