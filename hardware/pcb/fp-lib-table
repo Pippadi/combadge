@@ -1,6 +1,6 @@
 (fp_lib_table
   (version 7)
   (lib (name "CMM-3526D-261-I2S-TR")(type "KiCad")(uri "${KIPRJMOD}/third-party/CMM-3526D-261-I2S-TR.pretty")(options "")(descr ""))
-  (lib (name "MAX98357AEWL+T")(type "KiCad")(uri "${KIPRJMOD}/third-party/MAX98357AEWL+T.pretty")(options "")(descr ""))
   (lib (name "CSS-1210TB")(type "KiCad")(uri "${KIPRJMOD}/third-party/CSS-1210TB.pretty")(options "")(descr ""))
+  (lib (name "MAX98357AETE+T")(type "KiCad")(uri "${KIPRJMOD}/third-party/MAX98357AETE+T.pretty")(options "")(descr ""))
 )
