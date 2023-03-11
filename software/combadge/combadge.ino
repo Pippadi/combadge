@@ -76,16 +76,16 @@ void setup() {
     timerAlarmEnable(timer);
 }
 
-int32_t holdingBuf[BUF_LEN];
 void loop() {
-    // We get 24-bit samples from the INMP441
-    // in frames of 32 bits
+    // mic.read needs a 32-bit buffer
+    static int32_t holdingBuf[BUF_LEN];
     if (shouldTransmit) {
         size_t incomingBytes;
-        if (mic.read((uint8_t*) holdingBuf, BUF_LEN*sizeof(int32_t), &incomingBytes)) {
+        if (mic.read(holdingBuf, BUF_LEN, &incomingBytes)) {
             size_t incomingSamples = incomingBytes/sizeof(int32_t);
             for (int i = 0; i < incomingSamples; i++) {
-                outgoingBuf[i] = holdingBuf[i] / 65535; // Discard lower 16 bitst
+                // mic.read already removes the unused lower 32-BITS_PER_SAMPLE bits
+                outgoingBuf[i] = sample_t(holdingBuf[i]);
             }
             udp.writeTo((uint8_t*) outgoingBuf, incomingSamples*BYTES_PER_SAMPLE, BUDDY_IP, UDP_PORT);
         }
