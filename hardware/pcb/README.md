@@ -43,7 +43,7 @@ I'm hoping decoupling capacitors will take care of any current spikes the ESP32 
 
 The PCB has been designed in KiCAD.
 
-![PCB](/assets/pcb.png)
+![PCB](assets/pcb.png)
 
 - Footprints are chosen to be as large as possible where applicable, to facilitate hand-soldering.
 - The PCB has headers to which battery and speaker wires can be soldered.
