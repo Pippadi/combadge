@@ -70,19 +70,24 @@ void setup() {
         Serial.println("Failed listening on UDP");
     };
 
-    /*
 	timer = timerBegin(MIC_TIMER, 80, true);
 	timerAttachInterrupt(timer, &flagOffTransmit, true);
 	timerAlarmWrite(timer, BUF_FULL_INTERVAL, true);
     timerAlarmEnable(timer);
-    */
 }
 
+int32_t holdingBuf[BUF_LEN];
 void loop() {
+    // We get 24-bit samples from the INMP441
+    // in frames of 32 bits
     if (shouldTransmit) {
         size_t incomingBytes;
-        if (mic.read((uint8_t*) outgoingBuf, BUF_LEN*BYTES_PER_SAMPLE, &incomingBytes)) {
-            udp.writeTo((uint8_t*) outgoingBuf, incomingBytes, BUDDY_IP, UDP_PORT);
+        if (mic.read((uint8_t*) holdingBuf, BUF_LEN*sizeof(int32_t), &incomingBytes)) {
+            size_t incomingSamples = incomingBytes/sizeof(int32_t);
+            for (int i = 0; i < incomingSamples; i++) {
+                outgoingBuf[i] = holdingBuf[i] / 65535; // Discard lower 16 bitst
+            }
+            udp.writeTo((uint8_t*) outgoingBuf, incomingSamples*BYTES_PER_SAMPLE, BUDDY_IP, UDP_PORT);
         }
         shouldTransmit = false;
     }
