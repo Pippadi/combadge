@@ -55,6 +55,10 @@ void MAX98357::sleep() {
     digitalWrite(pins.enable, LOW);
 }
 
+bool MAX98357::asleep() {
+    return !enabled;
+}
+
 bool MAX98357::write(uint8_t* bytes, size_t byteCnt, size_t* bytesWritten) {
     esp_err_t err = i2s_write(port, bytes, byteCnt, bytesWritten, portMAX_DELAY);
     if (err != ESP_OK) {

@@ -24,6 +24,7 @@ class MAX98357 {
     bool begin(i2s_port_t _port, I2SCfg _cfg, MAX98357PinCfg _pins);
     void sleep();
     void wake();
+    bool asleep();
     bool write(uint8_t* bytes, size_t byteCnt, size_t* bytesWritten);
 };
 
