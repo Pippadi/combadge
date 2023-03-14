@@ -24,8 +24,8 @@ typedef int16_t sample_t;
 
 #define BUF_FULL_INTERVAL BUF_LEN * int(1000000.0 * (1.0 / float(SAMPLE_RATE)))
 
-#define WIFI_SSID "MVWiFi"
-#define WIFI_PASSWORD "A12168A17BC1519251521A18E219ECC"
+#define WIFI_SSID "YourSSID"
+#define WIFI_PASSWORD "YourPassword"
 
 #define BUDDY_IP IPAddress(192, 168, 142, 40)
 #define UDP_PORT 1592
