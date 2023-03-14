@@ -23,7 +23,7 @@ For testing, I'm using the INMP441, because it's available as a module. I would 
 
 ### Speaker
 
-With a speaker must come an amplifier. I chose the [MAX98357AEWL+T](https://www.maximintegrated.com/en/products/analog/audio/MAX98357A.html) because it's a class D amplifier that takes I2S input, and can drive a speaker with pretty much no external circuitry.
+With a speaker must come an amplifier. I chose the [MAX98357AETE+T](https://www.analog.com/en/products/max98357a.html#product-overview) because it's a class D amplifier that takes I2S input, and can drive a speaker with pretty much no external circuitry.
 It's also what I used to prototype.
 
 The [Taoglas SPKM.10.8.A](https://www.taoglas.com/product/10-mm-round-miniature-speaker-500mw/) seems like an adequate speaker for the job.
@@ -43,7 +43,7 @@ I'm hoping decoupling capacitors will take care of any current spikes the ESP32 
 
 The PCB has been designed in KiCAD.
 
-![PCB](/assets/pcb.png)
+![PCB](assets/pcb.png)
 
 - Footprints are chosen to be as large as possible where applicable, to facilitate hand-soldering.
 - The PCB has headers to which battery and speaker wires can be soldered.
@@ -52,7 +52,7 @@ The PCB has been designed in KiCAD.
 To load this KiCAD project, you will need to get the following third-party symbols and footprints:
 
 - [CSS-1210TB](https://app.ultralibrarian.com/details/711a64f8-0773-11ed-b159-0a34d6323d74/Nidec-Copal-Electronics/CSS-1210TB?uid=38990419&exports=KiCAD&open=exports)
-- [MAX98357AEWL+T](https://vendor.ultralibrarian.com/Maxim/Embedded?vdrPN=MAX98357AEWL%2BT)
+- [MAX98357AETE+T](https://vendor.ultralibrarian.com/ADI/embedded?mfrName=Maxim%20Integrated%20Products&mfrpn=MAX98357AETE%2bT)
 - [CMM-3526D-261-I2S-TR](https://www.cuidevices.com/product/resource/pcbfootprint/cmm-3526d-261-i2s-tr)
 
 You will need to change the paths to the third party symbols in the library and footprint managers. I've just plonked everything in a gitignored folder called `third-party`.
