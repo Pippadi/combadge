@@ -61,7 +61,7 @@ void playSound(const int16_t* sound, const size_t soundSizeBytes) {
     for (i=0; i<soundSizeSamples/BUF_LEN; i++) {
         i2s_write(spkPort, (char*) &(sound[i*BUF_LEN]), BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
     }
-    i2s_write(spkPort, (char*) &(sound[i*BUF_LEN + soundSizeSamples%BUF_LEN]), (soundSizeSamples%BUF_LEN)*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
+    i2s_write(spkPort, (char*) &(sound[i*BUF_LEN]), (soundSizeSamples%BUF_LEN)*BYTES_PER_SAMPLE, &bytesWritten, portMAX_DELAY);
 }
 
 void loop() {}

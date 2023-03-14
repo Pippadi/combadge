@@ -19,6 +19,8 @@ volatile bool shouldTransmit = false;
 hw_timer_t* timer = NULL;
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 
+uint32_t lastPacketMillis = 0;
+
 void IRAM_ATTR flagOffTransmit() {
 	portENTER_CRITICAL_ISR(&timerMux);
     shouldTransmit = true;
@@ -63,17 +65,19 @@ void setup() {
         while (true);
     }
 
-    playSound(HailBeep, HailBeepSizeBytes);
+    playSound(TNGChirp1, TNGChirp1SizeBytes);
 
     udp.onPacket(onPacket);
     if (!udp.listen(UDP_PORT)) {
         Serial.println("Failed listening on UDP");
     };
 
+    /*
 	timer = timerBegin(MIC_TIMER, 80, true);
 	timerAttachInterrupt(timer, &flagOffTransmit, true);
 	timerAlarmWrite(timer, BUF_FULL_INTERVAL, true);
     timerAlarmEnable(timer);
+    */
 }
 
 void loop() {
@@ -91,17 +95,23 @@ void loop() {
         }
         shouldTransmit = false;
     }
+
+    if (millis() - lastPacketMillis < 100 && spk.asleep()) {
+        spk.wake();
+    }
+    else if (millis() - lastPacketMillis > 100 && !spk.asleep()) {
+        spk.sleep();
+    }
 }
 
 void onPacket(AsyncUDPPacket packet) {
     size_t bytesRead = packet.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*BUF_LEN);
 
     size_t bytesWritten;
-    spk.wake();
-    if (!spk.write((uint8_t*) incomingBuf, bytesRead*BYTES_PER_SAMPLE, &bytesWritten)) {
+    if (!spk.write((char*) incomingBuf, bytesRead*BYTES_PER_SAMPLE, &bytesWritten)) {
         Serial.println(bytesWritten / BYTES_PER_SAMPLE);
     }
-    spk.sleep();
+    lastPacketMillis = millis();
 }
 
 void playSound(const sample_t* sound, const size_t soundSizeBytes) {
@@ -111,8 +121,8 @@ void playSound(const sample_t* sound, const size_t soundSizeBytes) {
 
     spk.wake();
     for (i=0; i<soundSizeSamples/BUF_LEN; i++) {
-        spk.write((uint8_t*) &(sound[i*BUF_LEN]), BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten);
+        Serial.println(spk.write((char*) &(sound[i*BUF_LEN]), BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten));
     }
-    spk.write((uint8_t*) &(sound[i*BUF_LEN + soundSizeSamples%BUF_LEN]), (soundSizeSamples%BUF_LEN)*BYTES_PER_SAMPLE, &bytesWritten);
+    spk.write((char*) &(sound[i*BUF_LEN]), (soundSizeSamples%BUF_LEN)*BYTES_PER_SAMPLE, &bytesWritten);
     spk.sleep();
 }

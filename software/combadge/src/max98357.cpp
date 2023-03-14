@@ -39,7 +39,7 @@ bool MAX98357::begin(i2s_port_t _port, I2SCfg _cfg, MAX98357PinCfg _pins) {
     }
 
     pinMode(pins.enable, OUTPUT);
-    sleep();
+    MAX98357::sleep();
 
     return true;
 }
@@ -59,7 +59,7 @@ bool MAX98357::asleep() {
     return !enabled;
 }
 
-bool MAX98357::write(uint8_t* bytes, size_t byteCnt, size_t* bytesWritten) {
+bool MAX98357::write(char* bytes, size_t byteCnt, size_t* bytesWritten) {
     esp_err_t err = i2s_write(port, bytes, byteCnt, bytesWritten, portMAX_DELAY);
     if (err != ESP_OK) {
         return false;

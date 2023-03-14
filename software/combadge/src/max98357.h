@@ -25,7 +25,7 @@ class MAX98357 {
     void sleep();
     void wake();
     bool asleep();
-    bool write(uint8_t* bytes, size_t byteCnt, size_t* bytesWritten);
+    bool write(char* bytes, size_t byteCnt, size_t* bytesWritten);
 };
 
 #endif
