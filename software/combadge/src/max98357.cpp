@@ -46,12 +46,15 @@ bool MAX98357::begin(i2s_port_t _port, I2SCfg _cfg, MAX98357PinCfg _pins) {
 
 void MAX98357::wake() {
     enabled = true;
+    // i2s_start(port);
     digitalWrite(pins.enable, HIGH);
     delayMicroseconds(10);
 }
 
 void MAX98357::sleep() {
     enabled = false;
+    i2s_zero_dma_buffer(port);
+    // i2s_stop(port);
     digitalWrite(pins.enable, LOW);
 }
 
@@ -65,4 +68,8 @@ bool MAX98357::write(char* bytes, size_t byteCnt, size_t* bytesWritten) {
         return false;
     }
     return true;
+}
+
+bool MAX98357::end() {
+    return i2s_driver_uninstall(port) == ESP_OK;
 }
