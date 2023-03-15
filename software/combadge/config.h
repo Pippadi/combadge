@@ -22,10 +22,10 @@ typedef int16_t sample_t;
 // exactly 1024 bytes long (must be less than or equal to MTU)
 #define BUF_LEN 1024 / BYTES_PER_SAMPLE
 
-#define BUF_FULL_INTERVAL BUF_LEN * int(1000000.0 * (1.0 / float(SAMPLE_RATE)))
+#define BUF_FULL_INTERVAL BUF_LEN * int(1000000.0 / float(SAMPLE_RATE))
 
 #define WIFI_SSID "YourSSID"
 #define WIFI_PASSWORD "YourPassword"
 
 #define BUDDY_IP IPAddress(192, 168, 142, 40)
-#define UDP_PORT 1592
+#define LISTEN_PORT 1592
