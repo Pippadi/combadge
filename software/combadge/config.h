@@ -16,7 +16,7 @@ typedef int16_t sample_t;
 #define BYTES_PER_SAMPLE sizeof(sample_t)
 #define BITS_PER_SAMPLE BYTES_PER_SAMPLE * 8
 
-#define SAMPLE_RATE 16000
+#define SAMPLE_RATE 44100
 
 #define BUF_LEN 4096
 
