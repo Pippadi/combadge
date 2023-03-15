@@ -18,7 +18,7 @@ bool INMP441::begin(i2s_port_t _port, I2SCfg _cfg, INMP441PinCfg _pins) {
 
         .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S),
         .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
-        .dma_buf_count = 4,
+        .dma_buf_count = 8,
         .dma_buf_len = 1024,
         .use_apll = false,
         .tx_desc_auto_clear = false,
