@@ -40,8 +40,12 @@ void IRAM_ATTR registerTap() {
 }
 
 void setup() {
+    setCpuFrequencyMhz(80);
+    btStop();
+    adc_power_off();
     Serial.begin(115200);
 
+    WiFi.setSleep(true);
     WiFi.setAutoReconnect(true);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     while (!WiFi.isConnected()) {
