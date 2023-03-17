@@ -108,11 +108,14 @@ void loop() {
 
 void streamToSpeaker(void*) {
     size_t bytesWritten;
+    sample_t* prevBuf = incomingBuf;
     playSound(HailBeep, HailBeepSizeBytes);
     spk.wake();
     while (true) {
-        if (!spk.write((char*) incomingBuf, BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten)) {
-            Serial.println(bytesWritten / BYTES_PER_SAMPLE);
+        if (prevBuf != incomingBuf) {
+            if (!spk.write((char*) incomingBuf, BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten)) {
+                Serial.println(bytesWritten / BYTES_PER_SAMPLE);
+            }
         }
         if (stopPlayback) {
             stopPlayback = false;
@@ -120,6 +123,7 @@ void streamToSpeaker(void*) {
             vTaskDelete(NULL);
             return;
         }
+        prevBuf = incomingBuf;
     }
 }
 
