@@ -16,6 +16,7 @@ MAX98357 spk;
 INMP441 mic;
 
 volatile bool shouldTransmit = false;
+volatile bool tapped = false;
 
 hw_timer_t* timer = NULL;
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
@@ -23,10 +24,19 @@ portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 TaskHandle_t streamToSpeakerHandle;
 TaskHandle_t streamFromMicHandle;
 
+sample_t incomingBuf1[BUF_LEN];
+sample_t incomingBuf2[BUF_LEN];
+sample_t* incomingBuf = incomingBuf1;
+bool stopPlayback = false;
+
 void IRAM_ATTR flagOffTransmit() {
     portENTER_CRITICAL_ISR(&timerMux);
     shouldTransmit = true;
     portEXIT_CRITICAL_ISR(&timerMux);
+}
+
+void IRAM_ATTR registerTap() {
+    tapped = true;
 }
 
 void setup() {
@@ -74,11 +84,44 @@ void setup() {
     timerAlarmWrite(timer, BUF_FULL_INTERVAL, true);
     timerAlarmEnable(timer);
 
-    xTaskCreate(streamToSpeaker, "StreamToSpeaker", 10240, NULL, 0, &streamToSpeakerHandle);
     xTaskCreate(streamFromMic, "StreamFromMic", 10240, NULL, 0, &streamFromMicHandle);
+
+    touchAttachInterrupt(TOUCH_PIN, registerTap, TOUCH_THRESHOLD);
+    server.begin(LISTEN_PORT, 1);
 }
 
-void loop() {}
+void loop() {
+    while (!incomingConn) {
+        incomingConn = server.available();
+    }
+    Serial.println(incomingConn.remoteIP());
+    xTaskCreate(streamToSpeaker, "StreamToSpeaker", 10240, NULL, 0, &streamToSpeakerHandle);
+    while (incomingConn.connected()) {
+        if (incomingConn.available()) {
+            sample_t* bufToReadTo = (incomingBuf == incomingBuf1) ? incomingBuf2 : incomingBuf1;
+            size_t bytesRead = incomingConn.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*BUF_LEN);
+            incomingBuf = bufToReadTo;
+        }
+    }
+    stopPlayback = true;
+}
+
+void streamToSpeaker(void*) {
+    size_t bytesWritten;
+    playSound(HailBeep, HailBeepSizeBytes);
+    spk.wake();
+    while (true) {
+        if (!spk.write((char*) incomingBuf, BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten)) {
+            Serial.println(bytesWritten / BYTES_PER_SAMPLE);
+        }
+        if (stopPlayback) {
+            stopPlayback = false;
+            spk.sleep();
+            vTaskDelete(NULL);
+            return;
+        }
+    }
+}
 
 void streamFromMic(void*) {
     static sample_t outgoingBuf[BUF_LEN];
@@ -86,46 +129,30 @@ void streamFromMic(void*) {
     static int32_t holdingBuf[BUF_LEN];
 
     while (true) {
-        if (!client.connected()) {
-            client.connect(BUDDY_IP, LISTEN_PORT);
-        }
-        if (shouldTransmit) {
-            size_t incomingBytes;
-            if (mic.read(holdingBuf, BUF_LEN, &incomingBytes)) {
-                size_t incomingSamples = incomingBytes/sizeof(int32_t);
-                for (int i = 0; i < incomingSamples; i++) {
-                    // mic.read already removes the unused lower 32-BITS_PER_SAMPLE bits
-                    outgoingBuf[i] = sample_t(holdingBuf[i]);
+        while (!tapped) { delay(10); }
+        playSound(TNGChirp1, TNGChirp1SizeBytes);
+        delay(250);
+        tapped = false;
+        client.connect(BUDDY_IP, LISTEN_PORT);
+        while (!client.connected()) { delay(10); };
+        while (client.connected() && !tapped) {
+            if (shouldTransmit) {
+                size_t incomingBytes;
+                if (mic.read(holdingBuf, BUF_LEN, &incomingBytes)) {
+                    size_t incomingSamples = incomingBytes/sizeof(int32_t);
+                    for (int i = 0; i < incomingSamples; i++) {
+                        // mic.read already removes the unused lower 32-BITS_PER_SAMPLE bits
+                        outgoingBuf[i] = sample_t(holdingBuf[i]);
+                    }
+                    client.write((uint8_t*) outgoingBuf, BUF_LEN*BYTES_PER_SAMPLE);
                 }
-                client.write((uint8_t*) outgoingBuf, BUF_LEN*BYTES_PER_SAMPLE);
-            }
-            shouldTransmit = false;
-        }
-    }
-}
-
-void streamToSpeaker(void*) {
-    static sample_t incomingBuf[BUF_LEN];
-
-    server.begin(LISTEN_PORT, 1);
-
-    while (true) {
-        while (!incomingConn) {
-            incomingConn = server.available();
-        }
-        Serial.println(incomingConn.remoteIP());
-        playSound(HailBeep, HailBeepSizeBytes);
-        spk.wake();
-        while (incomingConn.connected()) {
-            if (incomingConn.available()) {
-                size_t bytesRead = incomingConn.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*BUF_LEN);
-                size_t bytesWritten;
-                if (!spk.write((char*) incomingBuf, bytesRead*BYTES_PER_SAMPLE, &bytesWritten)) {
-                    Serial.println(bytesWritten / BYTES_PER_SAMPLE);
-                }
+                shouldTransmit = false;
             }
         }
-        spk.sleep();
+        client.stop();
+        delay(250);
+        tapped = false;
+        playSound(TNGChirp2, TNGChirp2SizeBytes);
     }
 }
 

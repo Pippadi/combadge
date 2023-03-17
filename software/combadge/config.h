@@ -27,3 +27,6 @@ typedef int16_t sample_t;
 
 #define BUDDY_IP IPAddress(192, 168, 142, 105)
 #define LISTEN_PORT 1592
+
+#define TOUCH_PIN 14
+#define TOUCH_THRESHOLD 30
