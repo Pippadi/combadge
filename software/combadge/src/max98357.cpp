@@ -19,7 +19,7 @@ bool MAX98357::begin(i2s_port_t _port, I2SCfg _cfg, MAX98357PinCfg _pins) {
         .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S),
         .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
         .dma_buf_count = 8,
-        .dma_buf_len = cfg.bufLen,
+        .dma_buf_len = 1024,
     };
 
     i2s_pin_config_t spkPins = {

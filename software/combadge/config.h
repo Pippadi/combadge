@@ -18,14 +18,15 @@ typedef int16_t sample_t;
 
 #define SAMPLE_RATE 44100
 
-// Because this is in samples, we are ensuring that buffers are
-// exactly 1024 bytes long (must be less than or equal to MTU)
-#define BUF_LEN 1024 / BYTES_PER_SAMPLE
+#define BUF_LEN 4096
 
-#define BUF_FULL_INTERVAL BUF_LEN * int(1000000.0 * (1.0 / float(SAMPLE_RATE)))
+#define BUF_FULL_INTERVAL BUF_LEN * int(1000000.0 / float(SAMPLE_RATE))
 
 #define WIFI_SSID "YourSSID"
 #define WIFI_PASSWORD "YourPassword"
 
-#define BUDDY_IP IPAddress(192, 168, 142, 40)
-#define UDP_PORT 1592
+#define BUDDY_IP IPAddress(192, 168, 142, 105)
+#define LISTEN_PORT 1592
+
+#define TOUCH_PIN 14
+#define TOUCH_THRESHOLD 30

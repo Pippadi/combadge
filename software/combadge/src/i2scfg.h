@@ -7,7 +7,6 @@
 struct I2SCfg {
     int sampleRate;
     int bitsPerSample;
-    int bufLen;
 };
 
 #endif
