@@ -16,4 +16,7 @@ In time, sound data will be relayed through a central server, which will aggrega
 There is as yet no protocol defined for sending data between combadges.
 
 The intricacies of I2S communication are abstracted out to classes, specially defined for each hardware peripheral.
-The underlying plan is to define a speaker and microphone interface, and write uniform implementations for specific microphone and speaker peripherals to make switching hardware simpler.
+The underlying plan is to eventually define a speaker and microphone interface, and write uniform implementations for specific microphone and speaker peripherals to make switching hardware simpler.
+
+Right now, configurations like sample rate and bitness are hardcoded (but modifiable in `config.h`) for the sake of simplicity.
+Allowing on-the-fly setting of such parameters is a goal for the future.

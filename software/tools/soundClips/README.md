@@ -3,6 +3,7 @@
 In this project, sound clips generally reside as header files with large arrays of data points.
 
 First, ensure that your clip is adequately loud and well-cropped with a tool like [Audacity](https://www.audacityteam.org).
+Also ensure the [ffmpeg](https://ffmpeg.org/) tool is installed where the script can find it.
 
 Next, check the sample rate in your [`config.h`](/software/combadge/config.h) in the `SAMPLE_RATE` definition.
 Also note the bitness defined with `sample_t` (e.g. `int16_t` is 16-bit).
@@ -14,6 +15,7 @@ HeaderFromSound.py [-h] [--rate SAMPLERATE] [--bitness BITNESS] [--name CLIPNAME
 ```
 
 Here's an example:
+
 ```sh
 python3 /path/to/HeaderFromSound.py --bitness 16 --rate 44100 --name Chirp > Chirp.h
 ```
