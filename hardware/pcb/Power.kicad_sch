@@ -1388,7 +1388,7 @@
   (symbol (lib_id "CSS-1210TB:CSS-1210TB") (at 34.925 26.67 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 2bcb8ba2-2cfb-4784-92a6-ce27ddcfec7e)
-    (property "Reference" "SW1" (at 47.625 17.78 0)
+    (property "Reference" "SW2" (at 47.625 17.78 0)
       (effects (font (size 1.524 1.524)))
     )
     (property "Value" "CSS-1210TB" (at 47.625 21.59 0)
@@ -1406,7 +1406,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/522738f4-f6b2-4897-a079-07da122bd152"
-          (reference "SW1") (unit 1)
+          (reference "SW2") (unit 1)
         )
       )
     )

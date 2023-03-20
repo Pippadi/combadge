@@ -48,6 +48,7 @@ The PCB has been designed in KiCAD.
 - Footprints are chosen to be as large as possible where applicable, to facilitate hand-soldering.
 - The PCB has headers to which battery and speaker wires can be soldered.
 - Some symbols used have part numbers slightly different from the ones specified in this document. They've been used because they are first-party KiCAD footprints, and they have matching pin configuration. It's just a pain hunting for symbols online.
+- Certain measurements can be seen in the `User.Comments` layer.
 
 To load this KiCAD project, you will need to get the following third-party symbols and footprints:
 
