@@ -2,27 +2,22 @@
 
 In this project, sound clips generally reside as header files with large arrays of data points.
 
-To generate such a file, first use a tool like [Audacity](https://www.audacityteam.org) to reformat your sound files to raw points.
-Open the file you want to convert, and crop if needed. If it is a stereo track, select the track and mix the stereo channels to mono.
+First, ensure that your clip is adequately loud and well-cropped with a tool like [Audacity](https://www.audacityteam.org).
+Also ensure the [ffmpeg](https://ffmpeg.org/) tool is installed where the script can find it.
 
-![Merge stereo to mono](assets/MixStereoToMono.png)
+Next, check the sample rate in your [`config.h`](/software/combadge/config.h) in the `SAMPLE_RATE` definition.
+Also note the bitness defined with `sample_t` (e.g. `int16_t` is 16-bit).
 
-Next, check the sample rate in use in your [`config.h`](/software/combadge/config.h) in the `SAMPLE_RATE` definition.
-If your track is not already using that sample rate, select the track and select `Tracks -> Resample...` to set the correct rate.
-Set the project rate to the same rate as well.
-
-![Set sample rate](assets/ResampleClip.png)
-
-Export the file with Shift-Ctrl-E. Set file type to "Other uncompressed files", header to "RAW (header-less)", and encoding to the type corresponding to the data type that `sample_t` is defined to in [`config.h`](/software/combadge/config.h).
-
-![Export as raw](assets/ExportAsRaw.png)
-
-Finally, invoke `headerFromRaw.py` to generate the header file accordingly.
+Finally, invoke `HeaderFromSound.py` to generate the header file accordingly.
 
 ```
-~/path/to/sounds:$ python3 /path/to/headerFromRaw.py rawAudio.raw NameOfClip BitsPerSample # Dry run
-...
-~/path/to/sounds:$ python3 /path/to/headerFromRaw.py chirp.raw Chirp 16 > Chirp.h # Write to file
+HeaderFromSound.py [-h] [--rate SAMPLERATE] [--bitness BITNESS] [--name CLIPNAME] INPUTFILE
 ```
 
-Move the generated header file to the appropriate location and use.
+Here's an example:
+
+```sh
+python3 /path/to/HeaderFromSound.py --bitness 16 --rate 44100 --name Chirp > Chirp.h
+```
+
+Move the generated header file to the appropriate [location](/software/combadge/sounds) and use.

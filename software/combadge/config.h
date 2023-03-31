@@ -13,15 +13,20 @@
 #define SPK_PORT I2S_NUM_1
 
 typedef int16_t sample_t;
-#define BITS_PER_SAMPLE 16
-#define BYTES_PER_SAMPLE BITS_PER_SAMPLE / 8
+#define BYTES_PER_SAMPLE sizeof(sample_t)
+#define BITS_PER_SAMPLE BYTES_PER_SAMPLE * 8
 
 #define SAMPLE_RATE 44100
-#define BUF_LEN 1024
-#define BUF_FULL_INTERVAL BUF_LEN * int(1000000.0 * (1.0 / float(SAMPLE_RATE)))
+
+#define BUF_LEN 4096
+
+#define BUF_FULL_INTERVAL BUF_LEN * int(1000000.0 / float(SAMPLE_RATE))
 
 #define WIFI_SSID "YourSSID"
 #define WIFI_PASSWORD "YourPassword"
 
-#define BUDDY_IP IPAddress(192, 168, 142, 40)
-#define UDP_PORT 1592
+#define BUDDY_IP IPAddress(192, 168, 142, 105)
+#define LISTEN_PORT 1592
+
+#define TOUCH_PIN 14
+#define TOUCH_THRESHOLD 30
