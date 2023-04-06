@@ -48,7 +48,11 @@ bool INMP441::read(int32_t* destination, size_t sampleCnt, size_t* bytesRead) {
     }
     for (int i=0; i<sampleCnt; i++) {
         // Discard unused lower (32 - bitsPerSample) bits
-        destination[i] = destination[i] / pow(2, (32-cfg.bitsPerSample+1)-1);
+        destination[i] = destination[i] / (pow(2, 32-cfg.bitsPerSample+1)-1);
+        // Swap byte order
+        int16_t temp = abs(destination[i]);
+        temp = ((0xFF & temp) << 8) | (0xFF00 & temp);
+        destination[i] = (destination[i] / abs(destination[i])) * temp;
     }
     return true;
 }
