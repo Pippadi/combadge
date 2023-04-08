@@ -40,19 +40,23 @@ bool INMP441::begin(i2s_port_t _port, I2SCfg _cfg, INMP441PinCfg _pins) {
     return err == ESP_OK;
 }
 
-// Accepts 32 bit buffers only
-bool INMP441::read(int32_t* destination, size_t sampleCnt, size_t* bytesRead) {
-    esp_err_t err = i2s_read(port, (uint8_t*) destination, sampleCnt*sizeof(int32_t), bytesRead, portMAX_DELAY);
+// Accepts 16 bit buffers only
+bool INMP441::read(int16_t* destination, size_t sampleCnt, size_t* bytesRead) {
+    int32_t temp[sampleCnt];
+    esp_err_t err = i2s_read(port, (uint8_t*) temp, sampleCnt*sizeof(int32_t), bytesRead, portMAX_DELAY);
     if (err != ESP_OK) {
         return false;
     }
     for (int i=0; i<sampleCnt; i++) {
-        // Discard unused lower (32 - bitsPerSample) bits
-        destination[i] = destination[i] / (pow(2, 32-cfg.bitsPerSample+1)-1);
+        // Helpful: https://esp32.com/viewtopic.php?t=15185
+        // Discard unused lower 16 bits
+        temp[i] >>= 16;
+        
         // Swap byte order
-        int16_t temp = abs(destination[i]);
-        temp = ((0xFF & temp) << 8) | (0xFF00 & temp);
-        destination[i] = (destination[i] / abs(destination[i])) * temp;
+        int16_t pt = ((0x00FF & temp[i]) << 8) | (0xFF00 & temp[i]);
+
+        // memcpy over to preserve sign
+        memcpy(&destination[i], &pt, sizeof(int16_t));
     }
     return true;
 }

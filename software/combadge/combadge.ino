@@ -133,8 +133,6 @@ void streamToSpeaker(void*) {
 
 void streamFromMic(void*) {
     static sample_t outgoingBuf[BUF_LEN];
-    // mic.read needs a 32-bit buffer
-    static int32_t holdingBuf[BUF_LEN];
 
     while (true) {
         while (!tapped) { delay(10); }
@@ -146,12 +144,8 @@ void streamFromMic(void*) {
         while (client.connected() && !tapped) {
             if (shouldTransmit) {
                 size_t incomingBytes;
-                if (mic.read(holdingBuf, BUF_LEN, &incomingBytes)) {
-                    size_t incomingSamples = incomingBytes/sizeof(int32_t);
-                    for (int i = 0; i < incomingSamples; i++) {
-                        // mic.read already removes the unused lower 32-BITS_PER_SAMPLE bits
-                        outgoingBuf[i] = sample_t(holdingBuf[i]);
-                    }
+                // Using outgoingBuf directly because sample_t is int16_t already
+                if (mic.read(outgoingBuf, BUF_LEN, &incomingBytes)) {
                     client.write((uint8_t*) outgoingBuf, BUF_LEN*BYTES_PER_SAMPLE);
                 }
                 shouldTransmit = false;
