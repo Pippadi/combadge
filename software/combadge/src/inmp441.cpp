@@ -3,6 +3,8 @@
 #include "i2scfg.h"
 #include "inmp441.h"
 
+#define INT16MAX 0x7FFF
+
 INMP441::INMP441() {}
 
 bool INMP441::begin(i2s_port_t _port, I2SCfg _cfg, INMP441PinCfg _pins) {
@@ -48,15 +50,14 @@ bool INMP441::read(int16_t* destination, size_t sampleCnt, size_t* bytesRead) {
         return false;
     }
     for (int i=0; i<sampleCnt; i++) {
-        // Helpful: https://esp32.com/viewtopic.php?t=15185
-        // Discard unused lower 16 bits
-        temp[i] >>= 16;
-        
-        // Swap byte order
-        int16_t pt = ((0x00FF & temp[i]) << 8) | (0xFF00 & temp[i]);
+        // Helpful:
+        // - https://esp32.com/viewtopic.php?t=15185
+        // - https://github.com/atomic14/esp32-walkie-talkie/blob/main/lib/audio_input/src/I2SMEMSSampler.cpp
+        // Discard unused lower 8 bits, and get rid of 3 bits of noise.
+        // The number 11 was empirically determined to provide the best signal.
+        temp[i] >>= 11;
 
-        // memcpy over to preserve sign
-        memcpy(&destination[i], &pt, sizeof(int16_t));
+        destination[i] = (int16_t) temp[i];
     }
     return true;
 }

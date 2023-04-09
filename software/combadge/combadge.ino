@@ -18,9 +18,6 @@ INMP441 mic;
 volatile bool shouldTransmit = false;
 volatile bool tapped = false;
 
-hw_timer_t* timer = NULL;
-portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
-
 TaskHandle_t streamToSpeakerHandle;
 TaskHandle_t streamFromMicHandle;
 
@@ -28,12 +25,6 @@ sample_t incomingBuf1[BUF_LEN];
 sample_t incomingBuf2[BUF_LEN];
 sample_t* incomingBuf = incomingBuf1;
 bool stopPlayback = false;
-
-void IRAM_ATTR flagOffTransmit() {
-    portENTER_CRITICAL_ISR(&timerMux);
-    shouldTransmit = true;
-    portEXIT_CRITICAL_ISR(&timerMux);
-}
 
 void IRAM_ATTR registerTap() {
     tapped = true;
@@ -83,14 +74,10 @@ void setup() {
 
     playSound(TNGChirp1, TNGChirp1SizeBytes);
 
-    timer = timerBegin(MIC_TIMER, 80, true);
-    timerAttachInterrupt(timer, &flagOffTransmit, true);
-    timerAlarmWrite(timer, BUF_FULL_INTERVAL, true);
-    timerAlarmEnable(timer);
-
     xTaskCreate(streamFromMic, "StreamFromMic", 10240, NULL, 0, &streamFromMicHandle);
 
     touchAttachInterrupt(TOUCH_PIN, registerTap, TOUCH_THRESHOLD);
+
     server.begin(LISTEN_PORT, 1);
 }
 
@@ -142,20 +129,18 @@ void streamFromMic(void*) {
         client.connect(BUDDY_IP, LISTEN_PORT);
         while (!client.connected()) { delay(10); };
         while (client.connected() && !tapped) {
-            if (shouldTransmit) {
-                size_t incomingBytes;
-                // Using outgoingBuf directly because sample_t is int16_t already
-                if (mic.read(outgoingBuf, BUF_LEN, &incomingBytes)) {
-                    client.write((uint8_t*) outgoingBuf, BUF_LEN*BYTES_PER_SAMPLE);
-                }
-                shouldTransmit = false;
+            vTaskDelay((BUF_FULL_INTERVAL_ms - 10) / portTICK_PERIOD_MS);
+            size_t incomingBytes;
+            // Using outgoingBuf directly because sample_t is int16_t already
+            if (mic.read(outgoingBuf, BUF_LEN, &incomingBytes)) {
+                client.write((uint8_t*) outgoingBuf, BUF_LEN*BYTES_PER_SAMPLE);
             }
         }
-        client.stop();
-        delay(250);
-        tapped = false;
-        playSound(TNGChirp2, TNGChirp2SizeBytes);
     }
+    client.stop();
+    delay(250);
+    tapped = false;
+    playSound(TNGChirp2, TNGChirp2SizeBytes);
 }
 
 void playSound(const sample_t* sound, const size_t soundSizeBytes) {
