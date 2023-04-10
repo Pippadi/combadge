@@ -43,12 +43,15 @@ bool INMP441::begin(i2s_port_t _port, I2SCfg _cfg, INMP441PinCfg _pins) {
 }
 
 // Accepts 16 bit buffers only
-bool INMP441::read(int16_t* destination, size_t sampleCnt, size_t* bytesRead) {
+size_t INMP441::read(int16_t* destination, size_t sampleCnt) {
+    size_t bytesRead;
     int32_t temp[sampleCnt];
-    esp_err_t err = i2s_read(port, (uint8_t*) temp, sampleCnt*sizeof(int32_t), bytesRead, portMAX_DELAY);
+
+    esp_err_t err = i2s_read(port, (uint8_t*) temp, sampleCnt*sizeof(int32_t), &bytesRead, portMAX_DELAY);
     if (err != ESP_OK) {
-        return false;
+        return 0;
     }
+
     for (int i=0; i<sampleCnt; i++) {
         // Helpful:
         // - https://esp32.com/viewtopic.php?t=15185
@@ -56,8 +59,7 @@ bool INMP441::read(int16_t* destination, size_t sampleCnt, size_t* bytesRead) {
         // Discard unused lower 8 bits, and get rid of 3 bits of noise.
         // The number 11 was empirically determined to provide the best signal.
         temp[i] >>= 11;
-
         destination[i] = (int16_t) temp[i];
     }
-    return true;
+    return bytesRead / sizeof(int16_t);
 }

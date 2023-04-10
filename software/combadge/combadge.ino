@@ -130,10 +130,10 @@ void streamFromMic(void*) {
         while (!client.connected()) { delay(10); };
         while (client.connected() && !tapped) {
             vTaskDelay((BUF_FULL_INTERVAL_ms - 10) / portTICK_PERIOD_MS);
-            size_t incomingBytes;
             // Using outgoingBuf directly because sample_t is int16_t already
-            if (mic.read(outgoingBuf, BUF_LEN, &incomingBytes)) {
-                client.write((uint8_t*) outgoingBuf, BUF_LEN*BYTES_PER_SAMPLE);
+            size_t samplesRead = mic.read(outgoingBuf, BUF_LEN);
+            if (samplesRead) {
+                client.write((uint8_t*) outgoingBuf, samplesRead*BYTES_PER_SAMPLE);
             }
         }
     }
