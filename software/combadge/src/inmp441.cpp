@@ -46,13 +46,15 @@ bool INMP441::begin(i2s_port_t _port, I2SCfg _cfg, INMP441PinCfg _pins) {
 size_t INMP441::read(int16_t* destination, size_t sampleCnt) {
     size_t bytesRead;
     int32_t temp[sampleCnt];
+    size_t samplesRead;
 
     esp_err_t err = i2s_read(port, (uint8_t*) temp, sampleCnt*sizeof(int32_t), &bytesRead, portMAX_DELAY);
     if (err != ESP_OK) {
         return 0;
     }
 
-    for (int i=0; i<sampleCnt; i++) {
+    samplesRead = bytesRead / sizeof(int32_t);
+    for (int i=0; i<samplesRead; i++) {
         // Helpful:
         // - https://esp32.com/viewtopic.php?t=15185
         // - https://github.com/atomic14/esp32-walkie-talkie/blob/main/lib/audio_input/src/I2SMEMSSampler.cpp
@@ -61,5 +63,5 @@ size_t INMP441::read(int16_t* destination, size_t sampleCnt) {
         temp[i] >>= 11;
         destination[i] = (int16_t) temp[i];
     }
-    return bytesRead / sizeof(int16_t);
+    return samplesRead;
 }
