@@ -122,25 +122,26 @@ void streamFromMic(void*) {
     static sample_t outgoingBuf[BUF_LEN];
 
     while (true) {
-        while (!tapped) { delay(10); }
+        while (!tapped) { vTaskDelay(10 / portTICK_PERIOD_MS); }
         playSound(TNGChirp1, TNGChirp1SizeBytes);
-        delay(250);
+        vTaskDelay(250 / portTICK_PERIOD_MS);
         tapped = false;
         client.connect(BUDDY_IP, LISTEN_PORT);
-        while (!client.connected()) { delay(10); };
+        while (!client.connected()) { vTaskDelay(10 / portTICK_PERIOD_MS); };
         while (client.connected() && !tapped) {
-            vTaskDelay((BUF_FULL_INTERVAL_ms - 10) / portTICK_PERIOD_MS);
+            // Dividing interval by two so that the buffer doesn't fill up before we're ready to send it
+            vTaskDelay(BUF_FULL_INTERVAL_ms / 2 / portTICK_PERIOD_MS);
             // Using outgoingBuf directly because sample_t is int16_t already
             size_t samplesRead = mic.read(outgoingBuf, BUF_LEN);
             if (samplesRead) {
                 client.write((uint8_t*) outgoingBuf, samplesRead*BYTES_PER_SAMPLE);
             }
         }
+        client.stop();
+        vTaskDelay(250 / portTICK_PERIOD_MS);
+        tapped = false;
+        playSound(TNGChirp2, TNGChirp2SizeBytes);
     }
-    client.stop();
-    delay(250);
-    tapped = false;
-    playSound(TNGChirp2, TNGChirp2SizeBytes);
 }
 
 void playSound(const sample_t* sound, const size_t soundSizeBytes) {

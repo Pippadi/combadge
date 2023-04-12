@@ -16,7 +16,7 @@ bool INMP441::begin(i2s_port_t _port, I2SCfg _cfg, INMP441PinCfg _pins) {
         .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX),
         .sample_rate = cfg.sampleRate,
         .bits_per_sample = I2S_BITS_PER_SAMPLE_32BIT,
-        .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT, // L/R to GND
+        .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT, // L/R to GND
 
         .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S),
         .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
@@ -61,6 +61,7 @@ size_t INMP441::read(int16_t* destination, size_t sampleCnt) {
         // Discard unused lower 8 bits, and get rid of 3 bits of noise.
         // The number 11 was empirically determined to provide the best signal.
         temp[i] >>= 11;
+        temp[i] &= 0xFFFF; // Truncating loud sounds
         destination[i] = (int16_t) temp[i];
     }
     return samplesRead;
