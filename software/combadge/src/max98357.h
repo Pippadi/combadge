@@ -22,9 +22,11 @@ class MAX98357 {
     public:
     MAX98357();
     bool begin(i2s_port_t _port, I2SCfg _cfg, MAX98357PinCfg _pins);
+    bool end();
     void sleep();
     void wake();
-    bool write(uint8_t* bytes, size_t byteCnt, size_t* bytesWritten);
+    bool asleep();
+    bool write(char* bytes, size_t byteCnt, size_t* bytesWritten);
 };
 
 #endif

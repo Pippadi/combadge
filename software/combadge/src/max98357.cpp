@@ -19,7 +19,7 @@ bool MAX98357::begin(i2s_port_t _port, I2SCfg _cfg, MAX98357PinCfg _pins) {
         .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S),
         .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
         .dma_buf_count = 8,
-        .dma_buf_len = cfg.bufLen,
+        .dma_buf_len = 1024,
     };
 
     i2s_pin_config_t spkPins = {
@@ -39,26 +39,37 @@ bool MAX98357::begin(i2s_port_t _port, I2SCfg _cfg, MAX98357PinCfg _pins) {
     }
 
     pinMode(pins.enable, OUTPUT);
-    sleep();
+    MAX98357::sleep();
 
     return true;
 }
 
 void MAX98357::wake() {
     enabled = true;
+    // i2s_start(port);
     digitalWrite(pins.enable, HIGH);
     delayMicroseconds(10);
 }
 
 void MAX98357::sleep() {
     enabled = false;
+    i2s_zero_dma_buffer(port);
+    // i2s_stop(port);
     digitalWrite(pins.enable, LOW);
 }
 
-bool MAX98357::write(uint8_t* bytes, size_t byteCnt, size_t* bytesWritten) {
+bool MAX98357::asleep() {
+    return !enabled;
+}
+
+bool MAX98357::write(char* bytes, size_t byteCnt, size_t* bytesWritten) {
     esp_err_t err = i2s_write(port, bytes, byteCnt, bytesWritten, portMAX_DELAY);
     if (err != ESP_OK) {
         return false;
     }
     return true;
+}
+
+bool MAX98357::end() {
+    return i2s_driver_uninstall(port) == ESP_OK;
 }
