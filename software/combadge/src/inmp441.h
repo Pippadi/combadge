@@ -20,7 +20,7 @@ class INMP441 {
     public:
     INMP441();
     bool begin(i2s_port_t _port, I2SCfg _cfg, INMP441PinCfg _pins);
-    bool read(int32_t* destination, size_t sampleCnt, size_t* bytesRead);
+    size_t read(int16_t* destination, size_t sampleCnt);
 };
 
 #endif

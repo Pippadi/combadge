@@ -18,9 +18,6 @@ INMP441 mic;
 volatile bool shouldTransmit = false;
 volatile bool tapped = false;
 
-hw_timer_t* timer = NULL;
-portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
-
 TaskHandle_t streamToSpeakerHandle;
 TaskHandle_t streamFromMicHandle;
 
@@ -29,19 +26,17 @@ sample_t incomingBuf2[BUF_LEN];
 sample_t* incomingBuf = incomingBuf1;
 bool stopPlayback = false;
 
-void IRAM_ATTR flagOffTransmit() {
-    portENTER_CRITICAL_ISR(&timerMux);
-    shouldTransmit = true;
-    portEXIT_CRITICAL_ISR(&timerMux);
-}
-
 void IRAM_ATTR registerTap() {
     tapped = true;
 }
 
 void setup() {
+    setCpuFrequencyMhz(80);
+    btStop();
+    adc_power_off();
     Serial.begin(115200);
 
+    WiFi.setSleep(true);
     WiFi.setAutoReconnect(true);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     while (!WiFi.isConnected()) {
@@ -79,14 +74,10 @@ void setup() {
 
     playSound(TNGChirp1, TNGChirp1SizeBytes);
 
-    timer = timerBegin(MIC_TIMER, 80, true);
-    timerAttachInterrupt(timer, &flagOffTransmit, true);
-    timerAlarmWrite(timer, BUF_FULL_INTERVAL, true);
-    timerAlarmEnable(timer);
-
     xTaskCreate(streamFromMic, "StreamFromMic", 10240, NULL, 0, &streamFromMicHandle);
 
     touchAttachInterrupt(TOUCH_PIN, registerTap, TOUCH_THRESHOLD);
+
     server.begin(LISTEN_PORT, 1);
 }
 
@@ -108,11 +99,14 @@ void loop() {
 
 void streamToSpeaker(void*) {
     size_t bytesWritten;
+    sample_t* prevBuf = incomingBuf;
     playSound(HailBeep, HailBeepSizeBytes);
     spk.wake();
     while (true) {
-        if (!spk.write((char*) incomingBuf, BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten)) {
-            Serial.println(bytesWritten / BYTES_PER_SAMPLE);
+        if (prevBuf != incomingBuf) {
+            if (!spk.write((char*) incomingBuf, BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten)) {
+                Serial.println(bytesWritten / BYTES_PER_SAMPLE);
+            }
         }
         if (stopPlayback) {
             stopPlayback = false;
@@ -120,37 +114,31 @@ void streamToSpeaker(void*) {
             vTaskDelete(NULL);
             return;
         }
+        prevBuf = incomingBuf;
     }
 }
 
 void streamFromMic(void*) {
     static sample_t outgoingBuf[BUF_LEN];
-    // mic.read needs a 32-bit buffer
-    static int32_t holdingBuf[BUF_LEN];
 
     while (true) {
-        while (!tapped) { delay(10); }
+        while (!tapped) { vTaskDelay(10 / portTICK_PERIOD_MS); }
         playSound(TNGChirp1, TNGChirp1SizeBytes);
-        delay(250);
+        vTaskDelay(250 / portTICK_PERIOD_MS);
         tapped = false;
         client.connect(BUDDY_IP, LISTEN_PORT);
-        while (!client.connected()) { delay(10); };
+        while (!client.connected()) { vTaskDelay(10 / portTICK_PERIOD_MS); };
         while (client.connected() && !tapped) {
-            if (shouldTransmit) {
-                size_t incomingBytes;
-                if (mic.read(holdingBuf, BUF_LEN, &incomingBytes)) {
-                    size_t incomingSamples = incomingBytes/sizeof(int32_t);
-                    for (int i = 0; i < incomingSamples; i++) {
-                        // mic.read already removes the unused lower 32-BITS_PER_SAMPLE bits
-                        outgoingBuf[i] = sample_t(holdingBuf[i]);
-                    }
-                    client.write((uint8_t*) outgoingBuf, BUF_LEN*BYTES_PER_SAMPLE);
-                }
-                shouldTransmit = false;
+            // Dividing interval by two so that the buffer doesn't fill up before we're ready to send it
+            vTaskDelay(BUF_FULL_INTERVAL_ms / 2 / portTICK_PERIOD_MS);
+            // Using outgoingBuf directly because sample_t is int16_t already
+            size_t samplesRead = mic.read(outgoingBuf, BUF_LEN);
+            if (samplesRead) {
+                client.write((uint8_t*) outgoingBuf, samplesRead*BYTES_PER_SAMPLE);
             }
         }
         client.stop();
-        delay(250);
+        vTaskDelay(250 / portTICK_PERIOD_MS);
         tapped = false;
         playSound(TNGChirp2, TNGChirp2SizeBytes);
     }
