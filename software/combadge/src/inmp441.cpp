@@ -3,8 +3,6 @@
 #include "i2scfg.h"
 #include "inmp441.h"
 
-#define INT16MAX 0x7FFF
-
 INMP441::INMP441() {}
 
 bool INMP441::begin(i2s_port_t _port, I2SCfg _cfg, INMP441PinCfg _pins) {
