@@ -1340,7 +1340,7 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid c7fcdd3f-8443-4445-9f9c-52c5baaddce4)
   )
-  (text "When R8 is 4k, charge current is 250mA.\n1000/4 = 250, per the datasheet."
+  (text "When R6 is 4k, charge current is 250mA.\n1000/4 = 250, per the datasheet."
     (at 121.285 146.685 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid dda799b9-2838-44c6-9be7-8a9e57f4f735)

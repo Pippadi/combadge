@@ -2,5 +2,5 @@
   (version 7)
   (lib (name "CSS-1210TB")(type "KiCad")(uri "${KIPRJMOD}/third-party/CSS-1210TB.kicad_sym")(options "")(descr "")(disabled))
   (lib (name "CMM-3526D-261-I2S-TR")(type "KiCad")(uri "${KIPRJMOD}/third-party/CMM-3526D-261-I2S-TR.kicad_sym")(options "")(descr "")(disabled))
-  (lib (name "MAX98357AETE+T")(type "KiCad")(uri "${KIPRJMOD}/third-party/MAX98357AETE+T.kicad_sym")(options "")(descr ""))
+  (lib (name "MAX98357")(type "KiCad")(uri "${KIPRJMOD}/MAX98357.kicad_sym")(options "")(descr ""))
 )

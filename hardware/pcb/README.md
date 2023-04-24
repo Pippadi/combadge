@@ -1,8 +1,8 @@
 # Component Choices
 
-The combadge is built around an [ESP32-WROOM-32](https://www.espressif.com/en/support/documents/technical-documents?keys=&field_type_tid%5B%5D=54&7&8&8&2&3https://www.espressif.com/en/support/documents/technical-documents?keys=&field_type_tid%5B%5D=54&7&8&8&2&3).
+The combadge is built around an [ESP32-WROOM-32E](https://www.espressif.com/en/support/documents/technical-documents?keys=&field_type_tid%5B%5D=54&7&8&8&2&3https://www.espressif.com/en/support/documents/technical-documents?keys=&field_type_tid%5B%5D=54&7&8&8&2&3).
 
-It is supposedly not recommended for new designs, but I chose it regardless because:
+I chose it because:
 
 - It is the wireless board with which I am most familiar
 - It has hardware I2S and touch support
@@ -53,7 +53,6 @@ The PCB has been designed in KiCAD.
 To load this KiCAD project, you will need to get the following third-party symbols and footprints:
 
 - [CSS-1210TB](https://app.ultralibrarian.com/details/711a64f8-0773-11ed-b159-0a34d6323d74/Nidec-Copal-Electronics/CSS-1210TB?uid=38990419&exports=KiCAD&open=exports)
-- [MAX98357AETE+T](https://vendor.ultralibrarian.com/ADI/embedded?mfrName=Maxim%20Integrated%20Products&mfrpn=MAX98357AETE%2bT)
 - [CMM-3526D-261-I2S-TR](https://www.cuidevices.com/product/resource/pcbfootprint/cmm-3526d-261-i2s-tr)
 
 You will need to change the paths to the third party symbols in the library and footprint managers. I've just plonked everything in a gitignored folder called `third-party`.
