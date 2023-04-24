@@ -904,7 +904,7 @@
           (reference "R2") (unit 1)
         )
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "R2") (unit 1)
+          (reference "R8") (unit 1)
         )
       )
     )
@@ -933,7 +933,7 @@
           (reference "SW1") (unit 1)
         )
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "SW1") (unit 1)
+          (reference "SW2") (unit 1)
         )
       )
     )
@@ -942,7 +942,7 @@
   (symbol (lib_name "GND_3") (lib_id "power:GND") (at 90.805 73.66 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 0c4963fa-dd5b-4a93-bc57-833f2079094a)
-    (property "Reference" "#PWR010" (at 90.805 80.01 0)
+    (property "Reference" "#PWR08" (at 90.805 80.01 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 90.805 78.74 0)
@@ -958,7 +958,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "#PWR010") (unit 1)
+          (reference "#PWR08") (unit 1)
         )
       )
     )
@@ -987,7 +987,7 @@
           (reference "C3") (unit 1)
         )
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "C3") (unit 1)
+          (reference "C6") (unit 1)
         )
       )
     )
@@ -1016,7 +1016,7 @@
           (reference "D1") (unit 1)
         )
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "D1") (unit 1)
+          (reference "D2") (unit 1)
         )
       )
     )
@@ -1044,7 +1044,7 @@
           (reference "#PWR01") (unit 1)
         )
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "#PWR01") (unit 1)
+          (reference "#PWR010") (unit 1)
         )
       )
     )
@@ -1073,7 +1073,7 @@
           (reference "C2") (unit 1)
         )
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "C2") (unit 1)
+          (reference "C5") (unit 1)
         )
       )
     )
@@ -1101,7 +1101,7 @@
           (reference "#PWR03") (unit 1)
         )
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "#PWR03") (unit 1)
+          (reference "#PWR012") (unit 1)
         )
       )
     )
@@ -1130,7 +1130,7 @@
           (reference "R1") (unit 1)
         )
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "R1") (unit 1)
+          (reference "R9") (unit 1)
         )
       )
     )
@@ -1139,7 +1139,7 @@
   (symbol (lib_name "+3.3V_1") (lib_id "power:+3.3V") (at 154.94 34.925 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 91aab491-9c5c-497f-ab1d-d45e964f5e38)
-    (property "Reference" "#PWR018" (at 154.94 38.735 0)
+    (property "Reference" "#PWR011" (at 154.94 38.735 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3.3V" (at 154.94 31.115 0)
@@ -1155,7 +1155,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "#PWR018") (unit 1)
+          (reference "#PWR011") (unit 1)
         )
       )
     )
@@ -1183,7 +1183,7 @@
           (reference "#PWR05") (unit 1)
         )
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "#PWR05") (unit 1)
+          (reference "#PWR09") (unit 1)
         )
       )
     )
@@ -1212,7 +1212,7 @@
           (reference "C1") (unit 1)
         )
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "C1") (unit 1)
+          (reference "C4") (unit 1)
         )
       )
     )
@@ -1278,7 +1278,7 @@
           (reference "U1") (unit 1)
         )
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "U1") (unit 1)
+          (reference "U4") (unit 1)
         )
       )
     )
@@ -1287,7 +1287,7 @@
   (symbol (lib_name "GND_2") (lib_id "power:GND") (at 188.595 84.455 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid ed321d54-40da-4722-916a-66d0decdccec)
-    (property "Reference" "#PWR04" (at 188.595 90.805 0)
+    (property "Reference" "#PWR013" (at 188.595 90.805 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 188.595 89.535 0)
@@ -1303,7 +1303,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/e52d477a-07ba-4161-9136-a631aed85a9f"
-          (reference "#PWR04") (unit 1)
+          (reference "#PWR013") (unit 1)
         )
       )
     )

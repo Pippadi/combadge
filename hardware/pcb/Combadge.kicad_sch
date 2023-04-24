@@ -276,7 +276,7 @@
   (symbol (lib_id "power:GND") (at 161.925 139.065 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 2cd28a46-58a1-435a-9c7f-622a1d88edf6)
-    (property "Reference" "#PWR02" (at 161.925 145.415 0)
+    (property "Reference" "#PWR01" (at 161.925 145.415 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 161.925 144.145 0)
@@ -292,7 +292,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf"
-          (reference "#PWR02") (unit 1)
+          (reference "#PWR01") (unit 1)
         )
       )
     )
