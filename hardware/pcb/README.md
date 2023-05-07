@@ -1,10 +1,9 @@
 # Component Choices
 
-The combadge is built around an [ESP32-WROOM-32E](https://www.espressif.com/en/support/documents/technical-documents?keys=&field_type_tid%5B%5D=54&7&8&8&2&3https://www.espressif.com/en/support/documents/technical-documents?keys=&field_type_tid%5B%5D=54&7&8&8&2&3).
+The combadge is built around an [ESP32-S3-WROOM-1](https://www.espressif.com/en/support/download/documents/modules?keys=&field_type_tid%5B%5D=838).
 
 I chose it because:
 
-- It is the wireless board with which I am most familiar
 - It has hardware I2S and touch support
 - It is well-supported by the Arduino toolchain
 - It is cheaply available in my region
@@ -53,5 +52,6 @@ To load this KiCAD project, you will need to get the following third-party symbo
 
 - [CSS-1210TB](https://app.ultralibrarian.com/details/711a64f8-0773-11ed-b159-0a34d6323d74/Nidec-Copal-Electronics/CSS-1210TB?uid=38990419&exports=KiCAD&open=exports)
 - [CMM-3526D-261-I2S-TR](https://www.cuidevices.com/product/resource/pcbfootprint/cmm-3526d-261-i2s-tr)
+- [ESP32](https://github.com/espressif/kicad-libraries)
 
 You will need to change the paths to the third party symbols in the library and footprint managers. I've just plonked everything in a gitignored folder called `third-party`.

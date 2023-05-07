@@ -2,4 +2,5 @@
   (version 7)
   (lib (name "CMM-3526D-261-I2S-TR")(type "KiCad")(uri "${KIPRJMOD}/third-party/CMM-3526D-261-I2S-TR.pretty")(options "")(descr ""))
   (lib (name "CSS-1210TB")(type "KiCad")(uri "${KIPRJMOD}/third-party/CSS-1210TB.pretty")(options "")(descr ""))
+  (lib (name "Espressif")(type "KiCad")(uri "${KIPRJMOD}/third-party/esp32-kicad/footprints/Espressif.pretty")(options "")(descr ""))
 )
