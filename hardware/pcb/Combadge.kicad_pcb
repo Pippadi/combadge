@@ -560,7 +560,7 @@
       (net 2 "GND") (pinfunction "GND") (pintype "passive") (tstamp e2fd9ab3-936c-4137-a911-65a8aff2e863))
     (pad "41" smd rect (at -0.1 0.86 270) (size 0.9 0.9) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 2 "GND") (pinfunction "GND") (pintype "passive") (tstamp c7904b8c-750e-45bc-a9b3-4e7285c1dffb))
-    (model "${ESPRESSIF_3DMODELS}/ESP32-S3-WROOM-1.STEP"
+    (model "${KIPRJMOD}/third-party/esp32-kicad/3d/ESP32-S3-WROOM-1.STEP"
       (opacity 0.7500)      (offset (xyz -9 -9.75 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
