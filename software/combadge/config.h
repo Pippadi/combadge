@@ -17,6 +17,7 @@ typedef int16_t sample_t;
 
 #define SAMPLE_RATE 44100
 
+// In samples
 #define BUF_LEN 2048
 
 #define BUF_FULL_INTERVAL_ms int(float(BUF_LEN) * 1000.0 / float(SAMPLE_RATE))

@@ -12,8 +12,11 @@ Right now, at startup, two threads are started - one for transmitting microphone
 
 All data is sent over TCP.
 For simplicity's sake, only peer-to-peer communication is performed with `BUDDY_IP` as defined in `config.h`.
-In time, sound data will be relayed through a central server, which will aggregate multiple sound streams from multiple clients and provide a single data stream for each client.
-There is as yet no protocol defined for sending data between combadges.
+Each combdage listens on `LISTEN_PORT` for its buddy, and when tapped, connects as a client to its buddy.
+Samples are sent raw in packets of size `BUF_LEN * BYTES_PER_SAMPLE`.
+Playback begins when the buddy connects, and ends when it disconnects.
+
+In time, sound data will be encoded and then relayed through a central server, which will aggregate multiple sound streams from multiple clients and provide a single data stream for each client.
 
 The intricacies of I2S communication are abstracted out to classes, specially defined for each hardware peripheral.
 The underlying plan is to define a speaker and microphone interface, and write uniform implementations for specific microphone and speaker peripherals to make switching hardware simpler.
