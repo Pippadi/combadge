@@ -471,7 +471,7 @@
   )
 
   (symbol (lib_id "Connector:Conn_01x02_Socket") (at 149.225 124.46 0) (mirror y) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 040d0d84-4d65-43be-a851-e35f54e2be64)
     (property "Reference" "J3" (at 147.32 125.095 0)
       (effects (font (size 1.27 1.27)) (justify left))
@@ -547,7 +547,7 @@
   )
 
   (symbol (lib_id "Connector:Conn_01x01_Male") (at 149.225 115.57 0) (mirror x) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
+    (in_bom no) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 5e27c022-8bb5-4723-b155-ba35e6b91285)
     (property "Reference" "J2" (at 149.86 110.49 0)
       (effects (font (size 1.27 1.27)))
@@ -575,7 +575,7 @@
   )
 
   (symbol (lib_id "Connector:Conn_01x01_Socket") (at 149.225 139.065 0) (mirror y) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 8f1efb23-d6da-4a38-a465-64f56a05ded7)
     (property "Reference" "J5" (at 147.32 139.7 0)
       (effects (font (size 1.27 1.27)) (justify left))

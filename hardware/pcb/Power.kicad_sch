@@ -1382,7 +1382,7 @@
   )
 
   (symbol (lib_id "Device:Battery_Cell") (at 142.875 140.97 270) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
+    (in_bom no) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 54fa1821-1962-473c-8470-e88a1b27fa8c)
     (property "Reference" "BT1" (at 144.907 133.35 90)
       (effects (font (size 1.27 1.27)))
