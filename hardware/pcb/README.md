@@ -1,10 +1,9 @@
 # Component Choices
 
-The combadge is built around an [ESP32-WROOM-32](https://www.espressif.com/en/support/documents/technical-documents?keys=&field_type_tid%5B%5D=54&7&8&8&2&3https://www.espressif.com/en/support/documents/technical-documents?keys=&field_type_tid%5B%5D=54&7&8&8&2&3).
+The combadge is built around an [ESP32-S3-WROOM-1](https://www.espressif.com/en/support/download/documents/modules?keys=&field_type_tid%5B%5D=838).
 
-It is supposedly not recommended for new designs, but I chose it regardless because:
+I chose it because:
 
-- It is the wireless board with which I am most familiar
 - It has hardware I2S and touch support
 - It is well-supported by the Arduino toolchain
 - It is cheaply available in my region
@@ -47,13 +46,12 @@ The PCB has been designed in KiCAD.
 
 - Footprints are chosen to be as large as possible where applicable, to facilitate hand-soldering.
 - The PCB has headers to which battery and speaker wires can be soldered.
-- Some symbols used have part numbers slightly different from the ones specified in this document. They've been used because they are first-party KiCAD footprints, and they have matching pin configuration. It's just a pain hunting for symbols online.
 - Certain measurements can be seen in the `User.Comments` layer.
 
 To load this KiCAD project, you will need to get the following third-party symbols and footprints:
 
 - [CSS-1210TB](https://app.ultralibrarian.com/details/711a64f8-0773-11ed-b159-0a34d6323d74/Nidec-Copal-Electronics/CSS-1210TB?uid=38990419&exports=KiCAD&open=exports)
-- [MAX98357AETE+T](https://vendor.ultralibrarian.com/ADI/embedded?mfrName=Maxim%20Integrated%20Products&mfrpn=MAX98357AETE%2bT)
 - [CMM-3526D-261-I2S-TR](https://www.cuidevices.com/product/resource/pcbfootprint/cmm-3526d-261-i2s-tr)
+- [ESP32](https://github.com/espressif/kicad-libraries)
 
 You will need to change the paths to the third party symbols in the library and footprint managers. I've just plonked everything in a gitignored folder called `third-party`.
