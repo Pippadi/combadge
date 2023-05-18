@@ -18,13 +18,9 @@ INMP441 mic;
 volatile bool shouldTransmit = false;
 volatile bool tapped = false;
 
-TaskHandle_t streamToSpeakerHandle;
 TaskHandle_t streamFromMicHandle;
 
-sample_t incomingBuf1[BUF_LEN];
-sample_t incomingBuf2[BUF_LEN];
-sample_t* incomingBuf = incomingBuf1;
-bool stopPlayback = false;
+sample_t incomingBuf[BUF_LEN];
 
 void IRAM_ATTR registerTap() {
     tapped = true;
@@ -82,40 +78,26 @@ void setup() {
 }
 
 void loop() {
+    size_t bytesRecvd, bytesWritten;
+
     while (!incomingConn) {
         incomingConn = server.available();
     }
-    Serial.println(incomingConn.remoteIP());
-    xTaskCreate(streamToSpeaker, "StreamToSpeaker", 10240, NULL, 0, &streamToSpeakerHandle);
-    while (incomingConn.connected()) {
-        if (incomingConn.available()) {
-            sample_t* bufToReadTo = (incomingBuf == incomingBuf1) ? incomingBuf2 : incomingBuf1;
-            size_t bytesRead = incomingConn.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*BUF_LEN);
-            incomingBuf = bufToReadTo;
-        }
-    }
-    stopPlayback = true;
-}
 
-void streamToSpeaker(void*) {
-    size_t bytesWritten;
-    sample_t* prevBuf = incomingBuf;
+    Serial.println(incomingConn.remoteIP());
     playSound(HailBeep, HailBeepSizeBytes);
     spk.wake();
-    while (true) {
-        if (prevBuf != incomingBuf) {
-            if (!spk.write((char*) incomingBuf, BUF_LEN*BYTES_PER_SAMPLE, &bytesWritten)) {
+
+    while (incomingConn.connected()) {
+        if (incomingConn.available()) {
+            bytesRecvd = incomingConn.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*BUF_LEN);
+            if (!spk.write((char*) incomingBuf, bytesRecvd, &bytesWritten)) {
                 Serial.println(bytesWritten / BYTES_PER_SAMPLE);
-            }
+            }      
         }
-        if (stopPlayback) {
-            stopPlayback = false;
-            spk.sleep();
-            vTaskDelete(NULL);
-            return;
-        }
-        prevBuf = incomingBuf;
     }
+
+    spk.sleep();
 }
 
 void streamFromMic(void*) {
