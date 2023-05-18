@@ -30,13 +30,15 @@ The [Taoglas SPKM.10.8.A](https://www.taoglas.com/product/10-mm-round-miniature-
 ## Power Management
 
 The unit runs on a lithium-polymer battery. Exact model and size undecided as of now. It will be one of the usual 3.7V LiPo cells.
-At this stage, though, I'm more concerned with battery management.
 
 All the chosen components of the combadge operate on 3.3V. I was hoping to find an all-in-one charging and voltage-regulating IC, but my searches yielded none for these parameters.
-For charging, I plan to use an [MCP73831](https://www.microchip.com/en-us/product/MCP73831) and a [TLV431AQFTA](https://www.diodes.com/assets/Datasheets/TLV431Q.pdf)-based circuit for over-discharge protection.
+For charging, I plan to use an [MCP73831](https://www.microchip.com/en-us/product/MCP73831).
 I found the 300mA [TLV74333PDBVR](https://www.ti.com/product/TLV743P/part-details/TLV74333PDBVR) LDO linear regulator for 3.3V power.
+A [TLV431AQFTA](https://www.diodes.com/assets/Datasheets/TLV431Q.pdf)-based circuit conditionally disables the regulator for over-discharge protection.
 
 I'm hoping decoupling capacitors will take care of any current spikes the ESP32 and speakers may need.
+When I was prototyping, I was powering everything off my computer's USB port. The INMP441 microphone module worked well, but the MAX98357 with no power supply filtering was horribly noisy.
+Some beefy electrolytic capacitors reduced the noise, but I feel I'll need ceramic capacitors with fast transient response times to completely eliminate it.
 
 # PCB
 
