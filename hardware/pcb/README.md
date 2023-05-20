@@ -36,9 +36,14 @@ For charging, I plan to use an [MCP73831](https://www.microchip.com/en-us/produc
 I found the 300mA [TLV74333PDBVR](https://www.ti.com/product/TLV743P/part-details/TLV74333PDBVR) LDO linear regulator for 3.3V power.
 A [TLV431AQFTA](https://www.diodes.com/assets/Datasheets/TLV431Q.pdf)-based circuit conditionally disables the regulator for over-discharge protection.
 
-I'm hoping decoupling capacitors will take care of any current spikes the ESP32 and speakers may need.
+I'm hoping bypass capacitors will take care of any current spikes the ESP32 and speakers may need.
+
 When I was prototyping, I was powering everything off my computer's USB port. The INMP441 microphone module worked well, but the MAX98357 with no power supply filtering was horribly noisy.
-Some beefy electrolytic capacitors reduced the noise, but I feel I'll need ceramic capacitors with fast transient response times to completely eliminate it.
+Some beefy electrolytic capacitors reduced the noise, but ceramic capacitors with faster transient response time would have worked better.
+The root cause of the noise turned out to be the fact that I was powering the speaker through the AMS1117 3.3V regulator on my ESP32 dev board.
+The regulator could not handle the current spikes demanded by the speaker, so its output voltage ended up dropping.
+Hooking the speaker up directly to the USB 5V line (VIN on my particular dev board) solved the issue.
+The PCB has been designed such that the amplifier is powered directly by the battery.
 
 # PCB
 

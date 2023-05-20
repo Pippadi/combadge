@@ -17,7 +17,7 @@ Finally, upload the code to the ESP32, and invoke the python script.
 python3 streamSound.py YourSound.raw
 ```
 
-Audio playback should be fairly smooth. If you have noise, it is very likely to be on the power supply line.
-Probing with an oscilloscope may be useful to diagnose issues. As mentioned in [hardware/pcb](/hardware/pcb), ceramic capacitors in addition to large electrolytic ones may help due to their quicker transient response time.
+Audio playback should be fairly smooth. If you have noise, it is very likely to be on the power supply line. Read
+Probing with an oscilloscope may be useful to diagnose issues. See [hardware/pcb](/hardware/pcb#power-management) for more insight.
 
 To make sure it's not your testing scripts that are at fault, use `streamSound.py` in conjunction with [/software/test/inmp441TCPStream/tcpRecorder.py](/software/test/inmp441TCPStream/tcpRecorder.py) to make sure that the sound you put in is the same sound you get out.
