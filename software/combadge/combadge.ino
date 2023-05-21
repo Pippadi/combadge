@@ -85,8 +85,8 @@ void loop() {
     }
 
     Serial.println(incomingConn.remoteIP());
-    playSound(HailBeep, HailBeepSizeBytes);
     spk.wake();
+    playSound(HailBeep, HailBeepSizeBytes);
 
     while (incomingConn.connected()) {
         if (incomingConn.available()) {
@@ -105,9 +105,12 @@ void streamFromMic(void*) {
 
     while (true) {
         while (!tapped) { vTaskDelay(10 / portTICK_PERIOD_MS); }
+
         playSound(TNGChirp1, TNGChirp1SizeBytes);
+
         vTaskDelay(250 / portTICK_PERIOD_MS);
         tapped = false;
+
         client.connect(BUDDY_IP, LISTEN_PORT);
         while (!client.connected()) { vTaskDelay(10 / portTICK_PERIOD_MS); };
         while (client.connected() && !tapped) {
@@ -128,7 +131,8 @@ void streamFromMic(void*) {
 
 void playSound(const sample_t* sound, const size_t soundSizeBytes) {
     size_t bytesWritten;
-    spk.wake();
+    bool spkAsleep = spk.asleep();
+    if (spkAsleep) { spk.wake(); }
     spk.write((char*) sound, soundSizeBytes, &bytesWritten);
-    spk.sleep();
+    if (spkAsleep) { spk.sleep(); }
 }
