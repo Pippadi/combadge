@@ -105,11 +105,8 @@ void streamFromMic(void*) {
 
     while (true) {
         while (!tapped) { vTaskDelay(10 / portTICK_PERIOD_MS); }
-
         playSound(TNGChirp1, TNGChirp1SizeBytes);
-
-        vTaskDelay(250 / portTICK_PERIOD_MS);
-        tapped = false;
+        waitTillTouchReleased();
 
         client.connect(BUDDY_IP, LISTEN_PORT);
         while (!client.connected()) { vTaskDelay(10 / portTICK_PERIOD_MS); };
@@ -123,9 +120,8 @@ void streamFromMic(void*) {
             }
         }
         client.stop();
-        vTaskDelay(250 / portTICK_PERIOD_MS);
-        tapped = false;
         playSound(TNGChirp2, TNGChirp2SizeBytes);
+        waitTillTouchReleased();
     }
 }
 
@@ -135,4 +131,11 @@ void playSound(const sample_t* sound, const size_t soundSizeBytes) {
     if (spkAsleep) { spk.wake(); }
     spk.write((char*) sound, soundSizeBytes, &bytesWritten);
     if (spkAsleep) { spk.sleep(); }
+}
+
+void waitTillTouchReleased() {
+    while (tapped) {
+        tapped = false;
+        vTaskDelay(100 / portTICK_PERIOD_MS); // Give interrupt 100ms to fire
+    }
 }
