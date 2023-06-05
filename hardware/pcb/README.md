@@ -15,30 +15,30 @@ I chose it because:
 ### Sound
 
 I've chosen to adopt I2S peripherals for this project, as they promise better audio quality than their analog counterparts, while reducing the amount of analog circuitry I have to design.
-The [ESP32-S3](https://docs.espressif.com/projects/esp-idf/en/v4.2.3/esp32/api-reference/peripherals/i2s.html) supports two I2S peripherals in hardware.
+The [ESP32-S3](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/api-reference/peripherals/i2s.html) supports two I2S peripherals in hardware.
 
 #### Microphone
 
 I've zeroed in on the [CMM-3526D-261-I2S-TR](https://www.cuidevices.com/product/audio/microphones/mems-microphones/cmm-3526d-261-i2s-tr).
-I suppose any similar microphone will do the job.
+Any similar microphone ought to do the job.
 
-For testing, I'm using the INMP441, because it's available as a module. I would have stuck with it for the PCB, but it seems to be discontinued by the manufacturer.
+I use the INMP441 because it's available as a module. I would have stuck with it for the PCB, but it seems to be discontinued by the manufacturer.
 
 #### Speaker
 
-With a speaker must come an amplifier. I chose the [MAX98357AETE+T](https://www.analog.com/en/products/max98357a.html#product-overview) because it's a class D amplifier that takes I2S input, and can drive a speaker with pretty much no external circuitry.
-It's also what I used to prototype.
-
 The [Taoglas SPKM.10.8.A](https://www.taoglas.com/product/10-mm-round-miniature-speaker-500mw/) seems like an adequate speaker for the job.
+
+A [MAX98357AETE+T](https://www.analog.com/en/products/max98357a.html#product-overview) class D amplifier drives the speaker.
+It's what I use to prototype.
 
 ### Power Management
 
 The unit runs on a lithium-polymer battery. Exact model and size undecided as of now. It will be one of the usual 3.7V LiPo cells.
 All the chosen components of the combadge operate on 3.3V. I was hoping to find an all-in-one charging and voltage-regulating IC, but my searches yielded none for these parameters.
 
-For charging, I plan to use an [MCP73831](https://www.microchip.com/en-us/product/MCP73831).
-I found the 300mA [TLV74333PDBVR](https://www.ti.com/product/TLV743P/part-details/TLV74333PDBVR) LDO linear regulator for 3.3V power.
-A [TLV431AQFTA](https://www.diodes.com/assets/Datasheets/TLV431Q.pdf)-based circuit conditionally disables the regulator for over-discharge protection.
+Charging is handled by an [MCP73831](https://www.microchip.com/en-us/product/MCP73831).
+A 300mA [TLV74333PDBVR](https://www.ti.com/product/TLV743P/part-details/TLV74333PDBVR) LDO linear regulator provides 3.3V power.
+A [TLV431AQFTA](https://www.diodes.com/assets/Datasheets/TLV431Q.pdf)-based circuit conditionally disables the regulator for battery over-discharge protection.
 
 ## PCB
 
@@ -58,7 +58,7 @@ This KiCAD project makes use of the following third-party symbols and footprints
 
 You will need to change the paths to the third party symbols in the library and footprint managers. I've just plonked everything in a gitignored folder called `third-party`.
 
-## Issues
+## Notes
 
 ### Crackling on speaker
 
