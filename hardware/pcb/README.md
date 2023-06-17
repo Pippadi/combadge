@@ -19,10 +19,10 @@ The [ESP32-S3](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/api
 
 #### Microphone
 
-I've zeroed in on the [CMM-3526D-261-I2S-TR](https://www.cuidevices.com/product/audio/microphones/mems-microphones/cmm-3526d-261-i2s-tr).
+I've zeroed in on the [Knowles SPH0645LM4H-1](https://www.knowles.com/docs/default-source/default-document-library/sph0645lm4h-1-datasheet.pdf?Status=Master&sfvrsn=751076b1_2).
 Any similar microphone ought to do the job.
 
-I use the INMP441 because it's available as a module. I would have stuck with it for the PCB, but it seems to be discontinued by the manufacturer.
+I use the INMP441 for prototyping because it's available as a module. I would have stuck with it for the PCB, but it seems to be discontinued by the manufacturer.
 
 #### Speaker
 
@@ -53,7 +53,6 @@ The PCB has been designed in KiCAD.
 This KiCAD project makes use of the following third-party symbols and footprints:
 
 - [CSS-1210TB](https://app.ultralibrarian.com/details/711a64f8-0773-11ed-b159-0a34d6323d74/Nidec-Copal-Electronics/CSS-1210TB?uid=38990419&exports=KiCAD&open=exports)
-- [CMM-3526D-261-I2S-TR](https://www.cuidevices.com/product/resource/pcbfootprint/cmm-3526d-261-i2s-tr)
 - [ESP32](https://github.com/espressif/kicad-libraries)
 
 You will need to change the paths to the third party symbols in the library and footprint managers. I've just plonked everything in a gitignored folder called `third-party`.
@@ -71,8 +70,3 @@ Hooking the speaker up directly to the USB 5V line (VIN on my particular dev boa
 
 The PCB has been designed such that the amplifier is powered directly by the battery.
 There are also some large low-transient-response-time ceramic capacitors for any bursts of energy components may need.
-
-### Microphone circuitry
-
-This isn't an issue, per se. The CMM-3526D-261-I2S-TR microphone chosen for this project has not been tested on prototypes.
-I couldn't find any cheap development boards for it. I'm taking a leap of faith.

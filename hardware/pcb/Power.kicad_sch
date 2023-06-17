@@ -1219,7 +1219,7 @@
   (symbol (lib_id "power:GND") (at 236.855 128.27 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 25f9196a-fb56-4306-a35f-9bfa90f3b609)
-    (property "Reference" "#PWR08" (at 236.855 134.62 0)
+    (property "Reference" "#PWR09" (at 236.855 134.62 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 236.855 133.35 0)
@@ -1235,7 +1235,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/522738f4-f6b2-4897-a079-07da122bd152"
-          (reference "#PWR08") (unit 1)
+          (reference "#PWR09") (unit 1)
         )
       )
     )
@@ -1271,7 +1271,7 @@
   (symbol (lib_id "power:GND") (at 76.835 114.935 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 34174095-f76f-4fff-baff-7bccd99b8afa)
-    (property "Reference" "#PWR05" (at 76.835 121.285 0)
+    (property "Reference" "#PWR04" (at 76.835 121.285 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 76.835 120.015 0)
@@ -1287,7 +1287,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/522738f4-f6b2-4897-a079-07da122bd152"
-          (reference "#PWR05") (unit 1)
+          (reference "#PWR04") (unit 1)
         )
       )
     )
@@ -1296,7 +1296,7 @@
   (symbol (lib_id "power:+3.3V") (at 248.285 88.9 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 387176de-cf98-49f3-80ff-32c97242a09f)
-    (property "Reference" "#PWR09" (at 248.285 92.71 0)
+    (property "Reference" "#PWR010" (at 248.285 92.71 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3.3V" (at 248.285 85.09 0)
@@ -1312,7 +1312,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/522738f4-f6b2-4897-a079-07da122bd152"
-          (reference "#PWR09") (unit 1)
+          (reference "#PWR010") (unit 1)
         )
       )
     )
@@ -1321,7 +1321,7 @@
   (symbol (lib_id "Device:R_US") (at 203.835 121.92 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 3877f04b-fe2f-42cf-9eef-fda6ea979a02)
-    (property "Reference" "R3" (at 206.375 121.285 0)
+    (property "Reference" "R4" (at 206.375 121.285 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "120k" (at 206.375 123.825 0)
@@ -1338,7 +1338,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/522738f4-f6b2-4897-a079-07da122bd152"
-          (reference "R3") (unit 1)
+          (reference "R4") (unit 1)
         )
       )
     )
@@ -1451,7 +1451,7 @@
   (symbol (lib_id "Device:R_US") (at 203.835 109.855 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 6fa27e1b-f1dd-4e88-ac50-2e2c57789aa2)
-    (property "Reference" "R2" (at 206.375 109.22 0)
+    (property "Reference" "R3" (at 206.375 109.22 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "220k" (at 206.375 111.76 0)
@@ -1468,7 +1468,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/522738f4-f6b2-4897-a079-07da122bd152"
-          (reference "R2") (unit 1)
+          (reference "R3") (unit 1)
         )
       )
     )
@@ -1477,7 +1477,7 @@
   (symbol (lib_id "Device:R_US") (at 210.82 92.075 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 79ac3f79-f609-40d6-9c27-c97d084707c3)
-    (property "Reference" "R4" (at 207.01 90.805 0)
+    (property "Reference" "R5" (at 207.01 90.805 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 207.01 93.345 0)
@@ -1494,7 +1494,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/522738f4-f6b2-4897-a079-07da122bd152"
-          (reference "R4") (unit 1)
+          (reference "R5") (unit 1)
         )
       )
     )
@@ -1558,7 +1558,7 @@
   (symbol (lib_id "power:+BATT") (at 117.475 105.41 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid c0950ab6-3316-4edf-820b-a633f67fdc64)
-    (property "Reference" "#PWR07" (at 117.475 109.22 0)
+    (property "Reference" "#PWR06" (at 117.475 109.22 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+BATT" (at 117.475 101.6 0)
@@ -1574,7 +1574,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/522738f4-f6b2-4897-a079-07da122bd152"
-          (reference "#PWR07") (unit 1)
+          (reference "#PWR06") (unit 1)
         )
       )
     )
@@ -1612,7 +1612,7 @@
   (symbol (lib_id "power:VBUS") (at 96.52 78.74 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid cc570ccd-cb96-44c6-9baf-270842475248)
-    (property "Reference" "#PWR06" (at 96.52 82.55 0)
+    (property "Reference" "#PWR05" (at 96.52 82.55 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "VBUS" (at 96.52 75.565 0)
@@ -1628,7 +1628,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/522738f4-f6b2-4897-a079-07da122bd152"
-          (reference "#PWR06") (unit 1)
+          (reference "#PWR05") (unit 1)
         )
       )
     )
@@ -1637,7 +1637,7 @@
   (symbol (lib_name "+BATT_2") (lib_id "power:+BATT") (at 172.72 78.74 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid d61949cb-d99d-4e9b-b105-618d0e49206f)
-    (property "Reference" "#PWR04" (at 172.72 82.55 0)
+    (property "Reference" "#PWR08" (at 172.72 82.55 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+BATT" (at 172.72 74.93 0)
@@ -1653,7 +1653,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/522738f4-f6b2-4897-a079-07da122bd152"
-          (reference "#PWR04") (unit 1)
+          (reference "#PWR08") (unit 1)
         )
       )
     )
@@ -1715,7 +1715,7 @@
   (symbol (lib_name "GND_1") (lib_id "power:GND") (at 143.51 98.425 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid f29501e3-2006-43fc-9a53-4b877462d9a6)
-    (property "Reference" "#PWR010" (at 143.51 104.775 0)
+    (property "Reference" "#PWR07" (at 143.51 104.775 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 143.51 102.87 0)
@@ -1731,7 +1731,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/522738f4-f6b2-4897-a079-07da122bd152"
-          (reference "#PWR010") (unit 1)
+          (reference "#PWR07") (unit 1)
         )
       )
     )
@@ -1740,7 +1740,7 @@
   (symbol (lib_id "Device:R_US") (at 122.555 95.25 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid f3c45ce8-e83e-4acd-ac33-5d89966d5628)
-    (property "Reference" "R5" (at 122.555 90.17 90)
+    (property "Reference" "R2" (at 122.555 90.17 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "150" (at 122.555 92.71 90)
@@ -1757,7 +1757,7 @@
     (instances
       (project "Combadge"
         (path "/dc42e7bc-f663-434d-8744-232038ac4fdf/522738f4-f6b2-4897-a079-07da122bd152"
-          (reference "R5") (unit 1)
+          (reference "R2") (unit 1)
         )
       )
     )
