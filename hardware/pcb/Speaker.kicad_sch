@@ -613,7 +613,7 @@
   )
 
   (symbol (lib_id "Device:Speaker") (at 102.87 101.6 180) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
+    (in_bom no) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 468b0055-25c0-405a-9da9-b206950fa52e)
     (property "Reference" "LS1" (at 102.362 90.17 0)
       (effects (font (size 1.27 1.27)))
