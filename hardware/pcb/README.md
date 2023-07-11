@@ -46,14 +46,11 @@ The PCB has been designed in KiCAD.
 
 ![PCB](assets/pcb.png)
 
-- Footprints are chosen to be as large as possible where applicable, to facilitate hand-soldering.
+- Footprints are chosen to be as large as possible where applicable, to facilitate hand-soldering or rework.
 - The PCB has headers to which battery and speaker wires can be soldered.
 - Certain measurements can be seen in the `User.Comments` layer.
 
-This KiCAD project makes use of the following third-party symbols and footprints:
-
-- [CSS-1210TB](https://app.ultralibrarian.com/details/711a64f8-0773-11ed-b159-0a34d6323d74/Nidec-Copal-Electronics/CSS-1210TB?uid=38990419&exports=KiCAD&open=exports)
-- [ESP32](https://github.com/espressif/kicad-libraries)
+This project makes use of the official Espressif [ESP32 KiCAD libraries](https://github.com/espressif/kicad-libraries).
 
 You will need to change the paths to the third party symbols in the library and footprint managers. I've just plonked everything in a gitignored folder called `third-party`.
 

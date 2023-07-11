@@ -2,4 +2,5 @@
   (version 7)
   (lib (name "CSS-1210TB")(type "KiCad")(uri "${KIPRJMOD}/third-party/CSS-1210TB.pretty")(options "")(descr ""))
   (lib (name "Espressif")(type "KiCad")(uri "${KIPRJMOD}/third-party/esp32-kicad/footprints/Espressif.pretty")(options "")(descr ""))
+  (lib (name "NidecCSS")(type "KiCad")(uri "${KIPRJMOD}/NidecCSS.pretty")(options "")(descr ""))
 )
