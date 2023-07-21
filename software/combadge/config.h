@@ -17,16 +17,19 @@ typedef int16_t sample_t;
 
 #define SAMPLE_RATE 44100
 
-// In samples
-#define BUF_LEN 2048
+#define BUF_LEN_SAMPLES 2048
+#define BUF_LEN_BYTES BUF_LEN_SAMPLES * BYTES_PER_SAMPLE
 
-#define BUF_FULL_INTERVAL_ms int(float(BUF_LEN) * 1000.0 / float(SAMPLE_RATE))
+#define PACKET_LEN_SAMPLES BUF_LEN_SAMPLES + 1
+#define PACKET_LEN_BYTES PACKET_LEN_SAMPLES * BYTES_PER_SAMPLE
+
+#define BUF_FULL_INTERVAL_ms int(float(BUF_LEN_SAMPLES) * 1000.0 / float(SAMPLE_RATE))
 
 #define WIFI_SSID "YourSSID"
 #define WIFI_PASSWORD "YourPassword"
 
-#define BUDDY_IP IPAddress(192, 168, 142, 105)
-#define LISTEN_PORT 1592
+#define BRIDGE "192.168.142.40"
+#define LISTEN_PORT 1701
 
 #define TOUCH_PIN 14
 #define TOUCH_THRESHOLD 30

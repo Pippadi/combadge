@@ -68,10 +68,10 @@ void setup() {
 
 void loop() {
     size_t bytesRecvd, bytesWritten;
-    static sample_t incomingBuf[BUF_LEN+1];
+    static sample_t incomingBuf[PACKET_LEN_SAMPLES];
 
     if (conn.available()) {
-        bytesRecvd = conn.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*(BUF_LEN + 1));
+        bytesRecvd = conn.read((uint8_t*) incomingBuf, PACKET_LEN_BYTES);
         if (bytesRecvd > 0) {
             switch (incomingBuf[0]) { // Packet type
                 case AUDIO_START:
@@ -83,7 +83,7 @@ void loop() {
                     break;
                 case AUDIO_DATA:
                     if (!spk.asleep())
-                        spk.write((char*) &incomingBuf[1], bytesRecvd - sizeof(sample_t), &bytesWritten);
+                        spk.write((char*) &incomingBuf[1], bytesRecvd - BYTES_PER_SAMPLE, &bytesWritten);
                     break;
             }
         }
@@ -94,7 +94,7 @@ void loop() {
 }
 
 void streamFromMic(void*) {
-    static sample_t outgoingBuf[BUF_LEN + 1];
+    static sample_t outgoingBuf[PACKET_LEN_SAMPLES];
 
     while (true) {
         while (!tapped || !conn.connected()) { vTaskDelay(10 / portTICK_PERIOD_MS); }
@@ -106,7 +106,7 @@ void streamFromMic(void*) {
             // Dividing interval by two so that the buffer doesn't fill up before we're ready to send it
             vTaskDelay(BUF_FULL_INTERVAL_ms / 2 / portTICK_PERIOD_MS);
             // Using outgoingBuf directly because sample_t is int16_t already
-            size_t samplesRead = mic.read(&outgoingBuf[1], BUF_LEN);
+            size_t samplesRead = mic.read(&outgoingBuf[1], BUF_LEN_SAMPLES);
             outgoingBuf[0] = AUDIO_DATA;
             if (samplesRead) {
                 conn.write((uint8_t*) outgoingBuf, (samplesRead+1)*BYTES_PER_SAMPLE);
@@ -147,7 +147,7 @@ void establishConnection() {
     Serial.println(WiFi.localIP());
 
     conn.stop();
-    conn.connect(BUDDY_IP, LISTEN_PORT);
+    conn.connect(BRIDGE, LISTEN_PORT);
     while (!conn.connected()) { vTaskDelay(10 / portTICK_PERIOD_MS); };
-    Serial.print("Connected to "); Serial.println(BUDDY_IP);
+    Serial.print("Connected to "); Serial.println(BRIDGE);
 }
