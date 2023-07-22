@@ -12,6 +12,16 @@
 #define AUDIO_STOP 0x02
 #define AUDIO_DATA 0x03
 
+typedef struct {
+    uint32_t  type; // No padding = good
+    uint32_t size;
+} PacketHeader;
+
+typedef struct {
+    PacketHeader header;
+    sample_t data[BUF_LEN_SAMPLES];
+} AudioData;
+
 WiFiClient conn;
 
 MAX98357 spk;
@@ -49,10 +59,10 @@ void setup() {
     }
 
     MAX98357PinCfg spkPins = {
-    .bclk = SPK_BCLK,
-    .ws = SPK_WS,
-    .data = SPK_DATA,
-    .enable = SPK_EN,
+        .bclk = SPK_BCLK,
+        .ws = SPK_WS,
+        .data = SPK_DATA,
+        .enable = SPK_EN,
     };
     if (!spk.begin(SPK_PORT, i2scfg, spkPins)) {
         Serial.println("Failed initializing speaker");
@@ -68,12 +78,13 @@ void setup() {
 
 void loop() {
     size_t bytesRecvd, bytesWritten;
-    static sample_t incomingBuf[PACKET_LEN_SAMPLES];
+    static uint8_t rawBuf[PACKET_LEN_BYTES];
+    sample_t* audioBuf = (sample_t*) &rawBuf[1];
 
     if (conn.available()) {
-        bytesRecvd = conn.read((uint8_t*) incomingBuf, PACKET_LEN_BYTES);
+        bytesRecvd = conn.read(rawBuf, PACKET_LEN_BYTES);
         if (bytesRecvd > 0) {
-            switch (incomingBuf[0]) { // Packet type
+            switch (rawBuf[0]) { // Packet type
                 case AUDIO_START:
                     spk.wake();
                     playSound(HailBeep, HailBeepSizeBytes);
@@ -83,7 +94,7 @@ void loop() {
                     break;
                 case AUDIO_DATA:
                     if (!spk.asleep())
-                        spk.write((char*) &incomingBuf[1], bytesRecvd - BYTES_PER_SAMPLE, &bytesWritten);
+                        spk.write((char*) audioBuf, bytesRecvd - BYTES_PER_SAMPLE, &bytesWritten);
                     break;
             }
         }
@@ -94,25 +105,31 @@ void loop() {
 }
 
 void streamFromMic(void*) {
-    static sample_t outgoingBuf[PACKET_LEN_SAMPLES];
+    static AudioData audio = {};
+    audio.header.type = AUDIO_DATA;
 
     while (true) {
         while (!tapped || !conn.connected()) { vTaskDelay(10 / portTICK_PERIOD_MS); }
         playSound(TNGChirp1, TNGChirp1SizeBytes);
         waitTillTouchReleased();
-        conn.write(AUDIO_START);
+
+        PacketHeader startMsg = {AUDIO_START, 0};
+        conn.write((uint8_t*) &startMsg, sizeof(startMsg));
 
         while (conn.connected() && !tapped) {
             // Dividing interval by two so that the buffer doesn't fill up before we're ready to send it
             vTaskDelay(BUF_FULL_INTERVAL_ms / 2 / portTICK_PERIOD_MS);
             // Using outgoingBuf directly because sample_t is int16_t already
-            size_t samplesRead = mic.read(&outgoingBuf[1], BUF_LEN_SAMPLES);
-            outgoingBuf[0] = AUDIO_DATA;
+            size_t samplesRead = mic.read(audio.data, BUF_LEN_SAMPLES);
             if (samplesRead) {
-                conn.write((uint8_t*) outgoingBuf, (samplesRead+1)*BYTES_PER_SAMPLE);
+                audio.header.type = AUDIO_DATA;
+                audio.header.size = samplesRead * BYTES_PER_SAMPLE;
+                conn.write((uint8_t*) &audio, sizeof(audio.header) + audio.header.size);
             }
         }
-        conn.write(AUDIO_STOP);
+
+        PacketHeader stopMsg = {AUDIO_STOP, 0};
+        conn.write((uint8_t*) &stopMsg, sizeof(stopMsg));
         playSound(TNGChirp2, TNGChirp2SizeBytes);
         waitTillTouchReleased();
     }
