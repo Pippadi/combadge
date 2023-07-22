@@ -76,9 +76,16 @@ func main() {
 					loggo.Info(incomingAddr, "stopping audio")
 				case audioData:
 					loggo.Info(incomingAddr, "sending audio")
-					incomingConn.Read(make([]byte, header.Size))
+					var totalRead uint32 = 0
+					for totalRead != header.Size {
+						n, err = incomingConn.Read(make([]byte, header.Size-totalRead))
+						if err != nil {
+							return
+						}
+						totalRead += uint32(n)
+					}
 				default:
-					loggo.Errorf("Unknown packet type 0x%x", header.Type)
+					loggo.Infof("Unknown packet type 0x%x", header.Type)
 				}
 			}
 		}()
