@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"unsafe"
@@ -76,13 +77,9 @@ func main() {
 					loggo.Info(incomingAddr, "stopping audio")
 				case audioData:
 					loggo.Info(incomingAddr, "sending audio")
-					var totalRead uint32 = 0
-					for totalRead != header.Size {
-						n, err = incomingConn.Read(make([]byte, header.Size-totalRead))
-						if err != nil {
-							return
-						}
-						totalRead += uint32(n)
+					_, err = readAllFragments(incomingConn, int(header.Size))
+					if err != nil {
+						return
 					}
 				default:
 					loggo.Infof("Unknown packet type 0x%x", header.Type)
@@ -90,4 +87,17 @@ func main() {
 			}
 		}()
 	}
+}
+
+func readAllFragments(f io.Reader, size int) ([]byte, error) {
+	final := make([]byte, 0)
+	for len(final) != size {
+		chunk := make([]byte, size-len(final))
+		n, err := f.Read(chunk)
+		if err != nil {
+			return nil, err
+		}
+		final = append(final, chunk[:n]...)
+	}
+	return final, nil
 }
