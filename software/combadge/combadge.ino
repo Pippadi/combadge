@@ -78,13 +78,13 @@ void setup() {
 
 void loop() {
     size_t bytesRecvd, bytesWritten;
-    static uint8_t rawBuf[PACKET_LEN_BYTES];
-    sample_t* audioBuf = (sample_t*) &rawBuf[1];
+    PacketHeader header;
+    AudioData ad;
 
     if (conn.available()) {
-        bytesRecvd = conn.read(rawBuf, PACKET_LEN_BYTES);
+        bytesRecvd = conn.read((uint8_t*) &header, sizeof(PacketHeader));
         if (bytesRecvd > 0) {
-            switch (rawBuf[0]) { // Packet type
+            switch (header.type) { // Packet type
                 case AUDIO_START:
                     spk.wake();
                     playSound(HailBeep, HailBeepSizeBytes);
@@ -93,8 +93,9 @@ void loop() {
                     spk.sleep();
                     break;
                 case AUDIO_DATA:
+                    bytesRecvd = conn.read((uint8_t*) &(ad.data), sizeof(ad.data));
                     if (!spk.asleep())
-                        spk.write((char*) audioBuf, bytesRecvd - BYTES_PER_SAMPLE, &bytesWritten);
+                        spk.write((char*) &(ad.data), bytesRecvd - BYTES_PER_SAMPLE, &bytesWritten);
                     break;
             }
         }
