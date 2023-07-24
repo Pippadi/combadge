@@ -1,4 +1,4 @@
-module github.com/Pippadi/combadge/bridge
+module github.com/Pippadi/combadge/combridge
 
 go 1.20
 

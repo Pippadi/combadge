@@ -1,14 +1,32 @@
 package badge
 
-import actor "gitlab.com/prithvivishak/goactor"
+import (
+	"github.com/Pippadi/combadge/combridge/protocol"
+	actor "gitlab.com/prithvivishak/goactor"
+)
 
-type badgeManager interface {
-	ProcessAudio(buf AudioBuf)
+type audioDev interface {
+	ProcessAudioFrom(src actor.Inbox, buf protocol.AudioBuf)
+	RegisterTransmitStart()
+	RegisterTransmitStop()
 }
 
-func sendAudioBuf(dest actor.Inbox, buf AudioBuf) {
+func SendAudioBuf(dest actor.Inbox, src actor.Inbox, buf protocol.AudioBuf) {
 	dest <- func(a actor.Actor) error {
-		a.(badgeManager).ProcessAudio(buf)
+		a.(audioDev).ProcessAudioFrom(src, buf)
+		return nil
+	}
+}
+
+func SendTransmitStart(dest actor.Inbox) {
+	dest <- func(a actor.Actor) error {
+		a.(audioDev).RegisterTransmitStart()
+		return nil
+	}
+}
+func SendTransmitStop(dest actor.Inbox) {
+	dest <- func(a actor.Actor) error {
+		a.(audioDev).RegisterTransmitStop()
 		return nil
 	}
 }

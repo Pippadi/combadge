@@ -1,7 +1,7 @@
 package listener
 
 import (
-	"github.com/Pippadi/combadge/bridge/badge"
+	"github.com/Pippadi/combadge/combridge/badge"
 	actor "gitlab.com/prithvivishak/goactor"
 )
 

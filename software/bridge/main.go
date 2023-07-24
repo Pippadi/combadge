@@ -5,31 +5,14 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Pippadi/combadge/bridge/badge"
-	"github.com/Pippadi/combadge/bridge/listener"
+	"github.com/Pippadi/combadge/combridge/bridge"
 	"github.com/Pippadi/loggo"
 	actor "gitlab.com/prithvivishak/goactor"
 )
 
-type bridge struct {
-	actor.Base
-}
-
-func (b *bridge) Initialize() error {
-	_, err := b.SpawnNested(new(listener.Listener), "Listener")
-	return err
-}
-
-func (b *bridge) AcceptBadge(bdg *badge.Badge) {
-	loggo.Info("Badge connected")
-}
-
-func (b *bridge) ProcessAudio(dat badge.AudioBuf) {
-	loggo.Info("Got data")
-}
-
 func main() {
-	stop, bridgeIbx, err := actor.SpawnRoot(new(bridge), "Bridge")
+	loggo.SetLevel(loggo.DebugLevel)
+	stop, bridgeIbx, err := actor.SpawnRoot(bridge.New(), "Bridge")
 	if err != nil {
 		loggo.Error(err)
 		os.Exit(1)

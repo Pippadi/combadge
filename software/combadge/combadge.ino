@@ -87,20 +87,24 @@ void loop() {
             switch (header.type) { // Packet type
                 case AUDIO_START:
                     spk.wake();
+                    Serial.println("Starting playback");
                     playSound(HailBeep, HailBeepSizeBytes);
                     break;
                 case AUDIO_STOP:
                     spk.sleep();
+                    Serial.println("Stopping playback");
                     break;
                 case AUDIO_DATA:
+                    Serial.println("Got samples to play back");
                     bytesRecvd = conn.read((uint8_t*) &(ad.data), sizeof(ad.data));
                     if (!spk.asleep())
-                        spk.write((char*) &(ad.data), bytesRecvd - BYTES_PER_SAMPLE, &bytesWritten);
+                        spk.write((char*) &(ad.data), bytesRecvd, &bytesWritten);
                     break;
             }
         }
     }
     else if (!conn.connected()) {
+        spk.sleep();
         establishConnection();
     }
 }
