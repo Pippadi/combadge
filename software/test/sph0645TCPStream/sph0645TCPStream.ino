@@ -2,7 +2,7 @@
 #include <soc/i2s_reg.h>
 #include <WiFi.h>
 
-#define BUF_LEN 512
+#define BUF_LEN 2048
 #define SAMPLE_RATE 44100
 #define I2S_PORT I2S_NUM_0
 
@@ -12,7 +12,7 @@
 #define WS_PIN 17
 
 // Change me
-#define PC_IP IPAddress(192, 168, 1, 10)
+#define PC_IP IPAddress(192, 168, 1, 100)
 #define SSID "YourSSID"
 #define PASSWORD "YourPassword"
 
@@ -54,8 +54,8 @@ void setup() {
         Serial.println("I2S driver initialization failed");
         while (true);
     }
+    //REG_SET_BIT(I2S_RX_TIMING_REG(I2S_PORT), BIT(0));
     REG_SET_BIT(I2S_RX_TIMING_REG(I2S_PORT), BIT(1));
-    //REG_SET_BIT(I2S_RX_TIMING_REG(I2S_PORT), BIT(17));
     REG_SET_BIT(I2S_RX_CONF1_REG(I2S_PORT), I2S_RX_MSB_SHIFT);
     err = i2s_set_pin(I2S_PORT, &micPins);
     if (err != ESP_OK) {
@@ -70,37 +70,36 @@ void setup() {
     }
     Serial.println("Connected to WiFi!");
     Serial.println(WiFi.localIP());
+    Serial.println(WiFi.macAddress());
 
     while (!client.connected()) {
         delay(500);
         Serial.print(".");
         client.connect(PC_IP, LISTEN_PORT);
     }
+    client.setNoDelay(true);
     Serial.println("Connected to PC");
 }
 
 void loop() {
-    static uint32_t buf32[BUF_LEN];
-    static uint16_t buf16[BUF_LEN];
+    static int32_t buf32[BUF_LEN];
+    static int16_t buf16[BUF_LEN];
     size_t bytesRead;
 
-    delay(int(1000.0 * float(BUF_LEN) / (float(SAMPLE_RATE)) * 2));
-
-    esp_err_t err = i2s_read(I2S_PORT, (uint8_t*) buf32, BUF_LEN*sizeof(uint32_t), &bytesRead, portMAX_DELAY);
+    esp_err_t err = i2s_read(I2S_PORT, (uint8_t*) buf32, BUF_LEN*sizeof(int32_t), &bytesRead, portMAX_DELAY);
     if (err != ESP_OK) {
         Serial.println("Error reading from microphone");
         Serial.println(err);
         return;
     }
 
-    size_t samplesRead = bytesRead / sizeof(uint32_t);
+    size_t samplesRead = bytesRead / sizeof(int32_t);
     for (int i=0; i<samplesRead; i++) {
-        // Discard unused lower 8 bits, and get rid of 3 bits of noise.
-        // The number 11 was empirically determined to provide the best signal.
-        buf32[i] >>= 11;
-        buf32[i] &= 0xFFFF; // Truncate loud sounds
-        buf16[i] = (uint16_t) buf32[i];
+        // Discard unused lower 12 bits. Sign bit is already where it needs to be.
+        buf32[i] >>= 12;
+        buf16[i] = (int16_t) (buf32[i] & 0xFFFF);
     }
 
-    client.write((uint8_t*) buf16, samplesRead * sizeof(uint16_t));
+    client.write((uint8_t*) buf16, samplesRead * sizeof(int16_t));
+    client.flush();
 }

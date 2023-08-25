@@ -1,7 +1,7 @@
 #include <driver/i2s.h>
 #include <WiFi.h>
 
-#define BUF_LEN 512
+#define BUF_LEN 2048
 #define SAMPLE_RATE 44100
 #define I2S_PORT I2S_NUM_0
 
