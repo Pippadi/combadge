@@ -1,9 +1,10 @@
 #include <WiFi.h>
 #include <AsyncUDP.h>
+#include "driver/adc.h"
 #include "config.h"
 #include "src/i2scfg.h"
 #include "src/max98357.h"
-#include "src/inmp441.h"
+#include "src/sph0645.h"
 #include "sounds/HailBeep.h"
 #include "sounds/TNGChirp1.h"
 #include "sounds/TNGChirp2.h"
@@ -25,7 +26,12 @@ typedef struct {
 WiFiClient conn;
 
 MAX98357 spk;
+
+#ifdef MIC_SPH0645
+SPH0645 mic;
+#else
 INMP441 mic;
+#endif
 
 volatile bool tapped = false;
 
@@ -38,8 +44,10 @@ void IRAM_ATTR registerTap() {
 void setup() {
     setCpuFrequencyMhz(80);
     btStop();
-    adc_power_off();
     Serial.begin(115200);
+
+    pinMode(LED, OUTPUT);
+    digitalWrite(LED, LOW);
 
     establishConnection();
 
@@ -48,14 +56,15 @@ void setup() {
         .bitsPerSample = BITS_PER_SAMPLE,
     };
 
-    INMP441PinCfg micPins = {
+    MicPinCfg micPins = {
         .bclk = MIC_BCLK,
         .ws = MIC_WS,
         .data = MIC_DATA,
     };
     if (!mic.begin(MIC_PORT, i2scfg, micPins)) {
         Serial.println("Failed initializing microphone");
-        while (true);
+        while (true)
+            blinkCycle(100);
     }
 
     MAX98357PinCfg spkPins = {
@@ -66,7 +75,8 @@ void setup() {
     };
     if (!spk.begin(SPK_PORT, i2scfg, spkPins)) {
         Serial.println("Failed initializing speaker");
-        while (true);
+        while (true)
+            blinkCycle(100);
     }
 
     playSound(TNGChirp1, TNGChirp1SizeBytes);
@@ -158,18 +168,30 @@ void waitTillTouchReleased() {
 }
 
 void establishConnection() {
-    WiFi.setSleep(true);
-    WiFi.setAutoReconnect(true);
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    while (!WiFi.isConnected()) {
-        delay(500);
-        Serial.print(".");
+    if (!WiFi.isConnected()) {
+        WiFi.setSleep(true);
+        WiFi.setAutoReconnect(true);
+        WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+        while (!WiFi.isConnected()) {
+            blinkCycle(150);
+            Serial.print(".");
+        }
+        Serial.println("Connected to WiFi!");
+        Serial.println(WiFi.localIP());
+        Serial.println(WiFi.macAddress());
     }
-    Serial.println("Connected to WiFi!");
-    Serial.println(WiFi.localIP());
 
     conn.stop();
-    conn.connect(BRIDGE, LISTEN_PORT);
-    while (!conn.connected()) { vTaskDelay(10 / portTICK_PERIOD_MS); };
+    while (!conn.connected()) {
+        blinkCycle(200);
+        conn.connect(BRIDGE, LISTEN_PORT);
+    }
     Serial.print("Connected to "); Serial.println(BRIDGE);
+}
+
+void blinkCycle(int dur_ms) {
+    digitalWrite(LED, HIGH);
+    delay(dur_ms);
+    digitalWrite(LED, LOW);
+    delay(dur_ms);
 }

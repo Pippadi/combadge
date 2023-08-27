@@ -1,14 +1,22 @@
 #include "driver/i2s.h"
 
-#define MIC_WS 25
-#define MIC_DATA 33
-#define MIC_BCLK 32
+//#define SOC_ESP32
+#define SOC_ESP32_S3
+
+#define LED 1
+
+//#define MIC_INMP441
+#define MIC_SPH0645
+
+#define MIC_WS 17
+#define MIC_DATA 7
+#define MIC_BCLK 4
 #define MIC_PORT I2S_NUM_0
 
-#define SPK_WS 13
-#define SPK_DATA 27
-#define SPK_BCLK 12
-#define SPK_EN 26
+#define SPK_WS 9
+#define SPK_DATA 11
+#define SPK_BCLK 10
+#define SPK_EN 18
 #define SPK_PORT I2S_NUM_1
 
 typedef int16_t sample_t;
@@ -25,7 +33,7 @@ typedef int16_t sample_t;
 #define WIFI_SSID "YourSSID"
 #define WIFI_PASSWORD "YourPassword"
 
-#define BRIDGE "192.168.142.40"
+#define BRIDGE "192.168.8.100"
 #define LISTEN_PORT 1701
 
 #define TOUCH_PIN 14
