@@ -67,3 +67,17 @@ Hooking the speaker up directly to the USB 5V line (VIN on my particular dev boa
 
 The PCB has been designed such that the amplifier is powered directly by the battery.
 There are also some large low-transient-response-time ceramic capacitors for any bursts of energy components may need.
+
+### SPH0645LM4H woes
+
+The SPH0645 is known to have some quirks in its I2S interface, to do with the synchronization of the clock and data signals.
+In addition, the signal it outputs has a weird offset from 0.
+
+The required workaround for the first problem has been successfully implemented and the second is more of an annoyance.
+Nevertheless, a future board revision may be better off with a more standard-compliant microphone like the ICS43434.
+
+### Power stability during battery-less operation
+
+The MCP73831 datasheet specifies a minimum value of 4.7uF for a capacitor across the battery side (C2 here) for stable supply when the battery is disconnected.
+This is enough for the ESP32-S3 to boot, but not enough for more current-demanding tasks like turning on WiFi.
+Future board revisions should have more and bigger capacitors to avoid brownouts when testing without a battery.
