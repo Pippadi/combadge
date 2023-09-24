@@ -36,5 +36,10 @@ typedef int16_t sample_t;
 #define BRIDGE "192.168.8.100"
 #define LISTEN_PORT 1701
 
-#define TOUCH_PIN 14
+#define TOUCH_PIN 8
+
+#ifdef SOC_ESP32
 #define TOUCH_THRESHOLD 30
+#else
+#define TOUCH_THRESHOLD 40000
+#endif

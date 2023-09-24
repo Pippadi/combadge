@@ -33,12 +33,18 @@ SPH0645 mic;
 INMP441 mic;
 #endif
 
-volatile bool tapped = false;
+volatile bool touched = false;
 
 TaskHandle_t streamFromMicHandle;
 
-void IRAM_ATTR registerTap() {
-    tapped = true;
+void IRAM_ATTR touchISR() {
+#ifdef SOC_ESP32
+    if (!touched) {
+        touched = true;
+    }
+#else
+    touched = touchInterruptGetLastStatus(TOUCH_PIN);
+#endif
 }
 
 void setup() {
@@ -83,7 +89,7 @@ void setup() {
 
     xTaskCreate(streamFromMic, "StreamFromMic", 10240, NULL, 0, &streamFromMicHandle);
 
-    touchAttachInterrupt(TOUCH_PIN, registerTap, TOUCH_THRESHOLD);
+    touchAttachInterrupt(TOUCH_PIN, touchISR, TOUCH_THRESHOLD);
 }
 
 void loop() {
@@ -124,14 +130,14 @@ void streamFromMic(void*) {
     audio.header.type = AUDIO_DATA;
 
     while (true) {
-        while (!tapped || !conn.connected()) { vTaskDelay(10 / portTICK_PERIOD_MS); }
+        while (!touched || !conn.connected()) { vTaskDelay(10 / portTICK_PERIOD_MS); }
         playSound(TNGChirp1, TNGChirp1SizeBytes);
         waitTillTouchReleased();
 
         PacketHeader startMsg = {AUDIO_START, 0};
         conn.write((uint8_t*) &startMsg, sizeof(startMsg));
 
-        while (conn.connected() && !tapped) {
+        while (conn.connected() && !touched) {
             // Dividing interval by two so that the buffer doesn't fill up before we're ready to send it
             vTaskDelay(BUF_FULL_INTERVAL_ms / 2 / portTICK_PERIOD_MS);
             // Using outgoingBuf directly because sample_t is int16_t already
@@ -161,8 +167,10 @@ void playSound(const sample_t* sound, const size_t soundSizeBytes) {
 }
 
 void waitTillTouchReleased() {
-    while (tapped) {
-        tapped = false;
+    while (touched) {
+#ifdef SOC_ESP32
+        touched = false;
+#endif
         vTaskDelay(100 / portTICK_PERIOD_MS); // Give interrupt 100ms to fire
     }
 }
@@ -191,7 +199,7 @@ void establishConnection() {
 
 void blinkCycle(int dur_ms) {
     digitalWrite(LED, HIGH);
-    delay(dur_ms);
+    vTaskDelay(dur_ms / portTICK_PERIOD_MS);
     digitalWrite(LED, LOW);
-    delay(dur_ms);
+    vTaskDelay(dur_ms / portTICK_PERIOD_MS);
 }
