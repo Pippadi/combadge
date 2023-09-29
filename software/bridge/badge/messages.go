@@ -7,8 +7,8 @@ import (
 
 type audioDev interface {
 	ProcessAudioFrom(src actor.Inbox, buf protocol.AudioBuf)
-	RegisterTransmitStart()
-	RegisterTransmitStop()
+	RegisterTransmitStart(src actor.Inbox)
+	RegisterTransmitStop(src actor.Inbox)
 }
 
 func SendAudioBuf(dest actor.Inbox, src actor.Inbox, buf protocol.AudioBuf) {
@@ -18,15 +18,15 @@ func SendAudioBuf(dest actor.Inbox, src actor.Inbox, buf protocol.AudioBuf) {
 	}
 }
 
-func SendTransmitStart(dest actor.Inbox) {
+func SendTransmitStart(dest actor.Inbox, src actor.Inbox) {
 	dest <- func(a actor.Actor) error {
-		a.(audioDev).RegisterTransmitStart()
+		a.(audioDev).RegisterTransmitStart(src)
 		return nil
 	}
 }
-func SendTransmitStop(dest actor.Inbox) {
+func SendTransmitStop(dest actor.Inbox, src actor.Inbox) {
 	dest <- func(a actor.Actor) error {
-		a.(audioDev).RegisterTransmitStop()
+		a.(audioDev).RegisterTransmitStop(src)
 		return nil
 	}
 }

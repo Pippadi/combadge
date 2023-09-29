@@ -31,7 +31,7 @@ func (b *Badge) Initialize() error {
 func (b *Badge) Finalize() {
 	b.conn.Close()
 	if b.transmitting {
-		SendTransmitStop(b.CreatorInbox())
+		SendTransmitStop(b.CreatorInbox(), b.Inbox())
 	}
 }
 
@@ -51,14 +51,14 @@ func (b *Badge) ProcessAudioFrom(src actor.Inbox, buf protocol.AudioBuf) {
 	binary.Write(b.conn, binary.LittleEndian, buf)
 }
 
-func (b *Badge) RegisterTransmitStart() {
+func (b *Badge) RegisterTransmitStart(src actor.Inbox) {
 	header := protocol.PacketHeader{
 		Type: protocol.AudioStart,
 		Size: 0,
 	}
 	binary.Write(b.conn, binary.LittleEndian, header)
 }
-func (b *Badge) RegisterTransmitStop() {
+func (b *Badge) RegisterTransmitStop(src actor.Inbox) {
 	header := protocol.PacketHeader{
 		Type: protocol.AudioStop,
 		Size: 0,
@@ -89,10 +89,10 @@ func (b *Badge) listenForPackets() {
 		switch header.Type {
 		case protocol.AudioStart:
 			b.transmitting = true
-			SendTransmitStart(b.CreatorInbox())
+			SendTransmitStart(b.CreatorInbox(), b.Inbox())
 		case protocol.AudioStop:
 			b.transmitting = false
-			SendTransmitStop(b.CreatorInbox())
+			SendTransmitStop(b.CreatorInbox(), b.Inbox())
 		case protocol.AudioData:
 			assembled, err := readAllFragments(b.conn, int(header.Size))
 			if err != nil {
