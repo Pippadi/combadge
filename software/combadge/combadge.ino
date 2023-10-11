@@ -111,7 +111,6 @@ void loop() {
                     Serial.println("Stopping playback");
                     break;
                 case AUDIO_DATA:
-                    Serial.println("Got samples to play back");
                     bytesRecvd = conn.read((uint8_t*) &(ad.data), sizeof(ad.data));
                     if (!spk.asleep())
                         spk.write((char*) &(ad.data), bytesRecvd, &bytesWritten);
@@ -134,13 +133,11 @@ void streamFromMic(void*) {
         playSound(TNGChirp1, TNGChirp1SizeBytes);
         waitTillTouchReleased();
 
+        Serial.println("Starting transmission");
         PacketHeader startMsg = {AUDIO_START, 0};
         conn.write((uint8_t*) &startMsg, sizeof(startMsg));
 
         while (conn.connected() && !touched) {
-            // Dividing interval by two so that the buffer doesn't fill up before we're ready to send it
-            vTaskDelay(BUF_FULL_INTERVAL_ms / 2 / portTICK_PERIOD_MS);
-            // Using outgoingBuf directly because sample_t is int16_t already
             size_t samplesRead = mic.read(audio.data, BUF_LEN_SAMPLES);
             if (samplesRead) {
                 audio.header.type = AUDIO_DATA;
@@ -149,6 +146,7 @@ void streamFromMic(void*) {
             }
         }
 
+        Serial.println("Ending transmission");
         PacketHeader stopMsg = {AUDIO_STOP, 0};
         conn.write((uint8_t*) &stopMsg, sizeof(stopMsg));
         playSound(TNGChirp2, TNGChirp2SizeBytes);
