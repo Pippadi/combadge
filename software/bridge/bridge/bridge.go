@@ -16,7 +16,7 @@ const (
 	port = 1701
 
 	bufFullInterval  = time.Second * protocol.BufLenSamples / protocol.SampleRate
-	transmitInterval = 3 * bufFullInterval / 4
+	transmitInterval = bufFullInterval / 2
 )
 
 type streamInfo struct {
@@ -54,15 +54,13 @@ func (b *Bridge) Initialize() error {
 
 func (b *Bridge) periodicallySendBuffer() {
 	shouldTransmit := false
-	wasReceiving := false
 	for {
-		wasReceiving = shouldTransmit
 		time.Sleep(transmitInterval)
 
 		shouldTransmit = b.shouldTransmit()
 		if !shouldTransmit {
-			if wasReceiving {
-				for ibx, si := range b.badges {
+			for ibx, si := range b.badges {
+				if si.Receiving {
 					loggo.Debug("Ending transmission to", ibx)
 					badge.SendTransmitStop(ibx, b.Inbox())
 					si.Receiving = false
