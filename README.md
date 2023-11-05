@@ -11,6 +11,7 @@ A Star Trek combadge built with the ESP32-S3.
 
 - Hardware and electronics: [hardware/pcb](hardware/pcb)
 - Main ESP32 firmware: [software/combadge](software/combadge)
+- Audio bridge: [software/bridge](software/bridge)
 - 3D-printable enclosure: [hardware/enclosure](hardware/enclosure)
 - Nuggets for testing: [software/test](software/test)
 - Helpful scripts/tools: [software/tools](software/tools)
