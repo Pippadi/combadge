@@ -98,7 +98,7 @@ void loop() {
                     Serial.println("Stopping playback");
                     break;
                 case AUDIO_DATA:
-                    bytesRecvd = conn.read((uint8_t*) &(ad.data), sizeof(ad.data));
+                    bytesRecvd = conn.read((uint8_t*) &(ad.data), min(header.size, sizeof(ad.data)));
                     if (!spk.asleep())
                         spk.write((char*) &(ad.data), bytesRecvd, &bytesWritten);
                     break;
@@ -156,7 +156,7 @@ void waitTillTouchReleased() {
 #ifdef SOC_ESP32
         touched = false;
 #endif
-        vTaskDelay(100 / portTICK_PERIOD_MS); // Give interrupt 100ms to fire
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
 
