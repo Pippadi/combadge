@@ -7,10 +7,13 @@ import sys
 sine_coefficients = np.array([])
 cosine_coefficients = np.array([])
 
+# Read only these many samples from the audio file
+SAMPLE_LIMIT = 8192
+
 samples = np.array([])
 # samples = np.sin(2 * np.pi * np.arange(0, 1024) / 256)
 with open(sys.argv[1], "rb") as f:
-    samples = np.frombuffer(f.read(), dtype=np.int16)
+    samples = np.frombuffer(f.read()[:SAMPLE_LIMIT], dtype=np.int16)
 
 # 16 found to be a good number
 COEFFICIENT_CNT = int(len(samples) / 16)
