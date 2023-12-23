@@ -1,6 +1,6 @@
 # combadge [Work in Progress]
 
-A Star Trek combadge built with the ESP32.
+A Star Trek combadge built with the ESP32-S3.
 
 ![Enclosure](/assets/enclosure.png)
 
@@ -11,20 +11,22 @@ A Star Trek combadge built with the ESP32.
 
 - Hardware and electronics: [hardware/pcb](hardware/pcb)
 - Main ESP32 firmware: [software/combadge](software/combadge)
+- Audio bridge: [software/bridge](software/bridge)
 - 3D-printable enclosure: [hardware/enclosure](hardware/enclosure)
 - Nuggets for testing: [software/test](software/test)
 - Helpful scripts/tools: [software/tools](software/tools)
 
-This project is still in its early stages. This is pretty much the entire directory tree. Happy exploring!
+This is pretty much the entire directory tree. Happy exploring!
 
-![PCB 3D View](/assets/pcb3d.gif)
+![Assembled PCB](/assets/pcb_real.jpg) ![PCB 3D View](/assets/pcb3d.gif)
 
 ## Goals
 
-The first priority is to get the hardware to a fabrication-ready state.
-This means that the hardware should be able to comprehensibly stream bidirectional audio on battery.
+Hardware has now been verified to work.
 
-Once this works well, some kind of basic walkie-talkie functionality will be implemented (maybe with [WebRTC](webrtc.org) or [Matrix](matrix.org) support?).
+Some kind of basic walkie-talkie functionality is in the works, built on top of a custom Combadge Real-time Audio Protocol.
+[WebRTC](https://webrtc.org) or [Matrix](https://matrix.org) support is a goal for the distant future.
+
 Ahead of this, the roadmap is largely undecided. Capable hardware leaves great scope for software.
 
 ## Motivations

@@ -9,4 +9,10 @@ struct I2SCfg {
     int bitsPerSample;
 };
 
+struct MicPinCfg {
+    int bclk;
+    int ws;
+    int data;
+};
+
 #endif

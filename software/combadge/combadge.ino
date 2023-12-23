@@ -1,125 +1,141 @@
 #include <WiFi.h>
 #include <AsyncUDP.h>
+#include "driver/adc.h"
 #include "config.h"
 #include "src/i2scfg.h"
 #include "src/max98357.h"
-#include "src/inmp441.h"
+#include "src/sph0645.h"
+#include "src/crap.h"
 #include "sounds/HailBeep.h"
 #include "sounds/TNGChirp1.h"
 #include "sounds/TNGChirp2.h"
 
-WiFiServer server(LISTEN_PORT);
-WiFiClient client;
-WiFiClient incomingConn;
+WiFiClient conn;
 
 MAX98357 spk;
-INMP441 mic;
 
-volatile bool shouldTransmit = false;
-volatile bool tapped = false;
+#ifdef MIC_SPH0645
+SPH0645 mic;
+#else
+INMP441 mic;
+#endif
+
+volatile bool touched = false;
 
 TaskHandle_t streamFromMicHandle;
 
-sample_t incomingBuf[BUF_LEN];
-
-void IRAM_ATTR registerTap() {
-    tapped = true;
+void IRAM_ATTR touchISR() {
+#ifdef SOC_ESP32
+    if (!touched) {
+        touched = true;
+    }
+#else
+    touched = touchInterruptGetLastStatus(TOUCH_PIN);
+#endif
 }
 
 void setup() {
     setCpuFrequencyMhz(80);
     btStop();
-    adc_power_off();
     Serial.begin(115200);
 
-    WiFi.setSleep(true);
-    WiFi.setAutoReconnect(true);
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    while (!WiFi.isConnected()) {
-        delay(500);
-        Serial.print(".");
-    }
-    Serial.println("Connected to WiFi!");
-    Serial.println(WiFi.localIP());
+    pinMode(LED, OUTPUT);
+    digitalWrite(LED, LOW);
+
+    establishConnection();
 
     I2SCfg i2scfg = {
         .sampleRate = SAMPLE_RATE,
         .bitsPerSample = BITS_PER_SAMPLE,
     };
 
-    INMP441PinCfg micPins = {
+    MicPinCfg micPins = {
         .bclk = MIC_BCLK,
         .ws = MIC_WS,
         .data = MIC_DATA,
     };
     if (!mic.begin(MIC_PORT, i2scfg, micPins)) {
         Serial.println("Failed initializing microphone");
-        while (true);
+        while (true)
+            blinkCycle(100);
     }
 
     MAX98357PinCfg spkPins = {
-    .bclk = SPK_BCLK,
-    .ws = SPK_WS,
-    .data = SPK_DATA,
-    .enable = SPK_EN,
+        .bclk = SPK_BCLK,
+        .ws = SPK_WS,
+        .data = SPK_DATA,
+        .enable = SPK_EN,
     };
     if (!spk.begin(SPK_PORT, i2scfg, spkPins)) {
         Serial.println("Failed initializing speaker");
-        while (true);
+        while (true)
+            blinkCycle(100);
     }
 
     playSound(TNGChirp1, TNGChirp1SizeBytes);
 
     xTaskCreate(streamFromMic, "StreamFromMic", 10240, NULL, 0, &streamFromMicHandle);
 
-    touchAttachInterrupt(TOUCH_PIN, registerTap, TOUCH_THRESHOLD);
-
-    server.begin(LISTEN_PORT, 1);
+    touchAttachInterrupt(TOUCH_PIN, touchISR, TOUCH_THRESHOLD);
 }
 
 void loop() {
     size_t bytesRecvd, bytesWritten;
+    PacketHeader header;
+    AudioData ad;
 
-    while (!incomingConn) {
-        incomingConn = server.available();
-    }
-
-    Serial.println(incomingConn.remoteIP());
-    spk.wake();
-    playSound(HailBeep, HailBeepSizeBytes);
-
-    while (incomingConn.connected()) {
-        if (incomingConn.available()) {
-            bytesRecvd = incomingConn.read((uint8_t*) incomingBuf, BYTES_PER_SAMPLE*BUF_LEN);
-            if (!spk.write((char*) incomingBuf, bytesRecvd, &bytesWritten)) {
-                Serial.println(bytesWritten / BYTES_PER_SAMPLE);
-            }      
+    if (conn.available()) {
+        bytesRecvd = conn.read((uint8_t*) &header, sizeof(PacketHeader));
+        if (bytesRecvd > 0) {
+            switch (header.type) { // Packet type
+                case AUDIO_START:
+                    spk.wake();
+                    Serial.println("Starting playback");
+                    playSound(HailBeep, HailBeepSizeBytes);
+                    break;
+                case AUDIO_STOP:
+                    spk.sleep();
+                    Serial.println("Stopping playback");
+                    break;
+                case AUDIO_DATA:
+                    bytesRecvd = conn.read((uint8_t*) &(ad.data), sizeof(ad.data));
+                    if (!spk.asleep())
+                        spk.write((char*) &(ad.data), bytesRecvd, &bytesWritten);
+                    break;
+            }
         }
     }
-
-    spk.sleep();
+    else if (!conn.connected()) {
+        spk.sleep();
+        establishConnection();
+    }
 }
 
 void streamFromMic(void*) {
-    static sample_t outgoingBuf[BUF_LEN];
+    static AudioData audio = {};
+    audio.header.type = AUDIO_DATA;
 
     while (true) {
-        while (!tapped) { vTaskDelay(10 / portTICK_PERIOD_MS); }
+        while (!touched || !conn.connected()) { vTaskDelay(10 / portTICK_PERIOD_MS); }
         playSound(TNGChirp1, TNGChirp1SizeBytes);
         waitTillTouchReleased();
 
-        client.connect(BUDDY_IP, LISTEN_PORT);
-        while (!client.connected()) { vTaskDelay(10 / portTICK_PERIOD_MS); };
-        while (client.connected() && !tapped) {
-            // Dividing interval by two so that the buffer doesn't fill up before we're ready to send it
-            vTaskDelay(BUF_FULL_INTERVAL_ms / 2 / portTICK_PERIOD_MS);
-            // Using outgoingBuf directly because sample_t is int16_t already
-            size_t samplesRead = mic.read(outgoingBuf, BUF_LEN);
+        Serial.println("Starting transmission");
+        PacketHeader startMsg = {AUDIO_START, 0};
+        conn.write((uint8_t*) &startMsg, sizeof(startMsg));
+
+        while (conn.connected() && !touched) {
+            size_t samplesRead = mic.read(audio.data, BUF_LEN_SAMPLES);
             if (samplesRead) {
-                client.write((uint8_t*) outgoingBuf, samplesRead*BYTES_PER_SAMPLE);
+                audio.header.type = AUDIO_DATA;
+                audio.header.size = samplesRead * BYTES_PER_SAMPLE;
+                conn.write((uint8_t*) &audio, sizeof(audio.header) + audio.header.size);
             }
         }
-        client.stop();
+
+        Serial.println("Ending transmission");
+        PacketHeader stopMsg = {AUDIO_STOP, 0};
+        conn.write((uint8_t*) &stopMsg, sizeof(stopMsg));
         playSound(TNGChirp2, TNGChirp2SizeBytes);
         waitTillTouchReleased();
     }
@@ -128,14 +144,47 @@ void streamFromMic(void*) {
 void playSound(const sample_t* sound, const size_t soundSizeBytes) {
     size_t bytesWritten;
     bool spkAsleep = spk.asleep();
-    if (spkAsleep) { spk.wake(); }
+    if (spkAsleep)
+        spk.wake();
     spk.write((char*) sound, soundSizeBytes, &bytesWritten);
-    if (spkAsleep) { spk.sleep(); }
+    if (spkAsleep)
+        spk.sleep();
 }
 
 void waitTillTouchReleased() {
-    while (tapped) {
-        tapped = false;
+    while (touched) {
+#ifdef SOC_ESP32
+        touched = false;
+#endif
         vTaskDelay(100 / portTICK_PERIOD_MS); // Give interrupt 100ms to fire
     }
+}
+
+void establishConnection() {
+    if (!WiFi.isConnected()) {
+        WiFi.setSleep(true);
+        WiFi.setAutoReconnect(true);
+        WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+        while (!WiFi.isConnected()) {
+            blinkCycle(150);
+            Serial.print(".");
+        }
+        Serial.println("Connected to WiFi!");
+        Serial.println(WiFi.localIP());
+        Serial.println(WiFi.macAddress());
+    }
+
+    conn.stop();
+    while (!conn.connected()) {
+        blinkCycle(200);
+        conn.connect(BRIDGE, LISTEN_PORT);
+    }
+    Serial.print("Connected to "); Serial.println(BRIDGE);
+}
+
+void blinkCycle(int dur_ms) {
+    digitalWrite(LED, HIGH);
+    vTaskDelay(dur_ms / portTICK_PERIOD_MS);
+    digitalWrite(LED, LOW);
+    vTaskDelay(dur_ms / portTICK_PERIOD_MS);
 }

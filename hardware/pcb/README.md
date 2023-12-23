@@ -19,10 +19,10 @@ The [ESP32-S3](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/api
 
 #### Microphone
 
-I've zeroed in on the [CMM-3526D-261-I2S-TR](https://www.cuidevices.com/product/audio/microphones/mems-microphones/cmm-3526d-261-i2s-tr).
+I've zeroed in on the [Knowles SPH0645LM4H-1](https://www.knowles.com/docs/default-source/default-document-library/sph0645lm4h-1-datasheet.pdf?Status=Master&sfvrsn=751076b1_2).
 Any similar microphone ought to do the job.
 
-I use the INMP441 because it's available as a module. I would have stuck with it for the PCB, but it seems to be discontinued by the manufacturer.
+I use the INMP441 for prototyping because it's available as a module. I would have stuck with it for the PCB, but it seems to be discontinued by the manufacturer.
 
 #### Speaker
 
@@ -46,15 +46,11 @@ The PCB has been designed in KiCAD.
 
 ![PCB](assets/pcb.png)
 
-- Footprints are chosen to be as large as possible where applicable, to facilitate hand-soldering.
+- Footprints are chosen to be as large as possible where applicable, to facilitate hand-soldering or rework.
 - The PCB has headers to which battery and speaker wires can be soldered.
 - Certain measurements can be seen in the `User.Comments` layer.
 
-This KiCAD project makes use of the following third-party symbols and footprints:
-
-- [CSS-1210TB](https://app.ultralibrarian.com/details/711a64f8-0773-11ed-b159-0a34d6323d74/Nidec-Copal-Electronics/CSS-1210TB?uid=38990419&exports=KiCAD&open=exports)
-- [CMM-3526D-261-I2S-TR](https://www.cuidevices.com/product/resource/pcbfootprint/cmm-3526d-261-i2s-tr)
-- [ESP32](https://github.com/espressif/kicad-libraries)
+This project makes use of the official Espressif [ESP32 KiCAD libraries](https://github.com/espressif/kicad-libraries).
 
 You will need to change the paths to the third party symbols in the library and footprint managers. I've just plonked everything in a gitignored folder called `third-party`.
 
@@ -72,7 +68,16 @@ Hooking the speaker up directly to the USB 5V line (VIN on my particular dev boa
 The PCB has been designed such that the amplifier is powered directly by the battery.
 There are also some large low-transient-response-time ceramic capacitors for any bursts of energy components may need.
 
-### Microphone circuitry
+### SPH0645LM4H woes
 
-This isn't an issue, per se. The CMM-3526D-261-I2S-TR microphone chosen for this project has not been tested on prototypes.
-I couldn't find any cheap development boards for it. I'm taking a leap of faith.
+The SPH0645 is known to have some quirks in its I2S interface, to do with the synchronization of the clock and data signals.
+In addition, the signal it outputs has a weird offset from 0.
+
+The required workaround for the first problem has been successfully implemented and the second is more of an annoyance.
+Nevertheless, a future board revision may be better off with a more standard-compliant microphone like the ICS43434.
+
+### Power stability during battery-less operation
+
+The MCP73831 datasheet specifies a minimum value of 4.7uF for a capacitor across the battery side (C2 here) for stable supply when the battery is disconnected.
+This is enough for the ESP32-S3 to boot, but not enough for more current-demanding tasks like turning on WiFi.
+Future board revisions should have more and bigger capacitors to avoid brownouts when testing without a battery.
