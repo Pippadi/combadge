@@ -18,22 +18,39 @@ module chevron() {
     linear_extrude($chevronHeight) import("chevron.svg");
 }
 
-module combadge() {    
-    difference() {
-        union() {
-            translate([6, -2, 0]) scale([0.85, 0.85, 1]) chevron();
-            translate([$baseLength/2, $baseWidth/2, 0]) scale([$baseLength/$baseWidth, 1, 1]) union() {
-                cylinder($chamberDepth + $wallThickness, d = $baseWidth);
-                translate([0, 0, $chamberDepth + $wallThickness]) base_top();
-            }
-        }
-        translate([$baseLength/2, $baseWidth/2, 0]) scale([$cavityLength/$cavityWidth, 1, 1])
-            cylinder($chamberDepth, d = $cavityWidth);
+module annulus(outer_radius, width, height) {
+    linear_extrude(height) difference() {
+        circle(outer_radius);
+        circle(outer_radius - width);
     }
 }
 
 module base_top() {
-    rotate_extrude() polygon(points=[[0, 0], [$baseWidth/2-2, 1], [$baseWidth/2, 0]]);
+    scale([1, 1, 5/$baseWidth])
+    rotate_extrude() 
+    intersection() {
+       circle($baseWidth/2);
+       square([$baseWidth, $baseWidth], center=false);
+    }
+    annulus($baseWidth/2, 1, 1.75);
+}
+
+module base() {
+    translate([$baseLength/2, $baseWidth/2, 0]) scale([$baseLength/$baseWidth, 1, 1])
+    union() {
+        difference() {
+            cylinder($chamberDepth, d = $baseWidth);
+            cylinder($chamberDepth, d = $cavityWidth);
+        }
+        translate([0, 0, $chamberDepth]) base_top();
+    }
+}
+
+module combadge() {
+    union() {
+        translate([6, -2, 0]) scale([0.85, 0.85, 1]) chevron();            
+        base();
+    }
 }
 
 combadge();
