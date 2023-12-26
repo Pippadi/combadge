@@ -9,10 +9,10 @@ $chevronHeight = 13;
 
 $fn = 128;
 
-$cavityLength = $pcbMajorAxis + 2*$wiggleRoom;
-$cavityWidth = $pcbMinorAxis + 2*$wiggleRoom;
-$baseLength = $cavityLength + 2*$wallThickness;
-$baseWidth = $cavityWidth + 2*$wallThickness;
+$chamberLength = $pcbMajorAxis + 2*$wiggleRoom;
+$chamberWidth = $pcbMinorAxis + 2*$wiggleRoom;
+$baseLength = $chamberLength + 2*$wallThickness;
+$baseWidth = $chamberWidth + 2*$wallThickness;
 
 module scale_width() {
     translate([$baseLength/2, $baseWidth/2, 0])
@@ -21,7 +21,10 @@ module scale_width() {
 }
 
 module chevron() {
-    linear_extrude($chevronHeight) import("chevron.svg");
+    difference() {
+        linear_extrude($chevronHeight) import("chevron.svg");
+        translate([10, 40, 0]) cube([30, 30, 8]);
+    }
 }
 
 module annulus(outer_radius, width, height) {
@@ -32,7 +35,7 @@ module annulus(outer_radius, width, height) {
 }
 
 module base_top() {
-    scale([1, 1, 5/$baseWidth])
+    scale([1, 1, 5.5/$baseWidth])
         rotate_extrude() 
         intersection() {
            circle($baseWidth/2);
@@ -52,10 +55,10 @@ module base() {
 module combadge() {
     difference() {
         union() {
-            translate([6, -2, 0]) scale([0.85, 0.85, 1]) chevron();            
-            base();
+            color("#c0c0c0") translate([6, -2, 0]) scale([0.85, 0.85, 1]) chevron();
+            color("#ffb700") base();
         }
-        scale_width() cylinder($chamberDepth, d = $cavityWidth);
+        scale_width() cylinder($chamberDepth, d = $chamberWidth);
     }
 }
 
