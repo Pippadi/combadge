@@ -74,17 +74,22 @@ module triangularPrism(side, depth, center=false) {
     linear_extrude(depth) polygon([[0, 0], [side, 0], [side/2, sqrt(3)*side/2]]);
 }
 
-module snapClip(center) {
-    if (center) {
-        translate([-1, -2.5, 0])
-        children();
+module snapClip(height, width, center) {
+    translate(center==true ? [-1, -width/2, 0] : [0, 0, 0])
+    union() {
+        translate([0, 0, height]) rotate([-90, 0, 0])
+        linear_extrude(width)
+        polygon([[0, 0], [1 ,0], [2, 1], [1, 1], [1, height], [0, height]]);
     }
-    translate([0, 0, 5]) rotate([-90, 0, 0])
-    linear_extrude(5)
-    polygon([[0, 0], [1 ,0], [2, 1], [1, 1], [1, 5], [0, 5]]);
 }
 
 module back() {
+    translate([$baseLength/2, 0, $wallThickness]) union() {
+        translate([0, $wallThickness, 0]) rotate([0, 0, -90])
+        snapClip(2, 4, true);
+        translate([0, $baseWidth-$wallThickness, 0]) rotate([0, 0, 90])
+        snapClip(2, 4, true);
+    }
     scale_width() color("#ffb700")
     cylinder($wallThickness, d=$baseWidth, center=false);
 }
