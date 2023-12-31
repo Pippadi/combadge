@@ -52,14 +52,42 @@ module base() {
     }
 }
 
+module cavity_with_holes() {
+    scale_width() cylinder($chamberDepth, d = $chamberWidth);
+    translate([$baseLength/2, $baseWidth/2, $chamberDepth/2]) {
+        translate([0, $baseWidth/2, 1]) cube([5, 5, 3], center=true);
+        translate([$baseLength/2, 0, 0]) cube([5, 7, 3], center=true);
+    }
+}
+
 module combadge() {
     difference() {
         union() {
             color("#c0c0c0") translate([6, -2, 0]) scale([0.85, 0.85, 1]) chevron();
             color("#ffb700") base();
         }
-        scale_width() cylinder($chamberDepth, d = $chamberWidth);
+        cavity_with_holes();
     }
 }
 
+module triangularPrism(side, depth, center=false) {
+    linear_extrude(depth) polygon([[0, 0], [side, 0], [side/2, sqrt(3)*side/2]]);
+}
+
+module snapClip(center) {
+    if (center) {
+        translate([-1, -2.5, 0])
+        children();
+    }
+    translate([0, 0, 5]) rotate([-90, 0, 0])
+    linear_extrude(5)
+    polygon([[0, 0], [1 ,0], [2, 1], [1, 1], [1, 5], [0, 5]]);
+}
+
+module back() {
+    scale_width() color("#ffb700")
+    cylinder($wallThickness, d=$baseWidth, center=false);
+}
+
 combadge();
+translate([60, 0, 0]) back();
