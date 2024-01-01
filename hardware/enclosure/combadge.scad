@@ -7,12 +7,15 @@ $pcbMinorAxis = 31;
 
 $chevronHeight = 13;
 
-$fn = 128;
-
 $chamberLength = $pcbMajorAxis + 2*$wiggleRoom;
 $chamberWidth = $pcbMinorAxis + 2*$wiggleRoom;
 $baseLength = $chamberLength + 2*$wallThickness;
 $baseWidth = $chamberWidth + 2*$wallThickness;
+
+$clipWidth = 4;
+$clipHeight = 2;
+
+$fn=128;
 
 module scale_width() {
     translate([$baseLength/2, $baseWidth/2, 0])
@@ -58,6 +61,10 @@ module cavity_with_holes() {
         translate([0, $baseWidth/2, 1]) cube([5, 5, 3], center=true);
         translate([$baseLength/2, 0, 0]) cube([5, 7, 3], center=true);
     }
+    translate([$baseLength/2, 0, 0.5+$clipHeight/2]) {
+        cube([$clipWidth, 5, 1], center=true);
+        translate([0, $baseWidth, 0]) cube([$clipWidth, 5, 1], center=true);
+    }
 }
 
 module combadge() {
@@ -85,14 +92,15 @@ module snapClip(height, width, center) {
 
 module back() {
     translate([$baseLength/2, 0, $wallThickness]) union() {
-        translate([0, $wallThickness, 0]) rotate([0, 0, -90])
-        snapClip(2, 4, true);
-        translate([0, $baseWidth-$wallThickness, 0]) rotate([0, 0, 90])
-        snapClip(2, 4, true);
+        translate([0, 0.5+$wallThickness, 0]) rotate([0, 0, -90])
+        snapClip($clipHeight, $clipWidth, true);
+        translate([0, $baseWidth-(0.5+$wallThickness), 0]) rotate([0, 0, 90])
+        snapClip($clipHeight, $clipWidth, true);
     }
     scale_width() color("#ffb700")
     cylinder($wallThickness, d=$baseWidth, center=false);
 }
 
 combadge();
-translate([60, 0, 0]) back();
+translate([60, 0, 0])
+back(); 
