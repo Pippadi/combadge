@@ -1,7 +1,9 @@
 #include "driver/i2s.h"
 
+/* Makefile automatically defines one of these symbols
+   when defining SOC="esp32" or SOC="esp32s3" */
 //#define SOC_ESP32
-#define SOC_ESP32_S3
+//#define SOC_ESP32_S3
 
 #define LED 1
 

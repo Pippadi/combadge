@@ -38,8 +38,8 @@ bool SPH0645::begin(i2s_port_t _port, I2SCfg _cfg, MicPinCfg _pins) {
     }
 
 #ifdef SOC_ESP32_S3
-    REG_SET_BIT(I2S_RX_TIMING_REG(I2S_PORT), BIT(1));
-    REG_SET_BIT(I2S_RX_CONF1_REG(I2S_PORT), I2S_RX_MSB_SHIFT);
+    REG_SET_BIT(I2S_RX_TIMING_REG(port), BIT(1));
+    REG_SET_BIT(I2S_RX_CONF1_REG(port), I2S_RX_MSB_SHIFT);
 #endif
 
     err = i2s_set_pin(port, &micPins);
