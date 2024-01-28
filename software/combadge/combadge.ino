@@ -1,14 +1,18 @@
 #include <WiFi.h>
-#include <AsyncUDP.h>
 #include "driver/adc.h"
 #include "config.h"
 #include "src/i2scfg.h"
-#include "src/max98357.h"
-#include "src/sph0645.h"
 #include "src/crap.h"
 #include "sounds/HailBeep.h"
 #include "sounds/TNGChirp1.h"
 #include "sounds/TNGChirp2.h"
+#include "src/max98357.h"
+
+#ifdef MIC_SPH0645
+#include "src/sph0645.h"
+#else
+#include "src/inmp441.h"
+#endif
 
 WiFiClient conn;
 

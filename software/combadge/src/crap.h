@@ -6,7 +6,7 @@
 #define AUDIO_DATA 0x03
 
 typedef struct {
-    uint32_t  type; // No padding = good
+    uint32_t type; // No padding = good
     uint32_t size;
 } PacketHeader;
 
