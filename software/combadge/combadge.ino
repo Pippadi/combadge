@@ -89,12 +89,12 @@ void loop() {
     static AudioPacket ad;
 
     bool gotBadPacket = false;
-    size_t bytesRecvd = 0, bytesWritten = 0;
+    size_t headerBytesRecvd = 0;
 
     if (conn.available() >= sizeof(PacketHeader))
-        bytesRecvd = conn.read((uint8_t*) &ad.header, sizeof(PacketHeader));
+        headerBytesRecvd = conn.read((uint8_t*) &ad.header, sizeof(PacketHeader));
 
-    if (bytesRecvd > 0) {
+    if (headerBytesRecvd == sizeof(PacketHeader)) {
         gotBadPacket = false;
         switch (ad.header.type) {
             case AUDIO_START:
@@ -111,8 +111,19 @@ void loop() {
                 break;
 
             case AUDIO_DATA:
-                bytesRecvd = conn.read((uint8_t*) ad.data, min(ad.header.size, sizeof(ad.data)));
-                spk.write((uint8_t*) ad.data, bytesRecvd, &bytesWritten);
+                {
+                    size_t totalBytesRead = 0, bytesWritten = 0;
+
+                    while (totalBytesRead < ad.header.size) {
+                        size_t bytesRead = conn.read((uint8_t*) ad.data, sizeof(ad.data));
+                        totalBytesRead += bytesRead;
+                        Serial.printf("%d %d\r\n", bytesRead, totalBytesRead);
+
+                        spk.write((uint8_t*) ad.data, bytesRead, &bytesWritten);
+                        if (bytesRead != bytesWritten)
+                            Serial.printf("Wrote only %d of %d bytes to speaker\r\n", bytesWritten, bytesRead);
+                    }
+                }
                 break;
 
             default:
@@ -120,15 +131,18 @@ void loop() {
         }
 
         if (gotBadPacket) {
-            Serial.printf("Bad packet type 0x%x with size %d\n", ad.header.type, ad.header.size);
+            //Serial.printf("Bad packet type 0x%x with size %d\r\n", ad.header.type, ad.header.size);
         } else {
             lastPacketMillis = millis();
+            return;
         }
-    } else if (receiving && millis() - lastPacketMillis > TX_DROP_TIMEOUT_MS) {
+    }
+
+    if (receiving && millis() - lastPacketMillis > TX_DROP_TIMEOUT_MS) {
         Serial.println("Transmission dropped");
         receiving = false;
         spk.sleep();
-        conn.flush(); // Clears inbound buffer as well, apparently
+        while (conn.available()) conn.read(); // Clear inbound buffer
     }
 
     if (!conn.connected()) {
