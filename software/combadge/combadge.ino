@@ -85,13 +85,12 @@ void setup() {
 
 void loop() {
     size_t bytesRecvd, bytesWritten;
-    PacketHeader header;
-    AudioData ad;
+    AudioPacket ad;
 
     if (conn.available()) {
-        bytesRecvd = conn.read((uint8_t*) &header, sizeof(PacketHeader));
+        bytesRecvd = conn.read((uint8_t*) &ad.header, sizeof(PacketHeader));
         if (bytesRecvd > 0) {
-            switch (header.type) { // Packet type
+            switch (ad.header.type) { // Packet type
                 case AUDIO_START:
                     spk.wake();
                     Serial.println("Starting playback");
@@ -102,7 +101,7 @@ void loop() {
                     Serial.println("Stopping playback");
                     break;
                 case AUDIO_DATA:
-                    bytesRecvd = conn.read((uint8_t*) &(ad.data), min(header.size, sizeof(ad.data)));
+                    bytesRecvd = conn.read((uint8_t*) &(ad.data), min(ad.header.size, sizeof(ad.data)));
                     if (!spk.asleep())
                         spk.write((char*) &(ad.data), bytesRecvd, &bytesWritten);
                     break;
@@ -116,7 +115,7 @@ void loop() {
 }
 
 void streamFromMic(void*) {
-    static AudioData audio = {};
+    static AudioPacket audio = {};
     audio.header.type = AUDIO_DATA;
 
     while (true) {

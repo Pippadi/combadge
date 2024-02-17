@@ -16,7 +16,7 @@ const (
 type Sample int16
 
 const (
-	BufLenSamples = 512
+	BufLenSamples = 256
 	SampleRate    = 44100
 
 	SampleMax       = math.MaxInt16

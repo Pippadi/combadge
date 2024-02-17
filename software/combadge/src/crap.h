@@ -13,6 +13,6 @@ typedef struct {
 typedef struct {
     PacketHeader header;
     sample_t data[BUF_LEN_SAMPLES];
-} AudioData;
+} AudioPacket;
 
 #endif
