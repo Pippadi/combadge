@@ -120,7 +120,7 @@ void loop() {
         }
 
         if (gotBadPacket) {
-            Serial.printf("Bad packet type: 0x%x\n", ad.header.type);
+            Serial.printf("Bad packet type 0x%x with size %d\n", ad.header.type, ad.header.size);
         } else {
             lastPacketMillis = millis();
         }
@@ -128,6 +128,7 @@ void loop() {
         Serial.println("Transmission dropped");
         receiving = false;
         spk.sleep();
+        conn.flush(); // Clears inbound buffer as well, apparently
     }
 
     if (!conn.connected()) {
