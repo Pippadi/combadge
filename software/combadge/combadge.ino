@@ -113,11 +113,11 @@ void loop() {
             case AUDIO_DATA:
                 {
                     size_t totalBytesRead = 0, bytesWritten = 0;
+                    ad.header.size = min(ad.header.size, BUF_LEN_BYTES);
 
                     while (totalBytesRead < ad.header.size) {
-                        size_t bytesRead = conn.read((uint8_t*) ad.data, sizeof(ad.data));
+                        size_t bytesRead = conn.read((uint8_t*) ad.data, ((size_t) ad.header.size) - totalBytesRead);
                         totalBytesRead += bytesRead;
-                        Serial.printf("%d %d\r\n", bytesRead, totalBytesRead);
 
                         spk.write((uint8_t*) ad.data, bytesRead, &bytesWritten);
                         if (bytesRead != bytesWritten)
