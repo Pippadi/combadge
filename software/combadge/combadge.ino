@@ -90,7 +90,8 @@ void loop() {
     if (conn.available()) {
         bytesRecvd = conn.read((uint8_t*) &ad.header, sizeof(PacketHeader));
         if (bytesRecvd > 0) {
-            switch (ad.header.type) { // Packet type
+            Serial.printf("0x%x %d\n", ad.header.type, ad.header.size);
+            switch (ad.header.type) {
                 case AUDIO_START:
                     spk.wake();
                     Serial.println("Starting playback");
@@ -101,10 +102,12 @@ void loop() {
                     Serial.println("Stopping playback");
                     break;
                 case AUDIO_DATA:
-                    bytesRecvd = conn.read((uint8_t*) &(ad.data), min(ad.header.size, sizeof(ad.data)));
+                    bytesRecvd = conn.read((uint8_t*) ad.data, min(ad.header.size, sizeof(ad.data)));
                     if (!spk.asleep())
                         spk.write((char*) &(ad.data), bytesRecvd, &bytesWritten);
                     break;
+                default:
+                    Serial.printf("Unknown packet type: 0x%x\n", ad.header.type);
             }
         }
     }
@@ -182,6 +185,7 @@ void establishConnection() {
         blinkCycle(200);
         conn.connect(BRIDGE, LISTEN_PORT);
     }
+    conn.setNoDelay(true);
     Serial.print("Connected to "); Serial.println(BRIDGE);
 }
 
