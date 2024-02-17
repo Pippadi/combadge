@@ -84,34 +84,55 @@ void setup() {
 }
 
 void loop() {
-    size_t bytesRecvd, bytesWritten;
-    AudioPacket ad;
+    static bool receiving = false;
+    static uint32_t lastPacketMillis = 0;
+    static AudioPacket ad;
 
-    if (conn.available()) {
+    bool gotBadPacket = false;
+    size_t bytesRecvd = 0, bytesWritten = 0;
+
+    if (conn.available() >= sizeof(PacketHeader))
         bytesRecvd = conn.read((uint8_t*) &ad.header, sizeof(PacketHeader));
-        if (bytesRecvd > 0) {
-            Serial.printf("0x%x %d\n", ad.header.type, ad.header.size);
-            switch (ad.header.type) {
-                case AUDIO_START:
-                    spk.wake();
-                    Serial.println("Starting playback");
-                    playSound(HailBeep, HailBeepSizeBytes);
-                    break;
-                case AUDIO_STOP:
-                    spk.sleep();
-                    Serial.println("Stopping playback");
-                    break;
-                case AUDIO_DATA:
-                    bytesRecvd = conn.read((uint8_t*) ad.data, min(ad.header.size, sizeof(ad.data)));
-                    if (!spk.asleep())
-                        spk.write((char*) &(ad.data), bytesRecvd, &bytesWritten);
-                    break;
-                default:
-                    Serial.printf("Unknown packet type: 0x%x\n", ad.header.type);
-            }
+
+    if (bytesRecvd > 0) {
+        gotBadPacket = false;
+        switch (ad.header.type) {
+            case AUDIO_START:
+                spk.wake();
+                Serial.println("Starting playback");
+                playSound(HailBeep, HailBeepSizeBytes);
+                receiving = true;
+                break;
+
+            case AUDIO_STOP:
+                spk.sleep();
+                Serial.println("Stopping playback");
+                receiving = false;
+                break;
+
+            case AUDIO_DATA:
+                bytesRecvd = conn.read((uint8_t*) ad.data, min(ad.header.size, sizeof(ad.data)));
+                spk.write((uint8_t*) ad.data, bytesRecvd, &bytesWritten);
+                break;
+
+            default:
+                gotBadPacket = true;
         }
+
+        if (gotBadPacket) {
+            Serial.printf("Bad packet type: 0x%x\n", ad.header.type);
+        } else {
+            lastPacketMillis = millis();
+        }
+    } else if (receiving && millis() - lastPacketMillis > TX_DROP_TIMEOUT_MS) {
+        Serial.println("Transmission dropped");
+        receiving = false;
+        spk.sleep();
     }
-    else if (!conn.connected()) {
+
+    if (!conn.connected()) {
+        Serial.println("Connection lost");
+        receiving = false;
         spk.sleep();
         establishConnection();
     }
@@ -152,7 +173,7 @@ void playSound(const sample_t* sound, const size_t soundSizeBytes) {
     bool spkAsleep = spk.asleep();
     if (spkAsleep)
         spk.wake();
-    spk.write((char*) sound, soundSizeBytes, &bytesWritten);
+    spk.write((uint8_t*) sound, soundSizeBytes, &bytesWritten);
     if (spkAsleep)
         spk.sleep();
 }

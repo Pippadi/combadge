@@ -45,3 +45,7 @@ typedef int16_t sample_t;
 #else
 #define TOUCH_THRESHOLD 40000
 #endif
+
+// Milliseconds to wait after last recieved packet to assume that
+// a transmission has "dropped" (stopped without AUDIO_STOP)
+#define TX_DROP_TIMEOUT_MS 5000
