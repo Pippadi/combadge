@@ -2,7 +2,7 @@
 #include <soc/i2s_reg.h>
 #include <WiFi.h>
 
-#define BUF_LEN 2048
+#define BUF_LEN 256
 #define SAMPLE_RATE 44100
 #define I2S_PORT I2S_NUM_0
 
@@ -35,7 +35,7 @@ void setup() {
         .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_STAND_I2S),
         .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
         .dma_buf_count = 8,
-        .dma_buf_len = 1024,
+        .dma_buf_len = BUF_LEN,
         .use_apll = false,
         .tx_desc_auto_clear = false,
         .fixed_mclk = 0,
