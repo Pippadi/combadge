@@ -1,9 +1,20 @@
 # combadge
 
 The code for the actual combadge, written in C++ for use with [Arduino](https://www.arduino.cc/), and of course the [ESP32 toolchain](https://github.com/espressif/arduino-esp32).
+While the current hardware uses the ESP32-S3, the code aims to retain support for the ESP32.
+
+## Usage
+
+- Edit `config.h` to match your hardware and software configurations.
++ The default pins and peripherals correspond to the hardware in this repository. Change accordingly if using something different.
++ WiFi credentials and bridge host and port will need to be changed per your setup.
++ At present, all involved parties will need to have the same audio configuration. So, changing items such as `sample_t` or `SAMPLE_RATE` will require similar changes to the bridge and the other clients/combadges.
+- Run `make SOC="esp32s3"` and `make flash PORT="/dev/<your port>"`. `SOC` can be set to `esp32` if required.
 
 ## Dependencies
 
+- [Arduino CLI](https://arduino.github.io/arduino-cli/0.36/) (when building with Makefile)
+- WiFi (See [`WiFiClient.h`](https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/src/WiFiClient.h))
 - I2S (See [`i2s.h`](https://github.com/espressif/arduino-esp32/blob/master/tools/sdk/esp32/include/driver/include/driver/i2s.h) and [`hal/i2s_types.h`](https://github.com/espressif/arduino-esp32/blob/master/tools/sdk/esp32/include/hal/include/hal/i2s_types.h))
 
 ## Outline
