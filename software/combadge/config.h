@@ -10,16 +10,14 @@
 //#define MIC_INMP441
 #define MIC_SPH0645
 
-#define MIC_WS 17
-#define MIC_DATA 7
-#define MIC_BCLK 4
-#define MIC_PORT I2S_NUM_0
+#define MIC_WS GPIO_NUM_17
+#define MIC_DATA GPIO_NUM_7
+#define MIC_BCLK GPIO_NUM_4
 
-#define SPK_WS 9
-#define SPK_DATA 11
-#define SPK_BCLK 10
-#define SPK_EN 18
-#define SPK_PORT I2S_NUM_1
+#define SPK_WS GPIO_NUM_9
+#define SPK_DATA GPIO_NUM_11
+#define SPK_BCLK GPIO_NUM_10
+#define SPK_EN GPIO_NUM_18
 
 typedef int16_t sample_t;
 #define BYTES_PER_SAMPLE sizeof(sample_t)

@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <driver/i2s.h>
+#include <driver/i2s_std.h>
 
 #ifndef I2SCfg_h
 #define I2SCfg_h
@@ -10,9 +10,9 @@ struct I2SCfg {
 };
 
 struct MicPinCfg {
-    int bclk;
-    int ws;
-    int data;
+    gpio_num_t bclk;
+    gpio_num_t ws;
+    gpio_num_t data;
 };
 
 #endif

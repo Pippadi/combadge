@@ -1,27 +1,26 @@
 #include <Arduino.h>
-#include <driver/i2s.h>
+#include <driver/i2s_std.h>
 #include "i2scfg.h"
 
 #ifndef MAX98357_h
 #define MAX98357_h
 
 struct MAX98357PinCfg {
-    int bclk;
-    int ws;
-    int data;
-    int enable;
+    gpio_num_t bclk;
+    gpio_num_t ws;
+    gpio_num_t data;
+    gpio_num_t enable;
 };
 
 class MAX98357 {
-    private:
-    i2s_port_t port;
+private:
+    i2s_chan_handle_t chanHandle;
     bool enabled;
     MAX98357PinCfg pins;
-    I2SCfg cfg;
 
-    public:
+public:
     MAX98357();
-    bool begin(i2s_port_t _port, I2SCfg _cfg, MAX98357PinCfg _pins);
+    bool begin(I2SCfg _cfg, MAX98357PinCfg _pins);
     bool end();
     void sleep();
     void wake();

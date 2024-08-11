@@ -1,40 +1,35 @@
 #include <Arduino.h>
-#include <driver/i2s.h>
+#include <driver/i2s_std.h>
 #include "i2scfg.h"
 #include "max98357.h"
 
 MAX98357::MAX98357() {}
 
-bool MAX98357::begin(i2s_port_t _port, I2SCfg _cfg, MAX98357PinCfg _pins) {
-    port = _port;
-    cfg = _cfg;
+bool MAX98357::begin(I2SCfg _cfg, MAX98357PinCfg _pins) {
     pins = _pins;
 
-    const i2s_config_t spkCfg = {
-        .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_TX),
-        .sample_rate = cfg.sampleRate,
-        .bits_per_sample = i2s_bits_per_sample_t(cfg.bitsPerSample),
-        .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
+    i2s_chan_config_t chanCfg = I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_AUTO, I2S_ROLE_MASTER);
+    i2s_new_channel(&chanCfg, &chanHandle, NULL);
 
-        .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S),
-        .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
-        .dma_buf_count = 8,
-        .dma_buf_len = 1024,
+    i2s_std_config_t spkCfg = {
+        .clk_cfg = I2S_STD_CLK_DEFAULT_CONFIG(_cfg.sampleRate),
+        .slot_cfg = I2S_STD_MSB_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_32BIT, I2S_SLOT_MODE_MONO),
+        .gpio_cfg = {
+            .mclk = I2S_GPIO_UNUSED,
+            .bclk = _pins.bclk,
+            .ws = _pins.ws,
+            .dout = _pins.data,
+            .din = I2S_GPIO_UNUSED,
+            .invert_flags = {
+                .mclk_inv = false,
+                .bclk_inv = false,
+                .ws_inv = false,
+            },
+        },
     };
 
-    i2s_pin_config_t spkPins = {
-        .bck_io_num = pins.bclk,
-        .ws_io_num = pins.ws,
-        .data_out_num = pins.data,
-    };
-
-    esp_err_t err;
-    err = i2s_driver_install(port, &spkCfg, 0, NULL);
-    if (err != ESP_OK) {
-        return false;
-    }
-    err = i2s_set_pin(port, &spkPins);
-    if (err != ESP_OK) {
+    i2s_channel_init_std_mode(chanHandle, &spkCfg);
+    if (i2s_channel_enable(chanHandle) != ESP_OK) {
         return false;
     }
 
@@ -46,15 +41,12 @@ bool MAX98357::begin(i2s_port_t _port, I2SCfg _cfg, MAX98357PinCfg _pins) {
 
 void MAX98357::wake() {
     enabled = true;
-    // i2s_start(port);
     digitalWrite(pins.enable, HIGH);
     delayMicroseconds(10);
 }
 
 void MAX98357::sleep() {
     enabled = false;
-    i2s_zero_dma_buffer(port);
-    // i2s_stop(port);
     digitalWrite(pins.enable, LOW);
 }
 
@@ -63,7 +55,7 @@ bool MAX98357::asleep() {
 }
 
 bool MAX98357::write(uint8_t* bytes, size_t byteCnt, size_t* bytesWritten) {
-    esp_err_t err = i2s_write(port, bytes, byteCnt, bytesWritten, portMAX_DELAY);
+    esp_err_t err = i2s_channel_write(chanHandle, bytes, byteCnt, bytesWritten, portMAX_DELAY);
     if (err != ESP_OK) {
         return false;
     }
@@ -71,5 +63,6 @@ bool MAX98357::write(uint8_t* bytes, size_t byteCnt, size_t* bytesWritten) {
 }
 
 bool MAX98357::end() {
-    return i2s_driver_uninstall(port) == ESP_OK;
+    i2s_channel_disable(chanHandle);
+    return i2s_del_channel(chanHandle) == ESP_OK;
 }

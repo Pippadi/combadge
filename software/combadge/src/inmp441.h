@@ -1,19 +1,17 @@
 #include <Arduino.h>
-#include <driver/i2s.h>
+#include <driver/i2s_std.h>
 #include "i2scfg.h"
 
 #ifndef INMP441_h
 #define INMP441_h
 
 class INMP441 {
-    private:
-    i2s_port_t port;
-    MicPinCfg pins;
-    I2SCfg cfg;
+private:
+    i2s_chan_handle_t chanHandle;
 
-    public:
+public:
     INMP441();
-    bool begin(i2s_port_t _port, I2SCfg _cfg, MicPinCfg _pins);
+    bool begin(I2SCfg _cfg, MicPinCfg _pins);
     size_t read(int16_t* destination, size_t sampleCnt);
 };
 

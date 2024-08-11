@@ -14,6 +14,9 @@
 #include "src/inmp441.h"
 #endif
 
+#define min(x, y) ((x) < (y) ? (x) : (y))
+#define max(x, y) ((x) > (y) ? (x) : (y))
+
 WiFiClient conn;
 
 MAX98357 spk;
@@ -48,7 +51,7 @@ void setup() {
 
     establishConnection();
 
-    I2SCfg i2scfg = {
+    I2SCfg i2sCfg = {
         .sampleRate = SAMPLE_RATE,
         .bitsPerSample = BITS_PER_SAMPLE,
     };
@@ -58,7 +61,7 @@ void setup() {
         .ws = MIC_WS,
         .data = MIC_DATA,
     };
-    if (!mic.begin(MIC_PORT, i2scfg, micPins)) {
+    if (!mic.begin(i2sCfg, micPins)) {
         Serial.println("Failed initializing microphone");
         while (true)
             blinkCycle(100);
@@ -70,7 +73,7 @@ void setup() {
         .data = SPK_DATA,
         .enable = SPK_EN,
     };
-    if (!spk.begin(SPK_PORT, i2scfg, spkPins)) {
+    if (!spk.begin(i2sCfg, spkPins)) {
         Serial.println("Failed initializing speaker");
         while (true)
             blinkCycle(100);
