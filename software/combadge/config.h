@@ -13,11 +13,13 @@
 #define MIC_WS GPIO_NUM_17
 #define MIC_DATA GPIO_NUM_7
 #define MIC_BCLK GPIO_NUM_4
+#define MIC_PORT I2S_NUM_0
 
 #define SPK_WS GPIO_NUM_9
 #define SPK_DATA GPIO_NUM_11
 #define SPK_BCLK GPIO_NUM_10
 #define SPK_EN GPIO_NUM_18
+#define SPK_PORT I2S_NUM_1
 
 typedef int16_t sample_t;
 #define BYTES_PER_SAMPLE sizeof(sample_t)

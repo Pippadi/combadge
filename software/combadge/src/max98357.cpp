@@ -5,10 +5,10 @@
 
 MAX98357::MAX98357() {}
 
-bool MAX98357::begin(I2SCfg _cfg, MAX98357PinCfg _pins) {
+bool MAX98357::begin(i2s_port_t port, I2SCfg _cfg, MAX98357PinCfg _pins) {
     pins = _pins;
 
-    i2s_chan_config_t chanCfg = I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_AUTO, I2S_ROLE_MASTER);
+    i2s_chan_config_t chanCfg = I2S_CHANNEL_DEFAULT_CONFIG(port, I2S_ROLE_MASTER);
     i2s_new_channel(&chanCfg, &chanHandle, NULL);
 
     i2s_std_config_t spkCfg = {

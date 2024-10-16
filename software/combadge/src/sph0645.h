@@ -11,7 +11,7 @@ private:
 
 public:
     SPH0645();
-    bool begin(I2SCfg _cfg, MicPinCfg _pins);
+    bool begin(i2s_port_t port, I2SCfg _cfg, MicPinCfg _pins);
     size_t read(int16_t* destination, size_t sampleCnt);
 };
 

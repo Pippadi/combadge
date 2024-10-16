@@ -5,8 +5,8 @@
 
 INMP441::INMP441() {}
 
-bool INMP441::begin(I2SCfg _cfg, MicPinCfg _pins) {
-    i2s_chan_config_t chanCfg = I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_AUTO, I2S_ROLE_MASTER);
+bool INMP441::begin(i2s_port_t port, I2SCfg _cfg, MicPinCfg _pins) {
+    i2s_chan_config_t chanCfg = I2S_CHANNEL_DEFAULT_CONFIG(port, I2S_ROLE_MASTER);
     i2s_new_channel(&chanCfg, NULL, &chanHandle);
 
     const i2s_std_config_t micCfg = {

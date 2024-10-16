@@ -6,9 +6,9 @@ While the current hardware uses the ESP32-S3, the code aims to retain support fo
 ## Usage
 
 - Edit `config.h` to match your hardware and software configurations.
-+ The default pins and peripherals correspond to the hardware in this repository. Change accordingly if using something different.
-+ WiFi credentials and bridge host and port will need to be changed per your setup.
-+ At present, all involved parties will need to have the same audio configuration. So, changing items such as `sample_t` or `SAMPLE_RATE` will require similar changes to the bridge and the other clients/combadges.
+    + The default pins and peripherals correspond to the hardware in this repository. Change accordingly if using something different.
+    + WiFi credentials and bridge host and port will need to be changed per your setup.
+    + At present, all involved parties will need to have the same audio configuration. So, changing items such as `sample_t` or `SAMPLE_RATE` will require similar changes to the bridge and the other clients/combadges.
 - Run `make SOC="esp32s3"` and `make flash PORT="/dev/<your port>"`. `SOC` can be set to `esp32` if required.
 
 ## Dependencies

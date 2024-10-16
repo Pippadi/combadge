@@ -20,7 +20,7 @@ private:
 
 public:
     MAX98357();
-    bool begin(I2SCfg _cfg, MAX98357PinCfg _pins);
+    bool begin(i2s_port_t port, I2SCfg _cfg, MAX98357PinCfg _pins);
     bool end();
     void sleep();
     void wake();

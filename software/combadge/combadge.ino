@@ -61,7 +61,7 @@ void setup() {
         .ws = MIC_WS,
         .data = MIC_DATA,
     };
-    if (!mic.begin(i2sCfg, micPins)) {
+    if (!mic.begin(MIC_PORT, i2sCfg, micPins)) {
         Serial.println("Failed initializing microphone");
         while (true)
             blinkCycle(100);
@@ -73,7 +73,7 @@ void setup() {
         .data = SPK_DATA,
         .enable = SPK_EN,
     };
-    if (!spk.begin(i2sCfg, spkPins)) {
+    if (!spk.begin(SPK_PORT, i2sCfg, spkPins)) {
         Serial.println("Failed initializing speaker");
         while (true)
             blinkCycle(100);
