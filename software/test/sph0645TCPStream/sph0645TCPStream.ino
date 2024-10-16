@@ -1,4 +1,4 @@
-#include <driver/i2s.h>
+#include <driver/i2s_std.h>
 #include <soc/i2s_reg.h>
 #include <WiFi.h>
 
@@ -7,9 +7,9 @@
 #define I2S_PORT I2S_NUM_0
 
 // Change me
-#define DATA_PIN 7
-#define BCLK_PIN 4
-#define WS_PIN 17
+#define DATA_PIN GPIO_NUM_7
+#define BCLK_PIN GPIO_NUM_4
+#define WS_PIN GPIO_NUM_17
 
 // Change me
 #define PC_IP IPAddress(192, 168, 1, 100)
@@ -20,48 +20,38 @@
 
 WiFiClient client;
 
+i2s_chan_handle_t rx_handle;
+i2s_chan_config_t chan_cfg = I2S_CHANNEL_DEFAULT_CONFIG(I2S_PORT, I2S_ROLE_MASTER);
+i2s_std_slot_config_t slot_cfg = I2S_STD_MSB_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_32BIT, I2S_SLOT_MODE_MONO);
+
+i2s_std_config_t rx_conf = {
+    .clk_cfg = I2S_STD_CLK_DEFAULT_CONFIG(44100),
+    .slot_cfg = slot_cfg,
+    .gpio_cfg = {
+        .mclk = I2S_GPIO_UNUSED,
+        .bclk = BCLK_PIN,
+        .ws = WS_PIN,
+        .dout = I2S_GPIO_UNUSED,
+        .din = DATA_PIN,
+        .invert_flags = {
+            .mclk_inv = false,
+            .bclk_inv = false,
+            .ws_inv = false,
+        },
+    },
+};
+
 void setup() {
     Serial.begin(115200);
 
-    const i2s_config_t micCfg = {
-        .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX),
-        .sample_rate = SAMPLE_RATE,
-        .bits_per_sample = I2S_BITS_PER_SAMPLE_32BIT,
-        .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
-        // My microphone is configured to send on the right channel.
-        // A bug in ESP-IDF swaps the two, so this is set to left.
-        // See https://github.com/espressif/esp-idf/issues/6625
+    rx_conf.slot_cfg.slot_mask = I2S_STD_SLOT_LEFT;
+    i2s_new_channel(&chan_cfg, NULL, &rx_handle);
+    i2s_channel_init_std_mode(rx_handle, &rx_conf);
+    i2s_channel_enable(rx_handle);
 
-        .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_STAND_I2S),
-        .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
-        .dma_buf_count = 8,
-        .dma_buf_len = BUF_LEN,
-        .use_apll = false,
-        .tx_desc_auto_clear = false,
-        .fixed_mclk = 0,
-    };
-
-    i2s_pin_config_t micPins = {
-        .bck_io_num = BCLK_PIN,
-        .ws_io_num = WS_PIN,
-        .data_out_num = -1,
-        .data_in_num = DATA_PIN,
-    };
-
-    esp_err_t err;
-    err = i2s_driver_install(I2S_PORT, &micCfg, 0, NULL);
-    if (err != ESP_OK) {
-        Serial.println("I2S driver initialization failed");
-        while (true);
-    }
     //REG_SET_BIT(I2S_RX_TIMING_REG(I2S_PORT), BIT(0));
     REG_SET_BIT(I2S_RX_TIMING_REG(I2S_PORT), BIT(1));
     REG_SET_BIT(I2S_RX_CONF1_REG(I2S_PORT), I2S_RX_MSB_SHIFT);
-    err = i2s_set_pin(I2S_PORT, &micPins);
-    if (err != ESP_OK) {
-        Serial.println("Setting pins failed");
-        while (true);
-    }
 
     WiFi.begin(SSID, PASSWORD);
     while (!WiFi.isConnected()) {
@@ -86,7 +76,7 @@ void loop() {
     static int16_t buf16[BUF_LEN];
     size_t bytesRead;
 
-    esp_err_t err = i2s_read(I2S_PORT, (uint8_t*) buf32, BUF_LEN*sizeof(int32_t), &bytesRead, portMAX_DELAY);
+    esp_err_t err = i2s_channel_read(rx_handle, (uint8_t*) buf32, BUF_LEN*sizeof(int32_t), &bytesRead, portMAX_DELAY);
     if (err != ESP_OK) {
         Serial.println("Error reading from microphone");
         Serial.println(err);
@@ -95,8 +85,8 @@ void loop() {
 
     size_t samplesRead = bytesRead / sizeof(int32_t);
     for (int i=0; i<samplesRead; i++) {
-        // Discard unused lower 12 bits. Sign bit is already where it needs to be.
-        buf32[i] >>= 12;
+        // Discard unused lower 11 bits. Sign bit is already where it needs to be.
+        buf32[i] >>= 11;
         buf16[i] = (int16_t) (buf32[i] & 0xFFFF);
     }
 

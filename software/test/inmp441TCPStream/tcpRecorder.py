@@ -1,6 +1,6 @@
 import socket
 
-BUF_LEN = 2048
+BUF_LEN = 256
 BYTES_PER_SAMPLE = 2
 PORT = 1592
 
