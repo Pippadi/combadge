@@ -10,7 +10,7 @@ type RingBuf struct {
 	readPtr int
 
 	// writePtrs is a map of keys to write pointer positions, relative to the read pointer
-	writePtrs []int
+	writePtrs map[any]int
 }
 
 // New creates a new RingBuf with the given size
@@ -18,13 +18,13 @@ func New(size int) *RingBuf {
 	return &RingBuf{
 		buf:       make([]int64, size),
 		readPtr:   0,
-		writePtrs: make(map[any]int, 0),
+		writePtrs: make(map[any]int),
 	}
 }
 
 // AddWriter adds a new writer to the ring buffer with the given key
 func (rb *RingBuf) AddWriter(key any) {
-	rb.writePtrs[key] = readPtr
+	rb.writePtrs[key] = rb.readPtr
 }
 
 // RemoveWriter removes a writer from the ring buffer with the given key
