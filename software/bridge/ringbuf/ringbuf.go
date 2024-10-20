@@ -2,7 +2,9 @@ package ringbuf
 
 import "fmt"
 
-// RingBuf is a ring buffer implementation that supports multiple writers
+// RingBuf is a ring buffer implementation that supports multiple writers.
+// Values written by each writer are summed in each cell of the buffer.
+// Cells are zeroed when read.
 type RingBuf struct {
 	buf []int64
 
@@ -32,32 +34,41 @@ func (rb *RingBuf) RemoveWriter(key any) {
 	delete(rb.writePtrs, key)
 }
 
-// Write writes a value to the ring buffer for the given key
+// Write writes a value to the ring buffer for the given key.
+// The value is summed with the existing value in the buffer.
 func (rb *RingBuf) Write(key any, val int64) error {
 	ptr, ok := rb.writePtrs[key]
 	if !ok {
 		return fmt.Errorf("writer with key %v not found", key)
 	}
 
+	if ptr >= len(rb.buf) {
+		return fmt.Errorf("writer with key %v has reached the end of the buffer", key)
+	}
+
 	idx := absIdxFromRelative(ptr, rb.readPtr, len(rb.buf))
 
-	rb.buf[idx] = val
+	rb.buf[idx] += val
 	rb.writePtrs[key]++
 
 	return nil
 }
 
-// Read reads a value from the ring buffer
+// Read reads a value from the ring buffer.
+// The value is zeroed in the buffer.
 func (rb *RingBuf) Read() int64 {
 	val := rb.buf[rb.readPtr]
+	rb.buf[rb.readPtr] = 0
+
 	rb.readPtr = (rb.readPtr + 1) % len(rb.buf)
 	for key, writePtr := range rb.writePtrs {
 		if writePtr < 0 {
 			rb.writePtrs[key] = 0
 		} else {
-			rb.writePtrs[key]++
+			rb.writePtrs[key]--
 		}
 	}
+
 	return val
 }
 

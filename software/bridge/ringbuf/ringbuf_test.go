@@ -18,7 +18,7 @@ func TestRingBuf(t *testing.T) {
 	rb.Write(1, 10)
 	rb.WriteSlice(0, []int64{20, 2, 3, 4, 5})
 
-	expected := []int64{20, 2, 3, 4, 5, 5, 6, 7, 8, 9}
+	expected := []int64{30, 2, 3, 4, 5, 0, 0, 0, 0, 0}
 	buf := make([]int64, 10)
 	rb.ReadSlice(buf)
 
