@@ -1,6 +1,9 @@
 package ringbuf
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 // RingBuf is a ring buffer implementation that supports multiple writers.
 // Values written by each writer are summed in each cell of the buffer.
@@ -12,31 +15,39 @@ type RingBuf struct {
 	readPtr int
 
 	// writePtrs is a map of keys to write pointer offsets, relative to the read pointer.
-	writePtrs map[any]int
+	writePtrs      map[any]int
+	writePtrsMutex *sync.Mutex
 }
 
 // New creates a new RingBuf with the given size
 func New(size int) *RingBuf {
 	return &RingBuf{
-		buf:       make([]int64, size),
-		readPtr:   0,
-		writePtrs: make(map[any]int),
+		buf:            make([]int64, size),
+		readPtr:        0,
+		writePtrs:      make(map[any]int),
+		writePtrsMutex: new(sync.Mutex),
 	}
 }
 
 // AddWriter adds a new writer to the ring buffer with the given key.
 func (rb *RingBuf) AddWriter(key any) {
+	rb.writePtrsMutex.Lock()
 	rb.writePtrs[key] = rb.readPtr
+	rb.writePtrsMutex.Unlock()
 }
 
 // RemoveWriter removes a writer from the ring buffer with the given key.
 func (rb *RingBuf) RemoveWriter(key any) {
+	rb.writePtrsMutex.Lock()
 	delete(rb.writePtrs, key)
+	rb.writePtrsMutex.Unlock()
 }
 
 // Write writes a value to the ring buffer for the given key.
 // The value is summed with the existing value in the buffer.
 func (rb *RingBuf) Write(key any, val int64) error {
+	rb.writePtrsMutex.Lock()
+	defer rb.writePtrsMutex.Unlock()
 	ptr, ok := rb.writePtrs[key]
 	if !ok {
 		return fmt.Errorf("writer with key %v not found", key)
@@ -57,6 +68,9 @@ func (rb *RingBuf) Write(key any, val int64) error {
 // Read reads a value from the ring buffer.
 // The value is zeroed in the buffer.
 func (rb *RingBuf) Read() (int64, error) {
+	rb.writePtrsMutex.Lock()
+	defer rb.writePtrsMutex.Unlock()
+
 	if rb.Available() == 0 {
 		return 0, fmt.Errorf("no values available to read")
 	}
