@@ -71,7 +71,7 @@ func (rb *RingBuf) Read() (int64, error) {
 	rb.writePtrsMutex.Lock()
 	defer rb.writePtrsMutex.Unlock()
 
-	if rb.Available() == 0 {
+	if rb.available() == 0 {
 		return 0, fmt.Errorf("no values available to read")
 	}
 
@@ -112,8 +112,9 @@ func (rb *RingBuf) ReadSlice(buf []int64) error {
 	return err
 }
 
-// Available returns the distance between the read pointer and the write pointer farthest ahead.
-func (rb *RingBuf) Available() int {
+// available() returns the distance between the read pointer and the write pointer farthest ahead.
+// This is unsafe because it doesn't lock the writePtrs mutex.
+func (rb *RingBuf) available() int {
 	farthestPtr := 0
 	for _, ptr := range rb.writePtrs {
 		if ptr > farthestPtr {
@@ -122,6 +123,13 @@ func (rb *RingBuf) Available() int {
 	}
 
 	return farthestPtr
+}
+
+// Available returns the distance between the read pointer and the write pointer farthest ahead.
+func (rb *RingBuf) Available() int {
+	rb.writePtrsMutex.Lock()
+	defer rb.writePtrsMutex.Unlock()
+	return rb.available()
 }
 
 func (rb *RingBuf) String() string {
