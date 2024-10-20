@@ -94,12 +94,13 @@ func (b *Badge) listenForPackets() {
 			b.transmitting = false
 			SendTransmitStop(b.CreatorInbox(), b.Inbox())
 		case protocol.AudioData:
-			assembled, err := readAllFragments(b.conn, int(header.Size))
+			rawBytes := make([]byte, int(header.Size))
+			n, err := io.ReadFull(b.conn, rawBytes)
 			if err != nil {
 				return
 			}
-			var ab = make(protocol.AudioBuf, protocol.BufLenSamples)
-			err = binary.Read(bytes.NewReader(assembled), binary.LittleEndian, ab)
+			var ab = make(protocol.AudioBuf, n/2)
+			binary.Read(bytes.NewReader(rawBytes[:n]), binary.LittleEndian, ab)
 			if err != nil {
 				continue
 			}
@@ -108,17 +109,4 @@ func (b *Badge) listenForPackets() {
 			loggo.Infof("Unknown packet type 0x%x", header.Type)
 		}
 	}
-}
-
-func readAllFragments(f io.Reader, size int) ([]byte, error) {
-	final := make([]byte, 0)
-	for len(final) != size {
-		chunk := make([]byte, size-len(final))
-		n, err := f.Read(chunk)
-		if err != nil {
-			return nil, err
-		}
-		final = append(final, chunk[:n]...)
-	}
-	return final, nil
 }
