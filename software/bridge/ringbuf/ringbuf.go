@@ -8,10 +8,10 @@ import "fmt"
 type RingBuf struct {
 	buf []int64
 
-	// readPtr is the absolute position of the read pointer in the buffer
+	// readPtr is the absolute position of the read pointer in the buffer.
 	readPtr int
 
-	// writePtrs is a map of keys to write pointer positions, relative to the read pointer
+	// writePtrs is a map of keys to write pointer offsets, relative to the read pointer.
 	writePtrs map[any]int
 }
 
@@ -24,12 +24,12 @@ func New(size int) *RingBuf {
 	}
 }
 
-// AddWriter adds a new writer to the ring buffer with the given key
+// AddWriter adds a new writer to the ring buffer with the given key.
 func (rb *RingBuf) AddWriter(key any) {
 	rb.writePtrs[key] = rb.readPtr
 }
 
-// RemoveWriter removes a writer from the ring buffer with the given key
+// RemoveWriter removes a writer from the ring buffer with the given key.
 func (rb *RingBuf) RemoveWriter(key any) {
 	delete(rb.writePtrs, key)
 }
@@ -46,7 +46,7 @@ func (rb *RingBuf) Write(key any, val int64) error {
 		return fmt.Errorf("writer with key %v has reached the end of the buffer", key)
 	}
 
-	idx := absIdxFromRelative(ptr, rb.readPtr, len(rb.buf))
+	idx := bufIdxFromOffset(ptr, rb.readPtr, len(rb.buf))
 
 	rb.buf[idx] += val
 	rb.writePtrs[key]++
@@ -64,13 +64,13 @@ func (rb *RingBuf) Read() (int64, error) {
 	val := rb.buf[rb.readPtr]
 	rb.buf[rb.readPtr] = 0
 
-	rb.readPtr = (rb.readPtr + 1) % len(rb.buf)
+	rb.readPtr = bufIdxFromOffset(1, rb.readPtr, len(rb.buf))
 	for key, writePtr := range rb.writePtrs {
-		if writePtr < 0 {
-			rb.writePtrs[key] = 0
-		} else {
+		if writePtr > 0 {
 			rb.writePtrs[key]--
 		}
+		// If writePtr == 0, the writer has reached the read pointer.
+		// We don't want write pointers behind the read pointers, so they're carried forward.
 	}
 
 	return val, nil
@@ -114,17 +114,7 @@ func (rb *RingBuf) String() string {
 	return fmt.Sprintf("RingBuf{buf: %v, readPtr: %v, writePtrs: %v}", rb.buf, rb.readPtr, rb.writePtrs)
 }
 
-// bufIdxFromOffset converts an offset to a buffer index
+// bufIdxFromOffset converts an offset to a buffer index.
 func bufIdxFromOffset(offset int, readPtr int, bufLen int) int {
 	return (readPtr + offset) % bufLen
-}
-
-// absIdxFromRelative converts a relative index to an absolute index
-func absIdxFromRelative(idx int, readPtr int, bufLen int) int {
-	absIdx := (readPtr + idx) % bufLen
-	if absIdx < 0 {
-		absIdx = bufLen + absIdx
-	}
-
-	return absIdx
 }
