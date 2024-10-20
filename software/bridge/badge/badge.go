@@ -1,11 +1,10 @@
 package badge
 
 import (
-	"bytes"
 	"encoding/binary"
+	"errors"
 	"io"
 	"net"
-	"unsafe"
 
 	"github.com/Pippadi/combadge/combridge/protocol"
 	"github.com/Pippadi/loggo"
@@ -58,6 +57,7 @@ func (b *Badge) RegisterTransmitStart(src actor.Inbox) {
 	}
 	binary.Write(b.conn, binary.LittleEndian, header)
 }
+
 func (b *Badge) RegisterTransmitStop(src actor.Inbox) {
 	header := protocol.PacketHeader{
 		Type: protocol.AudioStop,
@@ -70,20 +70,12 @@ func (b *Badge) listenForPackets() {
 	defer actor.SendStopMsg(b.Inbox())
 	for {
 		header := protocol.PacketHeader{}
-		headerBytes := make([]byte, int(unsafe.Sizeof(header)))
-		n, err := b.conn.Read(headerBytes)
+		err := binary.Read(b.conn, binary.LittleEndian, &header)
 		if err != nil {
-			loggo.Info(err)
+			if !errors.Is(err, io.EOF) {
+				loggo.Error(err)
+			}
 			return
-		}
-		if n != len(headerBytes) {
-			continue
-		}
-
-		err = binary.Read(bytes.NewReader(headerBytes), binary.LittleEndian, &header)
-		if err != nil {
-			loggo.Error(err)
-			continue
 		}
 
 		switch header.Type {
@@ -94,15 +86,13 @@ func (b *Badge) listenForPackets() {
 			b.transmitting = false
 			SendTransmitStop(b.CreatorInbox(), b.Inbox())
 		case protocol.AudioData:
-			rawBytes := make([]byte, int(header.Size))
-			n, err := io.ReadFull(b.conn, rawBytes)
+			var ab = make(protocol.AudioBuf, int(header.Size)/protocol.SampleSizeBytes)
+			binary.Read(b.conn, binary.LittleEndian, ab)
 			if err != nil {
+				if !errors.Is(err, io.EOF) {
+					loggo.Error(err)
+				}
 				return
-			}
-			var ab = make(protocol.AudioBuf, n/2)
-			binary.Read(bytes.NewReader(rawBytes[:n]), binary.LittleEndian, ab)
-			if err != nil {
-				continue
 			}
 			SendAudioBuf(b.CreatorInbox(), b.Inbox(), ab)
 		default:

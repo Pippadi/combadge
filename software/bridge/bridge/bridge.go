@@ -86,6 +86,10 @@ func (b *Bridge) periodicallySendBuffer() {
 		}
 
 		outBufLen := b.processingBuffer.Available()
+		if outBufLen == 0 {
+			b.badgesMutex.Unlock()
+			continue
+		}
 		if protocol.BufLenSamples < outBufLen {
 			outBufLen = protocol.BufLenSamples
 		}
