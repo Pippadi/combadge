@@ -56,7 +56,11 @@ func (rb *RingBuf) Write(key any, val int64) error {
 
 // Read reads a value from the ring buffer.
 // The value is zeroed in the buffer.
-func (rb *RingBuf) Read() int64 {
+func (rb *RingBuf) Read() (int64, error) {
+	if rb.Available() == 0 {
+		return 0, fmt.Errorf("no values available to read")
+	}
+
 	val := rb.buf[rb.readPtr]
 	rb.buf[rb.readPtr] = 0
 
@@ -69,9 +73,10 @@ func (rb *RingBuf) Read() int64 {
 		}
 	}
 
-	return val
+	return val, nil
 }
 
+// WriteSlice writes a slice of values to the ring buffer for the given key.
 func (rb *RingBuf) WriteSlice(key any, vals []int64) error {
 	for _, val := range vals {
 		if err := rb.Write(key, val); err != nil {
@@ -81,15 +86,37 @@ func (rb *RingBuf) WriteSlice(key any, vals []int64) error {
 	return nil
 }
 
+// ReadSlice reads a slice of values from the ring buffer.
 func (rb *RingBuf) ReadSlice(buf []int64) error {
+	var err error = nil
 	for i := 0; i < len(buf); i++ {
-		buf[i] = rb.Read()
+		buf[i], err = rb.Read()
+		if err != nil {
+			break
+		}
 	}
-	return nil
+	return err
+}
+
+// Available returns the distance between the read pointer and the write pointer farthest ahead.
+func (rb *RingBuf) Available() int {
+	farthestPtr := 0
+	for _, ptr := range rb.writePtrs {
+		if ptr > farthestPtr {
+			farthestPtr = ptr
+		}
+	}
+
+	return farthestPtr
 }
 
 func (rb *RingBuf) String() string {
 	return fmt.Sprintf("RingBuf{buf: %v, readPtr: %v, writePtrs: %v}", rb.buf, rb.readPtr, rb.writePtrs)
+}
+
+// bufIdxFromOffset converts an offset to a buffer index
+func bufIdxFromOffset(offset int, readPtr int, bufLen int) int {
+	return (readPtr + offset) % bufLen
 }
 
 // absIdxFromRelative converts a relative index to an absolute index
