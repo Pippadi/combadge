@@ -19,7 +19,8 @@ const (
 	bufFullInterval  = time.Second * protocol.BufLenSamples / protocol.SampleRate
 	transmitInterval = bufFullInterval / 2
 
-	bufSize = protocol.BufLenSamples * 4
+	bufSize         = protocol.BufLenSamples * 4
+	minTransmitSize = protocol.BufLenSamples / 2
 )
 
 type badgeState struct {
@@ -76,6 +77,15 @@ func (b *Bridge) periodicallySendBuffer() {
 			continue
 		}
 
+		outBufLen := b.processingBuffer.Available()
+		if outBufLen < minTransmitSize {
+			continue
+		}
+		if protocol.BufLenSamples < outBufLen {
+			outBufLen = protocol.BufLenSamples
+		}
+		loggo.Debugf("Sending %d samples", outBufLen)
+
 		b.badgesMutex.Lock()
 		for ibx, bs := range b.badges {
 			if bs.Receiving == false && !(b.transmittingCnt == 1 && bs.Transmitting) {
@@ -83,15 +93,6 @@ func (b *Bridge) periodicallySendBuffer() {
 				badge.SendTransmitStart(ibx, b.Inbox())
 				bs.Receiving = true
 			}
-		}
-
-		outBufLen := b.processingBuffer.Available()
-		if outBufLen == 0 {
-			b.badgesMutex.Unlock()
-			continue
-		}
-		if protocol.BufLenSamples < outBufLen {
-			outBufLen = protocol.BufLenSamples
 		}
 
 		outBufI64 := make([]int64, outBufLen)
