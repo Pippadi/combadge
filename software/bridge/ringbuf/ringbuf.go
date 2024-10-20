@@ -50,7 +50,7 @@ func (rb *RingBuf) Write(key any, val int64) error {
 // Read reads a value from the ring buffer
 func (rb *RingBuf) Read() int64 {
 	val := rb.buf[rb.readPtr]
-	rb.readPtr++
+	rb.readPtr = (rb.readPtr + 1) % len(rb.buf)
 	for key, writePtr := range rb.writePtrs {
 		if writePtr < 0 {
 			rb.writePtrs[key] = 0
@@ -59,6 +59,26 @@ func (rb *RingBuf) Read() int64 {
 		}
 	}
 	return val
+}
+
+func (rb *RingBuf) WriteSlice(key any, vals []int64) error {
+	for _, val := range vals {
+		if err := rb.Write(key, val); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (rb *RingBuf) ReadSlice(buf []int64) error {
+	for i := 0; i < len(buf); i++ {
+		buf[i] = rb.Read()
+	}
+	return nil
+}
+
+func (rb *RingBuf) String() string {
+	return fmt.Sprintf("RingBuf{buf: %v, readPtr: %v, writePtrs: %v}", rb.buf, rb.readPtr, rb.writePtrs)
 }
 
 // absIdxFromRelative converts a relative index to an absolute index
