@@ -29,6 +29,7 @@ INMP441 mic;
 
 volatile bool touched = false;
 
+TaskHandle_t streamToSpkHandle;
 TaskHandle_t streamFromMicHandle;
 
 void IRAM_ATTR touchISR() {
@@ -81,78 +82,81 @@ void setup() {
 
     playSound(TNGChirp1, TNGChirp1SizeBytes);
 
-    xTaskCreate(streamFromMic, "StreamFromMic", 10240, NULL, 0, &streamFromMicHandle);
+    xTaskCreatePinnedToCore(streamToSpk, "StreamToSpk", 10240, NULL, 0, &streamToSpkHandle, 1);
+    xTaskCreatePinnedToCore(streamFromMic, "StreamFromMic", 10240, NULL, 0, &streamFromMicHandle, 0);
 
     touchAttachInterrupt(TOUCH_PIN, touchISR, TOUCH_THRESHOLD);
 }
 
-void loop() {
+void streamToSpk(void*) {
     static bool receiving = false;
     static uint32_t lastPacketMillis = 0;
     static AudioPacket ad;
 
-    bool gotBadPacket = false;
-    size_t headerBytesRecvd = 0;
+    while (true) {
+        bool gotBadPacket = false;
+        size_t headerBytesRecvd = 0;
 
-    if (conn.available() >= sizeof(PacketHeader))
-        headerBytesRecvd = conn.read((uint8_t*) &ad.header, sizeof(PacketHeader));
+        if (conn.available() >= sizeof(PacketHeader))
+            headerBytesRecvd = conn.read((uint8_t*) &ad.header, sizeof(PacketHeader));
 
-    if (headerBytesRecvd == sizeof(PacketHeader)) {
-        gotBadPacket = false;
-        switch (ad.header.type) {
-            case AUDIO_START:
-                spk.wake();
-                Serial.println("Starting playback");
-                playSound(HailBeep, HailBeepSizeBytes);
-                receiving = true;
-                break;
+        if (headerBytesRecvd == sizeof(PacketHeader)) {
+            gotBadPacket = false;
+            switch (ad.header.type) {
+                case AUDIO_START:
+                    spk.wake();
+                    Serial.println("Starting playback");
+                    playSound(HailBeep, HailBeepSizeBytes);
+                    receiving = true;
+                    break;
 
-            case AUDIO_STOP:
-                spk.sleep();
-                Serial.println("Stopping playback");
-                receiving = false;
-                break;
+                case AUDIO_STOP:
+                    spk.sleep();
+                    Serial.println("Stopping playback");
+                    receiving = false;
+                    break;
 
-            case AUDIO_DATA:
-                {
-                    size_t totalBytesRead = 0, bytesWritten = 0;
-                    ad.header.size = min(ad.header.size, BUF_LEN_BYTES);
+                case AUDIO_DATA:
+                    {
+                        size_t totalBytesRead = 0, bytesWritten = 0;
+                        ad.header.size = min(ad.header.size, BUF_LEN_BYTES);
 
-                    while (totalBytesRead < ad.header.size) {
-                        size_t bytesRead = conn.read((uint8_t*) ad.data, ((size_t) ad.header.size) - totalBytesRead);
-                        totalBytesRead += bytesRead;
+                        while (totalBytesRead < ad.header.size) {
+                            size_t bytesRead = conn.read((uint8_t*) ad.data, ((size_t) ad.header.size) - totalBytesRead);
+                            totalBytesRead += bytesRead;
 
-                        spk.write((uint8_t*) ad.data, bytesRead, &bytesWritten);
-                        if (bytesRead != bytesWritten)
-                            Serial.printf("Wrote only %d of %d bytes to speaker\r\n", bytesWritten, bytesRead);
+                            spk.write((uint8_t*) ad.data, bytesRead, &bytesWritten);
+                            if (bytesRead != bytesWritten)
+                                Serial.printf("Wrote only %d of %d bytes to speaker\r\n", bytesWritten, bytesRead);
+                        }
                     }
-                }
-                break;
+                    break;
 
-            default:
-                gotBadPacket = true;
+                default:
+                    gotBadPacket = true;
+            }
+
+            if (gotBadPacket) {
+                Serial.printf("Bad packet type 0x%x with size %d\r\n", ad.header.type, ad.header.size);
+            } else {
+                lastPacketMillis = millis();
+                return;
+            }
         }
 
-        if (gotBadPacket) {
-            //Serial.printf("Bad packet type 0x%x with size %d\r\n", ad.header.type, ad.header.size);
-        } else {
-            lastPacketMillis = millis();
-            return;
+        if (receiving && millis() - lastPacketMillis > TX_DROP_TIMEOUT_MS) {
+            Serial.println("Transmission dropped");
+            receiving = false;
+            spk.sleep();
+            while (conn.available()) conn.read(); // Clear inbound buffer
         }
-    }
 
-    if (receiving && millis() - lastPacketMillis > TX_DROP_TIMEOUT_MS) {
-        Serial.println("Transmission dropped");
-        receiving = false;
-        spk.sleep();
-        while (conn.available()) conn.read(); // Clear inbound buffer
-    }
-
-    if (!conn.connected()) {
-        Serial.println("Connection lost");
-        receiving = false;
-        spk.sleep();
-        establishConnection();
+        if (!conn.connected()) {
+            Serial.println("Connection lost");
+            receiving = false;
+            spk.sleep();
+            establishConnection();
+        }
     }
 }
 
@@ -172,7 +176,6 @@ void streamFromMic(void*) {
         while (conn.connected() && !touched) {
             size_t samplesRead = mic.read(audio.data, BUF_LEN_SAMPLES);
             if (samplesRead) {
-                audio.header.type = AUDIO_DATA;
                 audio.header.size = samplesRead * BYTES_PER_SAMPLE;
                 conn.write((uint8_t*) &audio, sizeof(audio.header) + audio.header.size);
             }
@@ -234,3 +237,5 @@ void blinkCycle(int dur_ms) {
     digitalWrite(LED, LOW);
     vTaskDelay(dur_ms / portTICK_PERIOD_MS);
 }
+
+void loop() {}
