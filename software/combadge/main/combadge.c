@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <WiFi.h>
 #include "driver/adc.h"
 #include "config.h"
@@ -42,7 +43,7 @@ void IRAM_ATTR touchISR() {
 #endif
 }
 
-void setup() {
+void app_main() {
     setCpuFrequencyMhz(80);
     btStop();
     Serial.begin(115200);
@@ -82,10 +83,12 @@ void setup() {
 
     playSound(TNGChirp1, TNGChirp1SizeBytes);
 
-    xTaskCreatePinnedToCore(streamToSpk, "StreamToSpk", 10240, NULL, 0, &streamToSpkHandle, 1);
-    xTaskCreatePinnedToCore(streamFromMic, "StreamFromMic", 10240, NULL, 0, &streamFromMicHandle, 0);
+    //xTaskCreatePinnedToCore(streamToSpk, "StreamToSpk", 10240, NULL, 0, &streamToSpkHandle, 0);
+    xTaskCreatePinnedToCore(streamFromMic, "StreamFromMic", 10240, NULL, 0, &streamFromMicHandle, 1);
 
     touchAttachInterrupt(TOUCH_PIN, touchISR, TOUCH_THRESHOLD);
+
+    loop();
 }
 
 void streamToSpk(void*) {
