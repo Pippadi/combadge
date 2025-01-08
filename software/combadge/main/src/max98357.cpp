@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <driver/i2s_std.h>
 #include "i2scfg.h"
 #include "max98357.h"

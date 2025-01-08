@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <driver/i2s_std.h>
 #include <soc/i2s_reg.h>
 #include "i2scfg.h"
