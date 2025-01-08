@@ -1,4 +1,4 @@
-#include "driver/i2s.h"
+#include "driver/i2s_std.h"
 
 /* Makefile automatically defines one of these symbols
    when defining SOC="esp32" or SOC="esp32s3" */

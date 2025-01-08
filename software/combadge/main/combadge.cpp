@@ -7,19 +7,20 @@
 #include "lwip/sys.h"
 #include "lwip/err.h"
 #include "config.h"
-#include "src/i2scfg.h"
-#include "src/crap.h"
+
+#include "src/i2scfg.hpp"
+#include "src/crap.hpp"
 #include "sounds/HailBeep.h"
 #include "sounds/TNGChirp1.h"
 #include "sounds/TNGChirp2.h"
-#include "src/max98357.h"
+#include "src/max98357.hpp"
 
 #define TAG "combadge"
 
 #ifdef MIC_SPH0645
-#include "src/sph0645.h"
+#include "src/sph0645.hpp"
 #else
-#include "src/inmp441.h"
+#include "src/inmp441.hpp"
 #endif
 
 #define min(x, y) ((x) < (y) ? (x) : (y))

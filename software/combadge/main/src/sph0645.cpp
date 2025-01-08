@@ -1,7 +1,7 @@
 #include <driver/i2s_std.h>
 #include <soc/i2s_reg.h>
-#include "i2scfg.h"
-#include "sph0645.h"
+#include "i2scfg.hpp"
+#include "sph0645.hpp"
 
 SPH0645::SPH0645() {}
 

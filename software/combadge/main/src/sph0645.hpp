@@ -1,5 +1,5 @@
 #include <driver/i2s_std.h>
-#include "i2scfg.h"
+#include "i2scfg.hpp"
 
 #ifndef SPH0645_h
 #define SPH0645_h

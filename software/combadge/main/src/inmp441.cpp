@@ -1,6 +1,6 @@
 #include <driver/i2s_std.h>
-#include "i2scfg.h"
-#include "inmp441.h"
+#include "i2scfg.hpp"
+#include "inmp441.hpp"
 
 INMP441::INMP441() {}
 

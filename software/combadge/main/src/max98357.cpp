@@ -1,6 +1,6 @@
 #include <driver/i2s_std.h>
-#include "i2scfg.h"
-#include "max98357.h"
+#include "i2scfg.hpp"
+#include "max98357.hpp"
 
 MAX98357::MAX98357() {}
 

@@ -1,5 +1,5 @@
 #include <driver/i2s_std.h>
-#include "i2scfg.h"
+#include "i2scfg.hpp"
 
 #ifndef INMP441_h
 #define INMP441_h
