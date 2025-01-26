@@ -1,5 +1,6 @@
 #include <driver/i2s_std.h>
 #include <soc/i2s_reg.h>
+#include "freertos/FreeRTOS.h"
 #include "i2scfg.hpp"
 #include "sph0645.hpp"
 

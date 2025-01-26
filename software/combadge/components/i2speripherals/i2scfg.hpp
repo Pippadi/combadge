@@ -4,7 +4,7 @@
 #define I2SCfg_h
 
 struct I2SCfg {
-    int sampleRate;
+    uint32_t sampleRate;
     int bitsPerSample;
 };
 

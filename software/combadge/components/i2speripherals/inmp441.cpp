@@ -1,4 +1,5 @@
 #include <driver/i2s_std.h>
+#include "freertos/FreeRTOS.h"
 #include "i2scfg.hpp"
 #include "inmp441.hpp"
 

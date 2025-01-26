@@ -1,4 +1,6 @@
 #include <driver/i2s_std.h>
+#include <driver/gpio.h>
+#include "freertos/FreeRTOS.h"
 #include "i2scfg.hpp"
 #include "max98357.hpp"
 
@@ -32,7 +34,7 @@ bool MAX98357::begin(i2s_port_t port, I2SCfg _cfg, MAX98357PinCfg _pins) {
         return false;
     }
 
-    pinMode(pins.enable, OUTPUT);
+    gpio_set_direction(pins.enable, GPIO_MODE_OUTPUT);
     MAX98357::sleep();
 
     return true;
@@ -40,13 +42,13 @@ bool MAX98357::begin(i2s_port_t port, I2SCfg _cfg, MAX98357PinCfg _pins) {
 
 void MAX98357::wake() {
     enabled = true;
-    digitalWrite(pins.enable, HIGH);
-    delayMicroseconds(10);
+    gpio_set_level(pins.enable, 1);
+    vTaskDelay(1 / portTICK_PERIOD_MS);
 }
 
 void MAX98357::sleep() {
     enabled = false;
-    digitalWrite(pins.enable, LOW);
+    gpio_set_level(pins.enable, 0);
 }
 
 bool MAX98357::asleep() {
