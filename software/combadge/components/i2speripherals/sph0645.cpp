@@ -34,8 +34,8 @@ bool SPH0645::begin(i2s_port_t port, I2SCfg _cfg, MicPinCfg _pins) {
         return false;
     }
 
-    REG_SET_BIT(I2S_TIMING_REG(port), BIT(1));
-    REG_SET_BIT(I2S_CONF1_REG(port), I2S_RX_MSB_SHIFT);
+    REG_SET_BIT(I2S_RX_TIMING_REG(port), BIT(1));
+    REG_SET_BIT(I2S_RX_CONF1_REG(port), I2S_RX_MSB_SHIFT);
 
     return true;
 }
