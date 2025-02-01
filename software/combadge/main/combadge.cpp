@@ -6,6 +6,7 @@
 #include "esp_netif.h"
 #include "esp_timer.h"
 #include "nvs_flash.h"
+#include "driver/touch_sens.h"
 #include "freertos/event_groups.h"
 #include "freertos/task.h"
 #include "lwip/sys.h"
