@@ -48,7 +48,8 @@ size_t INMP441::read(int16_t* destination, size_t sampleCnt) {
         // - https://github.com/atomic14/esp32-walkie-talkie/blob/main/lib/audio_input/src/I2SMEMSSampler.cpp
         // Discard unused lower 8 bits, and get rid of 3 bits of noise.
         // The number 11 was empirically determined to provide the best signal.
-        temp[i] >>= 11;
+        temp[i] >>= 4;
+        temp[i] /= 16;
         temp[i] &= 0xFFFF; // Truncating loud sounds
         destination[i] = (int16_t) temp[i];
     }

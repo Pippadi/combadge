@@ -61,13 +61,14 @@ EventGroupHandle_t wifiEventGroup;
 #define WIFI_CONNECTED_BIT BIT0
 
 void initWifi();
-void waitTillTouchReleased();
+//void waitTillTouchReleased();
 void playSound(const sample_t* sound, const size_t soundSizeBytes);
 void streamToSpk(void*);
 void streamFromMic(void*);
 void wifiEventHandle(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
 void setupTCPSocket();
 
+/*
 bool touchActiveISR(touch_sensor_handle_t sensHandle, const touch_active_event_data_t *event, void *user_ctx) {
     ESP_EARLY_LOGI("touch", "channel %d active", (int) event->chan_id);
     touched = true;
@@ -79,6 +80,7 @@ bool touchInactiveISR(touch_sensor_handle_t sensHandle, const touch_active_event
     touched = false;
     return false;
 }
+*/
 
 extern "C" void app_main(void) {
     esp_err_t ret = nvs_flash_init();
@@ -105,6 +107,7 @@ extern "C" void app_main(void) {
         while (true);
     }
 
+    /*
     MAX98357PinCfg spkPins = {
         .bclk = SPK_BCLK,
         .ws = SPK_WS,
@@ -117,11 +120,13 @@ extern "C" void app_main(void) {
     }
 
     playSound(TNGChirp1, TNGChirp1SizeBytes);
+    */
 
     //xTaskCreatePinnedToCore(streamToSpk, "StreamToSpk", 10240, NULL, 0, &streamToSpkHandle, 0);
     xTaskCreatePinnedToCore(streamFromMic, "StreamFromMic", 10240, NULL, 0, &streamFromMicHandle, 1);
 }
 
+/*
 void streamToSpk(void*) {
     static bool receiving = false;
     static uint32_t lastPacketMillis = 0;
@@ -183,23 +188,28 @@ void streamToSpk(void*) {
         }
     }
 }
+*/
 
 void streamFromMic(void*) {
     static AudioPacket audio = {};
     audio.header.type = AUDIO_DATA;
 
     while (true) {
+        /*
         while (!touched) {
             vTaskDelay(10 / portTICK_PERIOD_MS);
         }
-        playSound(TNGChirp1, TNGChirp1SizeBytes);
-        waitTillTouchReleased();
+        */
+        //playSound(TNGChirp1, TNGChirp1SizeBytes);
+        //waitTillTouchReleased();
 
         ESP_LOGI(TAG, "Starting transmission");
         PacketHeader startMsg = {AUDIO_START, 0};
         send(conn, (uint8_t*) &startMsg, sizeof(startMsg), 0);
 
-        while (!touched) {
+        uint32_t startMillis = millis();
+        //while (!touched) {
+        while (millis() - startMillis < 10000) {
             size_t samplesRead = mic.read(audio.data, BUF_LEN_SAMPLES);
             if (samplesRead) {
                 audio.header.size = samplesRead * BYTES_PER_SAMPLE;
@@ -210,11 +220,12 @@ void streamFromMic(void*) {
         ESP_LOGI(TAG, "Ending transmission");
         PacketHeader stopMsg = {AUDIO_STOP, 0};
         send(conn, (uint8_t*) &stopMsg, sizeof(stopMsg), 0);
-        playSound(TNGChirp2, TNGChirp2SizeBytes);
-        waitTillTouchReleased();
+        //playSound(TNGChirp2, TNGChirp2SizeBytes);
+        //waitTillTouchReleased();
     }
 }
 
+/*
 void playSound(const sample_t* sound, const size_t soundSizeBytes) {
     size_t bytesWritten;
     bool spkAsleep = spk.asleep();
@@ -224,7 +235,9 @@ void playSound(const sample_t* sound, const size_t soundSizeBytes) {
     if (spkAsleep)
         spk.sleep();
 }
+*/
 
+/*
 void waitTillTouchReleased() {
     while (touched) {
 #ifdef SOC_ESP32
@@ -233,6 +246,7 @@ void waitTillTouchReleased() {
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
+*/
 
 void initWifi() {
     wifiEventGroup = xEventGroupCreate();
@@ -301,89 +315,94 @@ void setupTCPSocket() {
     ESP_LOGI(TAG, "Connected to %s", BRIDGE);
 }
 
+/*
 void touchInitialScanning(touch_sensor_handle_t sens_handle, touch_channel_handle_t chan_handle) {
-    /* Enable the touch sensor to do the initial scanning, so that to initialize the channel data */
+    // Enable the touch sensor to do the initial scanning, so that to initialize the channel data
     ESP_ERROR_CHECK(touch_sensor_enable(sens_handle));
 
-    /* Scan the enabled touch channels for several times, to make sure the initial channel data is stable */
+    // Scan the enabled touch channels for several times, to make sure the initial channel data is stable
     ESP_ERROR_CHECK(touch_sensor_trigger_oneshot_scanning(sens_handle, 2000));
 
-    /* Disable the touch channel to rollback the state */
-    ESP_ERROR_CHECK(touch_sensor_disable(sens_handle));
+    // Disable the touch channel to rollback the state
+ESP_ERROR_CHECK(touch_sensor_disable(sens_handle));
 
-    /* (Optional) Read the initial channel benchmark and reconfig the channel active threshold accordingly */
-    printf("Initial benchmark and new threshold are:\n");
-    /* Read the initial benchmark of the touch channel */
-    uint32_t benchmark[TOUCH_SAMPLE_CFG_NUM] = {};
-    ESP_ERROR_CHECK(touch_channel_read_data(chan_handle, TOUCH_CHAN_DATA_TYPE_BENCHMARK, benchmark));
-    /* Calculate the proper active thresholds regarding the initial benchmark */
-    printf("Touch [CH %d]", TOUCH_CHAN_ID);
-    /* Generate the default channel configuration and then update the active threshold based on the real benchmark */
-    touch_channel_config_t chanCfg = {
-        .active_thresh = {40000},
-        .charge_speed = TOUCH_CHARGE_SPEED_7,
-        .init_charge_volt = TOUCH_INIT_CHARGE_VOLT_LOW,
-    };
-    for (int j = 0; j < TOUCH_SAMPLE_CFG_NUM; j++) {
-        chanCfg.active_thresh[j] = (uint32_t) (benchmark[j] * touchThresholdRatio);
-        printf(" %d: %"PRIu32", %"PRIu32"\t", j, benchmark[j], chanCfg.active_thresh[j]);
-    }
-    printf("\n");
-    /* Update the channel configuration */
-    ESP_ERROR_CHECK(touch_sensor_reconfig_channel(chan_handle, &chanCfg));
+// (Optional) Read the initial channel benchmark and reconfig the channel active threshold accordingly
+printf("Initial benchmark and new threshold are:\n");
+// Read the initial benchmark of the touch channel
+uint32_t benchmark[TOUCH_SAMPLE_CFG_NUM] = {};
+ESP_ERROR_CHECK(touch_channel_read_data(chan_handle, TOUCH_CHAN_DATA_TYPE_BENCHMARK, benchmark));
+// Calculate the proper active thresholds regarding the initial benchmark
+printf("Touch [CH %d]", TOUCH_CHAN_ID);
+// Generate the default channel configuration and then update the active threshold based on the real benchmark
+touch_channel_config_t chanCfg = {
+    .active_thresh = {40000},
+    .charge_speed = TOUCH_CHARGE_SPEED_7,
+    .init_charge_volt = TOUCH_INIT_CHARGE_VOLT_LOW,
+};
+for (int j = 0; j < TOUCH_SAMPLE_CFG_NUM; j++) {
+    chanCfg.active_thresh[j] = (uint32_t) (benchmark[j] * touchThresholdRatio);
+    printf(" %d: %"PRIu32", %"PRIu32"\t", j, benchmark[j], chanCfg.active_thresh[j]);
 }
+printf("\n");
+// Update the channel configuration
+ESP_ERROR_CHECK(touch_sensor_reconfig_channel(chan_handle, &chanCfg));
+}
+*/
 
+/*
 void setupTouch() {
     touch_sensor_sample_config_t sample_cfg[TOUCH_SAMPLE_CFG_NUM] = {TOUCH_SENSOR_V2_DEFAULT_SAMPLE_CONFIG(500, TOUCH_VOLT_LIM_L_0V5, TOUCH_VOLT_LIM_H_2V2)};
-        touch_sensor_config_t touchSensCfg = TOUCH_SENSOR_DEFAULT_BASIC_CONFIG(TOUCH_SAMPLE_CFG_NUM, sample_cfg);
+    touch_sensor_config_t touchSensCfg = TOUCH_SENSOR_DEFAULT_BASIC_CONFIG(TOUCH_SAMPLE_CFG_NUM, sample_cfg);
     ESP_ERROR_CHECK(touch_sensor_new_controller(&touchSensCfg, &touchSensHandle));
+    */
 
-    /* Step 2: Create and enable the new touch channel handles with default configurations */
-    /** Following is about setting the touch channel active threshold of each sample configuration.
-     *
-     *  @How to Determine:
-     *  As the actual threshold is affected by various factors in real application,
-     *  we need to run the touch app first to get the `benchmark` and the `smooth_data` that being touched.
-     *
-     *  @Formula:
-     *  Touch V2/V3 uses relative threshold:
-     *      active_thresh = benchmark * coeff, (coeff for example, 0.1%~20%)
-     *  Please adjust the coeff to guarantee the threshold < smooth_data - benchmark
-     *
-     *  @Typical Practice:
-     *  Normally, we can't determine a fixed threshold at the beginning,
-     *  but we can give them estimated values first and update them after an initial scanning (like this example),
-     *  Step1: set an estimated value for each sample configuration first. (i.e., here)
-     *  Step2: then reconfig the threshold after the initial scanning.(see `example_touch_do_initial_scanning`)
-     *  Step3: adjust the `s_thresh2bm_ratio` to a proper value to trigger the active callback
-     */
+// Step 2: Create and enable the new touch channel handles with default configurations */
+/** Following is about setting the touch channel active threshold of each sample configuration.
+ *
+ *  @How to Determine:
+ *  As the actual threshold is affected by various factors in real application,
+ *  we need to run the touch app first to get the `benchmark` and the `smooth_data` that being touched.
+ *
+ *  @Formula:
+ *  Touch V2/V3 uses relative threshold:
+ *      active_thresh = benchmark * coeff, (coeff for example, 0.1%~20%)
+ *  Please adjust the coeff to guarantee the threshold < smooth_data - benchmark
+ *
+ *  @Typical Practice:
+ *  Normally, we can't determine a fixed threshold at the beginning,
+ *  but we can give them estimated values first and update them after an initial scanning (like this example),
+ *  Step1: set an estimated value for each sample configuration first. (i.e., here)
+ *  Step2: then reconfig the threshold after the initial scanning.(see `example_touch_do_initial_scanning`)
+ *  Step3: adjust the `s_thresh2bm_ratio` to a proper value to trigger the active callback
+*/
+/*
     touch_channel_config_t chanCfg = {
         .active_thresh = {1000},
         .charge_speed = TOUCH_CHARGE_SPEED_7,
         .init_charge_volt = TOUCH_INIT_CHARGE_VOLT_LOW,
     };
-    /* Allocate new touch channel on the touch controller */
+    // Allocate new touch channel on the touch controller
     ESP_ERROR_CHECK(touch_sensor_new_channel(touchSensHandle, TOUCH_CHAN_ID, &chanCfg, &touchChanHandle));
 
-    /* Step 3: Confiture the default filter for the touch sensor (Note: Touch V1 uses software filter) */
+    // Step 3: Confiture the default filter for the touch sensor (Note: Touch V1 uses software filter)
     touch_sensor_filter_config_t filter_cfg = TOUCH_SENSOR_DEFAULT_FILTER_CONFIG();
     ESP_ERROR_CHECK(touch_sensor_config_filter(touchSensHandle, &filter_cfg));
 
-    /* Step 4: Do the initial scanning to initialize the touch channel data
-     * Without this step, the channel data in the first read will be invalid
-     */
+    // Step 4: Do the initial scanning to initialize the touch channel data
+    // * Without this step, the channel data in the first read will be invalid
     touchInitialScanning(touchSensHandle, touchChanHandle);
 
-    /* Step 5: Register the touch sensor callbacks, here only take `active` and `inactive` event for example */
+    // Step 5: Register the touch sensor callbacks, here only take `active` and `inactive` event for example
     touch_event_callbacks_t callbacks = {
         .on_active = touchActiveISR,
         .on_inactive = touchInactiveISR,
     };
     ESP_ERROR_CHECK(touch_sensor_register_callbacks(touchSensHandle, &callbacks, NULL));
 
-    /* Step 6: Enable the touch sensor */
+    // Step 6: Enable the touch sensor
     ESP_ERROR_CHECK(touch_sensor_enable(touchSensHandle));
 
-    /* Step 7: Start continuous scanning, you can also trigger oneshot scanning manually */
+    // Step 7: Start continuous scanning, you can also trigger oneshot scanning manually
     ESP_ERROR_CHECK(touch_sensor_start_continuous_scanning(touchSensHandle));
 }
+*/
